@@ -1,0 +1,35 @@
+# Node.js
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+/.next
+/out
+
+# Static files
+/public/static
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs and text editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# NPM
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Next.js serverless output
+.serverless/
+
+# Coverage folder
+/coverage
