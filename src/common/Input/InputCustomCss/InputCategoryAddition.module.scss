@@ -1,0 +1,75 @@
+.inputCategory {
+    --border-radius: 10px;
+    --border-color: #F5F5F7;
+    --bg-color: #FFFFFF;
+    --placeholder-color: #33333380;
+    --placeholder-font-size: 15px;
+    --menu-border: 1.5px solid #acacac;
+    --option-padding: 10px 15px;
+    --option-margin: 5px;
+    --option-radius: 8px;
+    --focused-option-bg: #009F7D;
+    --focused-option-color: white;
+    --menu-list-padding: 15px;
+    --custom-gap: 8px;
+}
+
+.inputCategory :global(.react-select__control) {
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: 5px;
+    box-shadow: none;
+}
+
+.inputCategory :global(.react-select__control:hover) {
+    border-color: var(--border-color);
+}
+
+.inputCategory :global(.react-select__placeholder) {
+    color: var(--placeholder-color);
+    font-size: var(--placeholder-font-size);
+}
+
+.inputCategory :global(.react-select__menu) {
+    border-radius: var(--border-radius);
+}
+
+.inputCategory :global(.react-select__option) {
+    color: #000;
+    padding: var(--option-padding);
+    border-radius: var(--option-radius);
+    cursor: pointer;
+    flex: 0 0 auto;
+    min-width: fit-content;
+    max-width: max-content;
+}
+
+.inputCategory :global(.react-select__option--is-focused) {
+    background-color: var(--focused-option-bg);
+    color: var(--focused-option-color);
+}
+
+.inputCategory :global(.react-select__menu-list) {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--border-radius);
+}
+
+.inputCategory :global(.react-select__multi-value__remove) {
+    cursor: pointer;
+}
+
+.inputCategory .customOptionWrapper {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: var(--custom-gap);
+    align-items: center;
+    background-color: var(--bg-color);
+}
+
+.inputCategory :global(.react-select__menu-portal) {
+    position: relative;
+    top: 0;
+    left: 0;
+}
