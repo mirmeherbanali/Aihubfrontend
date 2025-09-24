@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { UserInput } from "../../lib/validators/userValidator";
+import { ENV } from "../../env";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: ENV.API_URL,
     credentials: "include", // cookie-based auth
   }),
   endpoints: (builder) => ({

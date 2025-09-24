@@ -5,7 +5,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 const isDev = process.env.NODE_ENV === "development";
 
 const securityHeaders = [
-   {
+  {
     key: "Content-Security-Policy",
     value: isDev
       ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:;"
@@ -18,6 +18,8 @@ const securityHeaders = [
 
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
+  swcMinify: true, // recommended for production builds
+  experimental: { appDir: true }, // if using app directory
   async headers() {
     return [
       {

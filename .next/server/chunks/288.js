@@ -1,17 +1,6 @@
-exports.id = 326;
-exports.ids = [326];
+exports.id = 288;
+exports.ids = [288];
 exports.modules = {
-
-/***/ 5850:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-Promise.resolve(/* import() eager */).then(__webpack_require__.t.bind(__webpack_require__, 1232, 23));
-Promise.resolve(/* import() eager */).then(__webpack_require__.t.bind(__webpack_require__, 2987, 23));
-Promise.resolve(/* import() eager */).then(__webpack_require__.t.bind(__webpack_require__, 831, 23));
-Promise.resolve(/* import() eager */).then(__webpack_require__.t.bind(__webpack_require__, 6926, 23));
-Promise.resolve(/* import() eager */).then(__webpack_require__.t.bind(__webpack_require__, 4282, 23))
-
-/***/ }),
 
 /***/ 902:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
@@ -44,8 +33,8 @@ var QueryClientProvider = __webpack_require__(212);
 var redux_toolkit_cjs_production_min = __webpack_require__(1388);
 // EXTERNAL MODULE: ./node_modules/@reduxjs/toolkit/dist/query/rtk-query.cjs.production.min.js
 var rtk_query_cjs_production_min = __webpack_require__(1011);
-// EXTERNAL MODULE: ./src/features/auth/authApi.ts
-var authApi = __webpack_require__(469);
+// EXTERNAL MODULE: ./src/features/auth/authApi.ts + 1 modules
+var authApi = __webpack_require__(7096);
 ;// CONCATENATED MODULE: ./src/store/index.ts
 
 
@@ -92,23 +81,79 @@ function ClientProviders({ children }) {
 
 /***/ }),
 
-/***/ 469:
+/***/ 7096:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   YA: () => (/* binding */ useLoginMutation),
-/* harmony export */   iJ: () => (/* binding */ authApi),
-/* harmony export */   l4: () => (/* binding */ useRegisterMutation)
-/* harmony export */ });
-/* unused harmony exports useRefreshQuery, useLogoutMutation, useGetProfileQuery */
-/* harmony import */ var _reduxjs_toolkit_query_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3298);
-/* harmony import */ var _reduxjs_toolkit_query_react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_reduxjs_toolkit_query_react__WEBPACK_IMPORTED_MODULE_0__);
 
-const authApi = (0,_reduxjs_toolkit_query_react__WEBPACK_IMPORTED_MODULE_0__.createApi)({
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  iJ: () => (/* binding */ authApi),
+  YA: () => (/* binding */ useLoginMutation),
+  l4: () => (/* binding */ useRegisterMutation)
+});
+
+// UNUSED EXPORTS: useGetProfileQuery, useLogoutMutation, useRefreshQuery
+
+// EXTERNAL MODULE: ./node_modules/@reduxjs/toolkit/dist/query/react/rtk-query-react.cjs.production.min.js
+var rtk_query_react_cjs_production_min = __webpack_require__(3298);
+// EXTERNAL MODULE: ./node_modules/zod/v3/types.js + 6 modules
+var types = __webpack_require__(5830);
+;// CONCATENATED MODULE: ./src/env.ts
+
+// ======================
+// 1️⃣ Server-only environment schema
+// ======================
+const serverEnvSchema = types/* object */.Ry({
+    NODE_ENV: types/* enum */.Km([
+        "development",
+        "test",
+        "production"
+    ]),
+    NEXT_PUBLIC_SUPABASE_KEY: types/* string */.Z_().min(1)
+});
+// ======================
+// 2️⃣ Client-safe environment schema
+// ======================
+const clientEnvSchema = types/* object */.Ry({
+    NEXT_PUBLIC_API_URL: types/* string */.Z_().url(),
+    ANALYZE: types/* string */.Z_().optional()
+});
+// ======================
+// 3️⃣ Parse environment variables safely
+// ======================
+// Server-side parsing (only on Node.js)
+const serverEnv =  true ? serverEnvSchema.parse(process.env) : 0;
+// Client-side parsing (only NEXT_PUBLIC_* variables)
+const clientEnv = clientEnvSchema.parse({
+    NEXT_PUBLIC_API_URL: "https://api.aidirectory.com",
+    ANALYZE: process.env.NEXT_PUBLIC_ANALYZE
+});
+// ======================
+// 4️⃣ Export typed ENV object
+// ======================
+const ENV = {
+    // Server-only vars
+    NODE_ENV: serverEnv?.NODE_ENV ?? "development",
+    SUPABASE_KEY: serverEnv?.NEXT_PUBLIC_SUPABASE_KEY ?? "",
+    // Client-safe vars
+    API_URL: clientEnv.NEXT_PUBLIC_API_URL,
+    ANALYZE: clientEnv.ANALYZE === "true"
+};
+// ======================
+// 5️⃣ Convenience flags
+// ======================
+const IS_DEV = ENV.NODE_ENV === "development";
+const IS_PROD = ENV.NODE_ENV === "production";
+const IS_TEST = ENV.NODE_ENV === "test";
+
+;// CONCATENATED MODULE: ./src/features/auth/authApi.ts
+
+
+const authApi = (0,rtk_query_react_cjs_production_min.createApi)({
     reducerPath: "authApi",
-    baseQuery: (0,_reduxjs_toolkit_query_react__WEBPACK_IMPORTED_MODULE_0__.fetchBaseQuery)({
-        baseUrl: "http://localhost:4000",
+    baseQuery: (0,rtk_query_react_cjs_production_min.fetchBaseQuery)({
+        baseUrl: ENV.API_URL,
         credentials: "include"
     }),
     endpoints: (builder)=>({
