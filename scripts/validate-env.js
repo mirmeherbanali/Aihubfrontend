@@ -1,3 +1,6 @@
+// scripts/validate-env.js
+require('dotenv').config(); // ← load .env
+
 const { z } = require("zod");
 
 // Define schema

@@ -1,0 +1,6 @@
+{
+  "/page": "/",
+  "/dashboard/page": "/dashboard",
+  "/auth/register/page": "/auth/register",
+  "/auth/login/page": "/auth/login"
+}
