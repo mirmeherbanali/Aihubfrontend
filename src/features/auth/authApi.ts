@@ -1,36 +1,38 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { UserInput } from "../../lib/validators/userValidator";
-import { ENV } from "../../env";
+import { baseApi } from "../api/baseApi";
+import { UserInput } from "@/lib/validators/userValidator";
+import { AuthResponse,UserProfile } from "../../types/form.types";
 
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: ENV.API_URL,
-    credentials: "include", // cookie-based auth
-  }),
+
+// Inject auth endpoints into baseApi
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<{ message: string }, UserInput>({
+    login: builder.mutation<AuthResponse, UserInput>({
       query: (body) => ({ url: "/auth/login", method: "POST", body }),
     }),
-    register: builder.mutation<{ message: string }, UserInput>({
+    register: builder.mutation<AuthResponse, UserInput>({
       query: (body) => ({ url: "/auth/register", method: "POST", body }),
     }),
-    refresh: builder.query<{ accessToken: string }, void>({
-      query: () => "/auth/refresh",
+    getProfile: builder.query<UserProfile, void>({
+      query: () => "/auth/me",
+      providesTags: ["Profile"],
+    }),
+    updateProfile: builder.mutation<UserProfile, Partial<UserProfile>>({
+      query: (body) => ({ url: "/auth/me", method: "PUT", body }),
+      invalidatesTags: ["Profile"],
     }),
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({ url: "/auth/logout", method: "POST" }),
-    }),
-    getProfile: builder.query<any, void>({
-      query: () => "/auth/me",
+      invalidatesTags: ["Profile"],
     }),
   }),
+  overrideExisting: false,
 });
 
+// Export typed hooks
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useRefreshQuery,
-  useLogoutMutation,
   useGetProfileQuery,
+  useUpdateProfileMutation,
+  useLogoutMutation,
 } = authApi;

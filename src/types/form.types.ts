@@ -17,6 +17,15 @@ interface BaseField {
   value?: string;
   onChange?: (val: string) => void;
   fetchOptions?: () => Promise<string[]>;
+  style?: React.CSSProperties;         // for input / select styling
+  wrapperStyle?: React.CSSProperties;  // for container div styling
+  row?: string | number;           // fields with same row appear together
+  col?: number;                     // default column span (for desktop)
+  breakpoints?: {                   // responsive column spans
+    sm?: number;  // mobile
+    md?: number;  // tablet
+    lg?: number;  // desktop
+  };
 }
 
 // Input-like fields (must have name)
@@ -61,3 +70,15 @@ export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
   onChange?: (val: string) => void;
   error?: string;
 }
+
+export interface AuthResponse {
+  message: string;
+  token?: string;
+}
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+}
+

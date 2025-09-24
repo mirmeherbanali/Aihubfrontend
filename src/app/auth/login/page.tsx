@@ -1,18 +1,21 @@
 "use client";
 
-import { useLoginMutation } from "@/features/auth/authApi";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSchema, UserInput } from "@/lib/validators/userValidator";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button, Divider } from "antd";
+import { GoogleOutlined, GithubOutlined, FacebookOutlined } from "@ant-design/icons";
+
+import { UserInput, userSchema } from "@/lib/validators/userValidator";
 import DynamicForm from "@/components/ui/DynamicForm";
 import { loginFields } from "@/lib/auth/fields/formFields";
 import { createLoginHandler } from "@/lib/auth/handler/formHandlers";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useLoginMutation } from "../../../features/auth/authApi";
 
 export default function LoginPage() {
-  const [loginUser, { isLoading }] = useLoginMutation();
   const router = useRouter();
+  const [loginUser, { isLoading }] = useLoginMutation();
 
   const { register, handleSubmit, formState } = useForm<UserInput>({
     resolver: zodResolver(userSchema),
@@ -21,12 +24,15 @@ export default function LoginPage() {
 
   const onSubmit = createLoginHandler(loginUser, router);
 
+  const handleSocialLogin = (provider: "google" | "github" | "facebook") => {
+    console.log(`Login with ${provider}`);
+  };
+
   return (
-    <div className="container">
-      <div className="card">
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '1.5rem' }}>
-          Login to Aidirectory
-        </h2>
+    <div className="container min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <div className="card w-full max-w-md shadow-xl rounded-2xl p-6 bg-white">
+        <h2 className="text-center text-xl font-bold mb-6">Login to Aidirectory</h2>
+
         <DynamicForm
           fields={loginFields}
           register={register}
@@ -35,7 +41,31 @@ export default function LoginPage() {
           onSubmit={onSubmit}
           isLoading={isLoading}
         />
-        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+
+        {/* Social Login Section */}
+        <Divider className="my-6">Or login with</Divider>
+        <div className="flex justify-center items-center gap-4 mb-4">
+          <Button
+            icon={<GoogleOutlined />}
+            shape="circle"
+            size="large"
+            onClick={() => handleSocialLogin("google")}
+          />
+          <Button
+            icon={<GithubOutlined />}
+            shape="circle"
+            size="large"
+            onClick={() => handleSocialLogin("github")}
+          />
+          <Button
+            icon={<FacebookOutlined />}
+            shape="circle"
+            size="large"
+            onClick={() => handleSocialLogin("facebook")}
+          />
+        </div>
+
+        <p className="text-center mt-4">
           Don't have an account?{" "}
           <Link href="/auth/register" className="text-link">
             Register here

@@ -1,28 +1,37 @@
 "use client";
 
-import { UserInput } from "@/lib/validators/userValidator";
 import { SubmitHandler } from "react-hook-form";
+import { UserInput } from "@/lib/validators/userValidator";
 
-// Login handler - now returns a function that accepts router
-export const createLoginHandler = (loginUser: any, router: any): SubmitHandler<UserInput> => {
+// Login handler
+export const createLoginHandler = (
+  loginUser: (data: UserInput ) => Promise<any>,
+  router: any
+): SubmitHandler<UserInput> => {
   return async (data) => {
     try {
-      await loginUser(data).unwrap();
+      const res = await loginUser(data);
+      console.log("Login success:", res);
       router.push("/dashboard");
-    } catch (err) {
-      console.error("Login failed", err);
+    } catch (err: any) {
+      console.error("Login failed:", err.data?.message || err.message || err);
     }
   };
 };
 
-// Register handler - now returns a function that accepts router
-export const createRegisterHandler = (registerUser: any, router: any): SubmitHandler<UserInput> => {
+// Register handler
+export const createRegisterHandler = (
+  registerUser: (data: UserInput ) => Promise<any>,
+  router: any,
+): SubmitHandler<UserInput> => {
   return async (data) => {
     try {
-      await registerUser(data).unwrap();
+      const { confirmPassword, ...apiData } = data;
+      const res = await registerUser(apiData);
+      console.log("Registration success:", res);
       router.push("/auth/login");
-    } catch (err) {
-      console.error("Registration failed", err);
+    } catch (err: any) {
+      console.error("Registration failed:", err.data?.message || err.message || err);
     }
   };
 };
