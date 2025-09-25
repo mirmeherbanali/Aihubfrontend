@@ -21,7 +21,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Env files (keep them secret, don’t commit)
-/.env
+.env*
 /.env.local
 /.env.development
 /.env.test

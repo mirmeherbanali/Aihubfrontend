@@ -19,6 +19,7 @@ interface BaseField {
   fetchOptions?: () => Promise<string[]>;
   style?: React.CSSProperties;         // for input / select styling
   wrapperStyle?: React.CSSProperties;  // for container div styling
+  icon?: React.ReactNode; // <-- left-side icon
   row?: string | number;           // fields with same row appear together
   col?: number;                     // default column span (for desktop)
   breakpoints?: {                   // responsive column spans
