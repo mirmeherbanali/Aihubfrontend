@@ -1,38 +1,48 @@
 .input-wrapper {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-label {
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.4rem;
   font-weight: 500;
   color: #333;
   font-size: 0.95rem;
+  text-align: left; // ✅ ensures label text is aligned left
 }
 
 .input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   border-radius: 6px;
   border: 1px solid #d9d9d9;
   font-size: 1rem;
+  transition: all 0.2s ease;
 
   &:focus {
     border-color: #40a9ff;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    outline: none;
   }
 }
 
 .password-toggle {
   cursor: pointer;
-  color: #1890ff;
-  font-size: 0.85rem;
+  color: #595959; // subtle icon color
+  font-size: 1rem;
   margin-left: 0.5rem;
+
+  &:hover {
+    color: #1890ff; // highlight on hover
+  }
 }
 
 .error {
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
   color: #ff4d4f;
   font-size: 0.85rem;
+  text-align: left;
 }

@@ -13,7 +13,7 @@ const Input: React.FC<InputProps> = ({
   control,
   style,
   wrapperStyle,
-  icon,
+  icon
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,11 +39,11 @@ const Input: React.FC<InputProps> = ({
                     className={styles["password-toggle"]}
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
-                       {showPassword ? (
-        <EyeTwoTone twoToneColor="#000000" /> // black color
-      ) : (
-        <EyeInvisibleOutlined style={{ color: "#000000" }} /> // black color
-      )}
+                    {showPassword ? (
+                      <EyeTwoTone twoToneColor="#000000" /> // black color
+                    ) : (
+                      <EyeInvisibleOutlined style={{ color: "#000000" }} /> // black color
+                    )}
                   </span>
                 )
               }

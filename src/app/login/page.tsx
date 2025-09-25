@@ -12,7 +12,7 @@ import {
 } from "@/lib/auth/handler/formHandlers";
 import { useLoginMutation, useRegisterMutation } from "@/features/auth/authApi";
 import { UserInput, userSchema } from "@/lib/validators/userValidator";
-import styles from "../../../components/ui/style/login.module.scss";
+import styles from "../../components/ui/style/login.module.scss";
 
 export default function AuthPage() {
   const router = useRouter();
