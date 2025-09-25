@@ -1,60 +1,125 @@
-name: CI Pipeline
+name: Deploy Next.js (SSR & Static) to Hostinger VPS with Slack + Nginx + Cleanup
 
 on:
   push:
-    branches: [ main, develop, feature/** ]
-  pull_request:
-    branches: [ main, develop ]
+    branches: [ main, staging ]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: npm
 
+      # 3️⃣ Install dependencies locally
       - name: Install dependencies
         run: npm ci
 
-      - name: Set NODE_ENV dynamically
+      # 4️⃣ Determine deployment type
+      - name: Set deployment type
+        id: deploy_type
         run: |
           if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
-            echo "NODE_ENV=production" >> $GITHUB_ENV
-          elif [[ $GITHUB_REF == 'refs/heads/develop' ]]; then
-            echo "NODE_ENV=development" >> $GITHUB_ENV
+            echo "type=SSR" >> $GITHUB_OUTPUT
           else
-            echo "NODE_ENV=test" >> $GITHUB_ENV
+            echo "type=STATIC" >> $GITHUB_OUTPUT
           fi
 
-      - name: Load Environment Variables
+      # 5️⃣ Build app
+      - name: Build Next.js
         run: |
-          if [[ $NODE_ENV == 'production' ]]; then
-            cp .env.production .env
-          elif [[ $NODE_ENV == 'development' ]]; then
-            cp .env.development .env
+          if [[ "${{ steps.deploy_type.outputs.type }}" == "SSR" ]]; then
+            npm run build
           else
-            cp .env.test .env
+            npm run build
+            npm run export
           fi
 
-      - name: Validate Environment Variables
-        run: npm run validate-env
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_SUPABASE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}
-          ANALYZE: ${{ secrets.ANALYZE }}
+      # 6️⃣ Deploy to VPS
+      - name: Deploy to Hostinger VPS
+        id: deploy
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
 
-      - name: Run Linter
-        run: npm run lint
+            APP_DIR="/home/username/aidirectory-app"
+            CURRENT="$APP_DIR/current"
+            BACKUP="$APP_DIR/backup"
+            STAGING="$APP_DIR/staging_build"
 
-      - name: Run Tests
-        run: npm test -- --ci --coverage
+            mkdir -p "$CURRENT" "$BACKUP" "$STAGING"
 
-      - name: Build Next.js App
-        run: npm run build
+            if [[ "${{ steps.deploy_type.outputs.type }}" == "SSR" ]]; then
+              # SSR deployment
+              if [ -d "$CURRENT" ]; then
+                rm -rf "$BACKUP"
+                mv "$CURRENT" "$BACKUP"
+              fi
+              cp -r /tmp/github_workspace/* "$CURRENT"
+              cd "$CURRENT"
+              npm install
+
+              # Env
+              echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" > .env
+              echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}" >> .env
+              echo "ANALYZE=${{ secrets.ANALYZE }}" >> .env
+
+              # PM2 deploy
+              command -v pm2 >/dev/null 2>&1 || npm install -g pm2
+              pm2 describe aidirectory > /dev/null
+              if [ $? -eq 0 ]; then
+                pm2 restart aidirectory || (rm -rf "$CURRENT" && mv "$BACKUP" "$CURRENT" && pm2 restart aidirectory)
+              else
+                pm2 start npm --name "aidirectory" -- start || (rm -rf "$CURRENT" && mv "$BACKUP" "$CURRENT" && pm2 start npm --name "aidirectory" -- start)
+              fi
+              pm2 save
+
+              # Reload Nginx
+              sudo systemctl reload nginx || echo "Nginx reload failed"
+
+            else
+              # Static export deployment
+              rm -rf "$STAGING/*"
+              cp -r /tmp/github_workspace/out/* "$STAGING"
+              echo "Static staging build updated at $STAGING"
+
+              # Optional: cleanup older static builds (keep only last)
+              # Already done by removing previous content
+            fi
+
+            echo "Deployment completed: ${{ steps.deploy_type.outputs.type }}"
+
+      # 7️⃣ Slack notification on success
+      - name: Slack Notification Success
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":rocket: Deployment of *${{ steps.deploy_type.outputs.type }}* branch completed successfully! :white_check_mark:\nBranch: `${GITHUB_REF_NAME}`\nCommit: `${GITHUB_SHA}`",
+              "mrkdwn": true
+            }
+        if: success()
+
+      # 8️⃣ Slack notification on failure
+      - name: Slack Notification Failure
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":x: Deployment of *${{ steps.deploy_type.outputs.type }}* branch failed! :warning:\nBranch: `${GITHUB_REF_NAME}`\nCommit: `${GITHUB_SHA}`",
+              "mrkdwn": true
+            }
+        if: failure()

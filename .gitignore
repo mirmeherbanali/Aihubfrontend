@@ -23,9 +23,9 @@ pnpm-debug.log*
 # Env files (keep them secret, don’t commit)
 /.env
 /.env.local
-/.env.development.local
-/.env.test.local
-/.env.production.local
+/.env.development
+/.env.test
+/.env.production
 
 # Editor stuff
 .vscode/*
@@ -40,6 +40,11 @@ pnpm-debug.log*
 # If you’re using npm, keep package-lock.json and remove the next 2 lines
 # yarn.lock
 # pnpm-lock.yaml
+
+# Optional: ignore lockfiles
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # OS
 Thumbs.db
