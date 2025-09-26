@@ -27,7 +27,7 @@ export default function AuthPage() {
     });
   const onLoginSubmit = createLoginHandler(loginUser, router);
 
-  // ✅ Register mutation + form
+  // ✅ Register mutation + form changes
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
   const { control: registerControl, handleSubmit: registerSubmit } =
     useForm<UserInput>({
