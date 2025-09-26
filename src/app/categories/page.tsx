@@ -1,11 +1,7 @@
-import React from "react";
-
-const Category = () => {
+export default function Page() {
   return (
     <div>
-      <h1>This I s Category Page</h1>
+      <p>Category</p>
     </div>
   );
-};
-
-export default Category;
+}
