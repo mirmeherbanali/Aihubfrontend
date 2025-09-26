@@ -1,0 +1,248 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
+
+// Variables
+$purple-color: #004b3d;
+$light-color: #f4fbf9;
+$secondary: #009f7d;
+$primary: #035140;
+$black: #333333;
+$white: #ffffff;
+$background: #f5f5f7;
+$accent_red: #df0000;
+$acent_orange: #ca8200;
+$accent_green: #73cf11;
+$accent_yellow: #dfc100;
+$landing: 50px;
+$bigsubheading: 30px;
+$heading: 26px;
+$subheading: 22px;
+$content: 17px;
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1200px;
+
+// Breakpoints
+@mixin breakpoint($size) {
+  @if $size ==xs {
+    @media (max-width: #{$breakpoint-xs}) {
+      @content;
+    }
+  } @else if $size ==sm {
+    @media (max-width: #{$breakpoint-sm}) {
+      @content;
+    }
+  } @else if $size ==md {
+    @media (max-width: #{$breakpoint-md}) {
+      @content;
+    }
+  } @else if $size ==lg {
+    @media (max-width: #{$breakpoint-lg}) {
+      @content;
+    }
+  }
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  color: $black;
+}
+
+.font_Nanum {
+  font-family: "Nanum Pen Script", cursive;
+}
+
+.bg_purple {
+  background-color: $purple-color;
+}
+
+.bg_light {
+  background-color: $light-color;
+}
+
+.bg_secondary {
+  background-color: $secondary;
+}
+
+.bg_primary {
+  background-color: $primary;
+}
+
+.bg_black {
+  background-color: $black;
+}
+
+.bg_background {
+  background-color: $background;
+}
+
+.bg_red {
+  background-color: $accent_red;
+}
+
+.bg_orange {
+  background-color: $acent_orange;
+}
+
+.bg_green {
+  background-color: $accent_green;
+}
+
+.bg_yellow {
+  background-color: $accent_yellow;
+}
+
+.bg_white {
+  background-color: $white;
+}
+
+.text_purple {
+  color: $purple-color;
+}
+
+.text_light {
+  color: $light-color;
+}
+
+.text_secondary {
+  color: $secondary;
+}
+
+.text_primary {
+  color: $primary;
+}
+
+.text_black {
+  color: $black;
+}
+
+.text_background {
+  color: $background;
+}
+
+.text_red {
+  color: $accent_red;
+}
+
+.text_orange {
+  color: $acent_orange;
+}
+
+.text_green {
+  color: $accent_green;
+}
+
+.text_yellow {
+  color: $accent_yellow;
+}
+
+.text_white {
+  color: $white;
+}
+
+.landing {
+  font-size: $landing;
+  font-weight: 600;
+}
+
+.bigsubheading {
+  font-size: $bigsubheading;
+  font-weight: 600;
+}
+
+.heading {
+  font-size: $heading;
+  font-weight: bold;
+}
+
+.subheading {
+  font-size: $subheading;
+  font-weight: bold;
+}
+
+.content {
+  font-weight: 600;
+}
+
+.content1 {
+  font-weight: 400;
+}
+
+.content1,
+p {
+  font-size: $content;
+}
+
+.regular {
+  font-size: $content;
+}
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+p,
+.content1 {
+  @include breakpoint(lg) {
+    font-size: 14px;
+  }
+}
+
+.landing {
+  @include breakpoint(md) {
+    font-size: $heading;
+  }
+}
+
+.subheading {
+  @include breakpoint(lg) {
+    font-size: 16px;
+  }
+}
+
+.heading {
+  @include breakpoint(lg) {
+    font-size: 18px;
+  }
+}
+
+.reportcount {
+  font-size: 30px !important;
+}
+
+.reportcount {
+  @include breakpoint(md) {
+    font-size: 20px !important;
+  }
+}
+
+.btn-border {
+  border: 1px solid $secondary;
+}
+
+.heading {
+  @include breakpoint(xs) {
+    font-size: 16px;
+  }
+}
+
+.bigsubheading {
+  @include breakpoint(sm) {
+    font-size: 18px;
+  }
+}
+.regular {
+  @include breakpoint(md) {
+    font-size: 14px;
+  }
+}
+

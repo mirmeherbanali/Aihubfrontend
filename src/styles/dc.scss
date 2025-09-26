@@ -1,0 +1,185 @@
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #004b3d;
+  --secondary: #f0f9f7;
+  --accent: #fbbf24;
+  --transition: 0.3s ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --secondary: #1a1a1a;
+  }
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  color: var(--foreground);
+  font-family: "Montserrat", sans-serif;
+  scroll-behavior: smooth;
+  transition: background var(--transition), color var(--transition);
+}
+
+a {
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+.tableSpacing {
+  width: 100%;
+  border: 1px solid transparent;
+  border-collapse: collapse;
+
+  th {
+    padding: 15px;
+    padding-left: 0;
+  }
+  td {
+    padding: 15px;
+    padding-left: 0px;
+  }
+  tbody {
+    tr {
+      border-bottom: 1px solid #333333;
+      td:last-child {
+        padding-right: 0px;
+      }
+    }
+    tr:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.mobile-flagged-review {
+  th{
+    font-size: 17px;
+    @media(max-width: 1023px){
+       font-size: 14px;
+    }
+  }
+  td {
+    padding: 10px;
+    font-size: 17px;
+    @media(max-width: 1023px){
+      font-size: 14px;
+    }
+  }
+  td:first-child {
+    width: 40%;
+  }
+  td:last-child {
+    width: 60%;
+  }
+}
+@keyframes popup-open {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-popup-open {
+  animation: popup-open 0.3s ease-out forwards;
+}
+
+.customInput::placeholder{
+   font-size: 14px;
+}
+
+.buttonAlignment{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    flex-direction: row;
+    @media (max-width: 1023px){
+        justify-content: space-between;
+        gap: 10px;        
+    }
+    @media (max-width: 370px){
+      flex-direction: column;
+    }
+
+    button{
+        background-color: #ffffff;
+        color: #009f7d;
+        font-size: 17px;
+        outline: 1px solid #009f7d;
+        border-radius: 50px;
+        padding: 10px;
+        width: auto;
+        min-width: 150px;
+        cursor: pointer;
+        @media(max-width: 1023px){
+            font-size: 14px; 
+        }
+    }
+    button:last-child{
+        background-color: #009f7d;
+        color: #ffffff;
+    }
+}
+
+/*Notification Hover Css*/
+.notification-modal-wrapper {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+.group1:hover .notification-modal-wrapper {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.notification-modal-wrapper-online {
+  opacity: 0;
+  transform: translateX(100%); 
+  animation: slideInOut 8s ease-in-out forwards;
+  z-index: 10;
+}
+
+@keyframes slideInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(100%); /* Start off-screen to the right */
+  }
+  12.5% {
+    opacity: 1;
+    transform: translateX(0); /* Slide in to visible position (1s) */
+  }
+  62.5% {
+    opacity: 1;
+    transform: translateX(0); /* Stay visible for ~3 seconds */
+  }
+  87.5% {
+    opacity: 1;
+    transform: translateX(0); /* Start sliding out */
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%); /* Slide back out to the right (1s) */
+  }
+}
+
+/*Input Password Css*/
+input[type=password]:not(:placeholder-shown)  {
+    font-family: Verdana;
+    letter-spacing: 0.135em;
+    font-size: large;
+    color: #3f3f3f;
+}
