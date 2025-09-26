@@ -12,13 +12,13 @@ import {
 } from "@/lib/auth/handler/formHandlers";
 import { useLoginMutation, useRegisterMutation } from "@/features/auth/authApi";
 import { UserInput, userSchema } from "@/lib/validators/userValidator";
-import styles from "../../../components/ui/style/login.module.scss";
+import styles from "../../components/ui/style/login.module.scss";
 
 export default function AuthPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
-  // ✅ Login mutation + form
+  // ✅ Login mutation + form -
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
   const { control: loginControl, handleSubmit: loginSubmit } =
     useForm<UserInput>({
@@ -27,7 +27,7 @@ export default function AuthPage() {
     });
   const onLoginSubmit = createLoginHandler(loginUser, router);
 
-  // ✅ Register mutation + form
+  // ✅ Register mutation + form changes
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
   const { control: registerControl, handleSubmit: registerSubmit } =
     useForm<UserInput>({

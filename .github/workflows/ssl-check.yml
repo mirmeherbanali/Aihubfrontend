@@ -1,0 +1,143 @@
+name: SSL Management & Renewal Check
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"    # every Monday at 06:00 UTC
+  workflow_dispatch:        # allow manual run
+
+jobs:
+  ssl-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Check SSL Renewal on Hostinger VPS
+      - name: Check SSL Renewal
+        id: sslcheck
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🔍 Testing SSL renewal..."
+            sudo certbot renew --dry-run || exit 1
+
+            echo "📅 Fetching expiry date..."
+            EXPIRY=$(echo | openssl s_client -servername yourdomain.com -connect yourdomain.com:443 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+            echo "SSL_EXPIRY=$EXPIRY" >> $GITHUB_ENV
+
+            EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s)
+            NOW_EPOCH=$(date +%s)
+            DIFF_DAYS=$(( (EXPIRY_EPOCH - NOW_EPOCH) / 86400 ))
+            echo "DAYS_LEFT=$DIFF_DAYS" >> $GITHUB_ENV
+
+      # 2️⃣ Failure notifications
+      - name: Failure Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: "#FF0000"
+          SLACK_MESSAGE: "🚨 SSL Renewal FAILED for Aidirectory! Check VPS logs: /var/log/letsencrypt/letsencrypt.log"
+
+      - name: Failure Email Notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "🚨 SSL Renewal Failed on Aidirectory"
+          to: your@email.com
+          from: Aidirectory Bot
+          body: |
+            SSL renewal failed on VPS.
+            Please login and check logs:
+            /var/log/letsencrypt/letsencrypt.log
+
+      # 3️⃣ Expiry warning if <30 days
+      - name: SSL Expiry Warning Slack
+        if: success() && env.DAYS_LEFT != '' && fromJSON(env.DAYS_LEFT) < 30
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: "#FFA500"
+          SLACK_MESSAGE: "⚠️ SSL certificate expiring soon! Only ${{ env.DAYS_LEFT }} days left (Expiry: ${{ env.SSL_EXPIRY }})"
+
+      - name: SSL Expiry Warning Email
+        if: success() && env.DAYS_LEFT != '' && fromJSON(env.DAYS_LEFT) < 30
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "⚠️ SSL Expiring Soon on Aidirectory"
+          to: your@email.com
+          from: Aidirectory Bot
+          body: |
+            ⚠️ SSL certificate is expiring in ${{ env.DAYS_LEFT }} days!
+            Expiry date: ${{ env.SSL_EXPIRY }}
+            Please monitor renewal.
+
+      - name: Create GitHub Issue for SSL Expiry
+        if: success() && env.DAYS_LEFT != '' && fromJSON(env.DAYS_LEFT) < 30
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "⚠️ SSL Expiring Soon: ${{ env.DAYS_LEFT }} days left"
+          content-filepath: .github/ssl-warning.md
+          labels: security, ssl, urgent
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4️⃣ Auto-close old issue if renewed
+      - name: Find existing SSL Expiry Issue
+        id: find-issue
+        uses: peter-evans/find-issue@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: open
+          labels: security, ssl, urgent
+          title: "⚠️ SSL Expiring Soon"
+
+      - name: Close SSL Expiry Issues
+        if: success() && env.DAYS_LEFT != '' && fromJSON(env.DAYS_LEFT) >= 30
+        uses: peter-evans/close-issue@v3
+        with:
+          issue-number: ${{ steps.find-issue.outputs.issue_number }}
+          comment: "✅ SSL renewed successfully. Certificate valid for ${{ env.DAYS_LEFT }} more days."
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5️⃣ Success Slack notification for renewed SSL
+      - name: SSL Renewed Slack Notification
+        if: success() && env.DAYS_LEFT != '' && fromJSON(env.DAYS_LEFT) >= 30
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: "#36a64f"
+          SLACK_MESSAGE: "✅ SSL certificate renewed successfully for Aidirectory! Certificate valid for ${{ env.DAYS_LEFT }} more days (Expiry: ${{ env.SSL_EXPIRY }})"
+
+      # 6️⃣ Monthly Success Notification
+      - name: Success Slack Notification (monthly)
+        if: success() && github.run_number % 4 == 0
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: "#36a64f"
+          SLACK_MESSAGE: "✅ SSL check passed for Aidirectory 🎉\nCertificate Expiry: ${{ env.SSL_EXPIRY }}"
+
+      - name: Success Email Notification (monthly)
+        if: success() && github.run_number % 4 == 0
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "✅ SSL OK on Aidirectory"
+          to: your@email.com
+          from: Aidirectory Bot
+          body: |
+            ✅ SSL certificates are valid and will renew automatically 🎉
+            Certificate Expiry: ${{ env.SSL_EXPIRY }}
