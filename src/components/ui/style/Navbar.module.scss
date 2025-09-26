@@ -1,0 +1,76 @@
+.header {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 22px;
+  color: #0066cc;
+  gap: 10px;
+  z-index: 1;
+}
+
+.desktopMenu {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.desktopButtons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.mobileButtons {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mobileTabletMenu {
+  display: none;
+}
+
+/* Tablet (577px - 992px): show hamburger + buttons */
+@media (max-width: 992px) and (min-width: 577px) {
+  .desktopMenu {
+    display: none;
+  }
+  .desktopButtons {
+    display: flex;
+  }
+  .mobileTabletMenu {
+    display: block;
+  }
+  .mobileButtons {
+    display: none; /* buttons stay in navbar, not drawer */
+  }
+}
+
+/* Mobile (≤576px): show hamburger, move buttons inside drawer */
+@media (max-width: 576px) {
+  .desktopMenu {
+    display: none;
+  }
+  .desktopButtons {
+    display: none;
+  }
+  .mobileTabletMenu {
+    display: block;
+  }
+  .mobileButtons {
+    display: flex;
+  }
+}
