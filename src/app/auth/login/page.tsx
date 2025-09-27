@@ -4,48 +4,70 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button, Divider } from "antd";
-import { GoogleOutlined, GithubOutlined, FacebookOutlined } from "@ant-design/icons";
 import DynamicForm from "@/components/ui/DynamicForm";
 import { loginFields, registerFields } from "@/lib/auth/fields/formFields";
-import { createLoginHandler, createRegisterHandler } from "@/lib/auth/handler/formHandlers";
+import {
+  createLoginHandler,
+  createRegisterHandler
+} from "@/lib/auth/handler/formHandlers";
 import { useLoginMutation, useRegisterMutation } from "@/features/auth/authApi";
 import { UserInput, userSchema } from "@/lib/validators/userValidator";
+import styles from "../../../components/ui/style/login.module.scss";
 
 export default function AuthPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login/register
+  const [isLogin, setIsLogin] = useState(true);
 
-  // Login mutation + form
+  // ✅ Login mutation + form
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
-  const { control: loginControl, handleSubmit: loginSubmit } = useForm<UserInput>({
-    resolver: zodResolver(userSchema),
-    mode: "onBlur",
-  });
+  const { control: loginControl, handleSubmit: loginSubmit } =
+    useForm<UserInput>({
+      resolver: zodResolver(userSchema),
+      mode: "onBlur"
+    });
   const onLoginSubmit = createLoginHandler(loginUser, router);
 
-  // Register mutation + form
+  // ✅ Register mutation + form
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
-  const { control: registerControl, handleSubmit: registerSubmit } = useForm<UserInput>({
-    resolver: zodResolver(userSchema),
-    mode: "onBlur",
-  });
+  const { control: registerControl, handleSubmit: registerSubmit } =
+    useForm<UserInput>({
+      resolver: zodResolver(userSchema),
+      mode: "onBlur"
+    });
   const onRegisterSubmit = createRegisterHandler(registerUser, router);
 
+  // ✅ Social login
   const handleSocialLogin = (provider: "google" | "github" | "facebook") => {
     console.log(`Login with ${provider}`);
   };
 
-  return (
-    <div className="container min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="card w-full max-w-md shadow-xl rounded-2xl p-6 bg-white">
-        {/* Header */}
-        <h2 className="text-center text-2xl font-bold mb-6">
-          {isLogin ? "Login to Aidirectory" : "Join Aidirectory"}
-        </h2>
+  // ✅ Define providers with order
+  const socialProviders: {
+    name: "google" | "facebook" | "github";
+    icon: string;
+  }[] = [
+    { name: "google", icon: "/icons/google.svg" },
+    { name: "facebook", icon: "/icons/facebook.svg" },
+    { name: "github", icon: "/icons/github.svg" }
+  ];
 
-        {/* Form */}
+  return (
+    <div className={styles.container}>
+      <div className={styles.card}>
+        {/* Logo */}
+        <div className={styles.logo}>
+          <img src="/assets/logo.jpg" alt="Logo" style={{ height: 55 }} />
+        </div>
+        {/* Title */}
+        <h2 className={styles.title}>
+          {isLogin ? "Sign in" : "Create Account"}
+        </h2>
+        <p className={styles.subtitle}>
+          {isLogin
+            ? "to continue to your account"
+            : "Join us by creating an account"}
+        </p>
+        {/* ✅ Dynamic Form (logic from old code) */}
         {isLogin ? (
           <DynamicForm
             fields={loginFields}
@@ -63,46 +85,39 @@ export default function AuthPage() {
             isLoading={registerLoading}
           />
         )}
-
-        {/* Social Login */}
-        <Divider className="my-6">Or {isLogin ? "login" : "register"} with</Divider>
-        <div className="flex justify-center items-center gap-4 mb-4">
-          {["google", "github", "facebook"].map(provider => {
-            const Icon = provider === "google" ? GoogleOutlined : provider === "github" ? GithubOutlined : FacebookOutlined;
-            return (
-              <Button
-                key={provider}
-                icon={<Icon />}
-                shape="circle"
-                size="large"
-                onClick={() => handleSocialLogin(provider as "google" | "github" | "facebook")}
-              />
-            );
-          })}
+        {/* Divider */}
+        <div className={styles.or}>
+          <span></span>
+          <p>or</p>
+          <span></span>
         </div>
-
-        {/* Toggle Link */}
-        <p className="text-center mt-4">
+        {/* 🔹 Updated social login buttons */}
+        <div className={styles.socialsRow}>
+          {socialProviders.map((provider) => (
+            <button
+              key={provider.name}
+              type="button"
+              className={styles[provider.name]} // style per provider
+              onClick={() => handleSocialLogin(provider.name)}
+            >
+              <img src={provider.icon} alt={provider.name} />
+            </button>
+          ))}
+        </div>
+        {/* Footer toggle */}
+        <p className={styles.footer}>
           {isLogin ? (
             <>
-              Don't have an account?{" "}
-              <button
-                type="button"
-                className="text-blue-500 hover:underline"
-                onClick={() => setIsLogin(false)}
-              >
-                Register here
+              Don’t have an account?{" "}
+              <button type="button" onClick={() => setIsLogin(false)}>
+                Create account
               </button>
             </>
           ) : (
             <>
               Already have an account?{" "}
-              <button
-                type="button"
-                className="text-blue-500 hover:underline"
-                onClick={() => setIsLogin(true)}
-              >
-                Login here
+              <button type="button" onClick={() => setIsLogin(true)}>
+                Sign in
               </button>
             </>
           )}
