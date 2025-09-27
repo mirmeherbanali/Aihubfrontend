@@ -5,21 +5,22 @@ import { DownOutlined, LoginOutlined, MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { COLORS } from "@/constants/colors";
 import { useState } from "react";
-import styles from "../../ui/style/Navbar.module.scss"; // 👈 import sass module
+import styles from "../../ui/style/Navbar.module.scss";
 
 const { Header } = Layout;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const isUserLogin = JSON.parse(localStorage.getItem("user_login"));
 
   const handleMenuClick = () => setOpen(false);
 
   const menuItems = [
     {
-      key: "1",
+      key: "3",
       label: (
-        <Link href="/free-tools" onClick={handleMenuClick}>
-          Free Tools
+        <Link href="/categories" onClick={handleMenuClick}>
+          Category
         </Link>
       )
     },
@@ -49,49 +50,9 @@ export default function Navbar() {
           }}
         >
           <span>
-            Products <DownOutlined style={{ fontSize: 10 }} />
+            Resources <DownOutlined style={{ fontSize: 10 }} />
           </span>
         </Dropdown>
-      )
-    },
-    {
-      key: "3",
-      label: (
-        <Link href="/categories" onClick={handleMenuClick}>
-          Category
-        </Link>
-      )
-    },
-    {
-      key: "4",
-      label: (
-        <Link href="/ranking" onClick={handleMenuClick}>
-          Ranking
-        </Link>
-      )
-    },
-    {
-      key: "5",
-      label: (
-        <Link href="/jobs" onClick={handleMenuClick}>
-          Jobs
-        </Link>
-      )
-    },
-    {
-      key: "6",
-      label: (
-        <Link href="/research" onClick={handleMenuClick}>
-          Research
-        </Link>
-      )
-    },
-    {
-      key: "7",
-      label: (
-        <Link href="/login" onClick={handleMenuClick}>
-          Submit
-        </Link>
       )
     }
   ];
@@ -99,87 +60,66 @@ export default function Navbar() {
   return (
     <Header className={styles.header}>
       {/* Logo */}
-      <div className={styles.logo}>
-        <img src="/assets/logo.jpg" alt="Logo" style={{ height: 35 }} />
-        AiDictionary
-      </div>
+      <div className={styles.logo}>AiDictionary</div>
 
       {/* Desktop Menu */}
-      <div className={styles.desktopMenu}>
+      {/* Desktop Menu & Buttons Wrapper */}
+      <div className={styles.desktopRight}>
         <Menu
           mode="horizontal"
+          theme="dark"
           style={{
             borderBottom: "none",
-            background: "transparent",
-            display: "flex",
-            justifyContent: "center"
+            background: "transparent"
           }}
           items={menuItems}
         />
-      </div>
 
-      {/* Right Section */}
-      <div
-        style={{ display: "flex", alignItems: "center", gap: 15, zIndex: 1 }}
-      >
-        {/* Desktop Buttons */}
         <div className={styles.desktopButtons}>
           <Link href="/auth/login">
-            <Button
-              type="link"
-              icon={<LoginOutlined />}
-              style={{ color: COLORS.primaryBlue, fontWeight: 500 }}
-            >
+            <Button type="link" className={styles.loginBtn}>
               Login
             </Button>
           </Link>
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: COLORS.accentBlue,
-              borderColor: COLORS.accentBlue,
-              color: COLORS.white,
-              fontWeight: 500
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                COLORS.teal;
-              (e.currentTarget as HTMLButtonElement).style.borderColor =
-                COLORS.teal;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                COLORS.accentBlue;
-              (e.currentTarget as HTMLButtonElement).style.borderColor =
-                COLORS.accentBlue;
-            }}
-          >
-            Submit a Tool
-          </Button>
-        </div>
-
-        {/* Mobile/Tablet Hamburger */}
-        <div className={styles.mobileTabletMenu}>
-          <Button
-            type="text"
-            icon={<MenuOutlined />}
-            onClick={() => setOpen(true)}
-          />
+          <Button className={styles.submitBtn}>Add Your Tool</Button>
         </div>
       </div>
 
-      {/* Drawer for Mobile */}
+      {/* Desktop Buttons */}
+      {/* <div className={styles.desktopButtons}>
+        <Link href="/auth/login">
+          <Button type="link" className={styles.loginBtn}>
+            Login
+          </Button>
+        </Link>
+        <Button className={styles.submitBtn}>Add Your Tool</Button>
+      </div> */}
+
+      {/* Mobile/Tablet Hamburger */}
+      <div className={styles.mobileTabletMenu}>
+        <Button
+          type="text"
+          icon={<MenuOutlined style={{ color: "white", fontSize: "20px" }} />}
+          onClick={() => setOpen(true)}
+        />
+      </div>
+
+      {/* Drawer for Mobile/Tablet */}
       <Drawer
         title="Menu"
         placement="right"
         onClose={() => setOpen(false)}
         open={open}
       >
-        <Menu mode="vertical" items={menuItems} />
+        <Menu
+          mode="vertical"
+          items={menuItems}
+          // onClick={handleMenuClick} // auto close after click
+        />
 
-        {/* Mobile-only Buttons inside Drawer */}
+        {/* Buttons inside Drawer */}
         <div className={styles.mobileButtons}>
-          <Link href="/auth/login">
+          <Link href="/auth/login" onClick={handleMenuClick}>
             <Button
               type="link"
               icon={<LoginOutlined />}
@@ -197,18 +137,7 @@ export default function Navbar() {
               fontWeight: 500,
               marginTop: 10
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                COLORS.teal;
-              (e.currentTarget as HTMLButtonElement).style.borderColor =
-                COLORS.teal;
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                COLORS.accentBlue;
-              (e.currentTarget as HTMLButtonElement).style.borderColor =
-                COLORS.accentBlue;
-            }}
+            onClick={handleMenuClick}
           >
             Submit a Tool
           </Button>

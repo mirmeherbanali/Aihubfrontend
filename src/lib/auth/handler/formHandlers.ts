@@ -12,6 +12,7 @@ export const createLoginHandler = (
     try {
       const res = await loginUser(data);
       console.log("Login success:", res);
+        localStorage.setItem("user", JSON.stringify(res.user));
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Login failed:", err.data?.message || err.message || err);

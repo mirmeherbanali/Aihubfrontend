@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { FieldValues, Control, SubmitHandler, Controller } from "react-hook-form";
+import {
+  FieldValues,
+  Control,
+  SubmitHandler,
+  Controller
+} from "react-hook-form";
 import { DynamicFormProps, FormField } from "@/types/form.types";
 import DropzoneComponent from "./DropzoneComponent";
 import AsyncDropdown from "./AsyncDropdown";
@@ -15,26 +20,35 @@ function DynamicFormInner<T extends FieldValues>({
   handleSubmit,
   onSubmit,
   isLoading = false,
-  buttonText = "Submit",
-}: Omit<DynamicFormProps<T>, "register" | "formState"> & { control: Control<T> }) {
-
-  const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
+  buttonText = "Submit"
+}: Omit<DynamicFormProps<T>, "register" | "formState"> & {
+  control: Control<T>;
+}) {
+  const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
+    {}
+  );
 
   const handleImageChange = (name: string, files: FileList | null) => {
     if (files && files[0]) {
-      setImagePreviews(prev => ({ ...prev, [name]: URL.createObjectURL(files[0]) }));
+      setImagePreviews((prev) => ({
+        ...prev,
+        [name]: URL.createObjectURL(files[0])
+      }));
     }
   };
 
   const groupedFields: Record<string | number, FormField<T>[]> = {};
-  fields.forEach(f => {
+  fields.forEach((f) => {
     const key = f.row ?? `row-${Math.random()}`;
     if (!groupedFields[key]) groupedFields[key] = [];
     groupedFields[key].push(f);
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles["form-container"]}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={styles["form-container"]}
+    >
       {Object.values(groupedFields).map((rowFields, rowIdx) => (
         <div key={rowIdx} className={styles["form-row"]}>
           {rowFields.map((field, idx) => {
@@ -62,7 +76,13 @@ function DynamicFormInner<T extends FieldValues>({
                     field={field}
                     value={field.value}
                     onChange={field.onChange}
-                    error={field.name ? (field.value ? undefined : "Required") : undefined}
+                    error={
+                      field.name
+                        ? field.value
+                          ? undefined
+                          : "Required"
+                        : undefined
+                    }
                   />
                 ) : (
                   <div key={field.name || idx}>
@@ -71,13 +91,23 @@ function DynamicFormInner<T extends FieldValues>({
                       control={control}
                       render={({ field: controllerField, fieldState }) => (
                         <>
-                          <select {...controllerField} className={styles["select"]} style={field.style}>
+                          <select
+                            {...controllerField}
+                            className={styles["select"]}
+                            style={field.style}
+                          >
                             <option value="">Select {field.label}</option>
-                            {field.options?.map(opt => (
-                              <option key={opt} value={opt}>{opt}</option>
+                            {field.options?.map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
                             ))}
                           </select>
-                          {fieldState.error && <p className={styles["error"]}>{fieldState.error.message}</p>}
+                          {fieldState.error && (
+                            <p className={styles["error"]}>
+                              {fieldState.error.message}
+                            </p>
+                          )}
                         </>
                       )}
                     />
@@ -86,11 +116,21 @@ function DynamicFormInner<T extends FieldValues>({
 
               case "image":
                 return (
-                  <div key={field.name || idx} className={styles["image-field"]}>
+                  <div
+                    key={field.name || idx}
+                    className={styles["image-field"]}
+                  >
                     {field.label && <label>{field.label}</label>}
-                    <DropzoneComponent onDrop={files => handleImageChange(field.name!, files)} error="" />
+                    <DropzoneComponent
+                      onDrop={(files) => handleImageChange(field.name!, files)}
+                      error=""
+                    />
                     {imagePreviews[field.name!] && (
-                      <img src={imagePreviews[field.name!]} alt="preview" className={styles["image-preview"]} />
+                      <img
+                        src={imagePreviews[field.name!]}
+                        alt="preview"
+                        className={styles["image-preview"]}
+                      />
                     )}
                   </div>
                 );
