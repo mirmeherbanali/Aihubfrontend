@@ -11,7 +11,6 @@ const { Header } = Layout;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const isUserLogin = JSON.parse(localStorage.getItem("user_login"));
 
   const handleMenuClick = () => setOpen(false);
 
@@ -60,7 +59,7 @@ export default function Navbar() {
   return (
     <Header className={styles.header}>
       {/* Logo */}
-      <div className={styles.logo}>AiDictionary</div>
+      <div className={styles.logo}>Allisted</div>
 
       {/* Desktop Menu */}
       {/* Desktop Menu & Buttons Wrapper */}
