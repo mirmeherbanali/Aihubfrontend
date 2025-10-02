@@ -2,8 +2,13 @@
 
 import { SubmitHandler } from "react-hook-form";
 import { LoginInput,RegisterInput } from "@/lib/validators/userValidator";
-
+import {
+  showToastifySuccess,
+  showToastifyError,
+} from "../../../components/ui/tostify/Toastifyresponse";
 // Login handler
+import ShowTostifyMessageAndReset from "../../../components/ui/tostify/showTostifyMessageAndReset";
+const showTostifyMessageAndReset = ShowTostifyMessageAndReset();
 export const createLoginHandler = (
   loginUser: (data: LoginInput ) => Promise<any>,
   router: any

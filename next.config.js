@@ -9,7 +9,7 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: isDev
-      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' http://192.168.1.9:8000; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' http://192.168.1.13:8000; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
       : "default-src 'self'; connect-src 'self' https://your-production-api.com; img-src 'self' data: https:; script-src 'self'; style-src 'self';",
   },
   { key: "X-Frame-Options", value: "DENY" },
