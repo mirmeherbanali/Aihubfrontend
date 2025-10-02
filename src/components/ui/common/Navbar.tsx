@@ -6,11 +6,14 @@ import Link from "next/link";
 import { COLORS } from "@/constants/colors";
 import { useState } from "react";
 import styles from "../../ui/style/Navbar.module.scss";
+import { useAuthToggle } from "@/context/AuthToggleContext";
 
 const { Header } = Layout;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { setIsLogin  } = useAuthToggle();
+
 
   const handleMenuClick = () => setOpen(false);
 
@@ -76,10 +79,10 @@ export default function Navbar() {
 
         <div className={styles.desktopButtons}>
           <Link href="/auth/login">
-            <Button type="link" className={styles.loginBtn}>
-              Login
-            </Button>
-          </Link>
+          <Button type="link" className={styles.loginBtn} onClick={() => setIsLogin(true)}>
+            Login
+          </Button>
+        </Link>
           <Button className={styles.submitBtn}>Add Your Tool</Button>
         </div>
       </div>

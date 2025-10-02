@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import DynamicForm from "@/components/ui/DynamicForm";
+
 import { loginFields, registerFields } from "@/lib/auth/fields/formFields";
 import {
   createLoginHandler,
@@ -13,27 +14,28 @@ import {
 import { useLoginMutation, useRegisterMutation } from "@/features/auth/authApi";
 import { LoginInput,loginSchema, registerSchema,RegisterInput } from "@/lib/validators/userValidator";
 import styles from "../../../components/ui/style/login.module.scss";
+import { useAuthToggle } from "@/context/AuthToggleContext"; // updated path
 
 export default function AuthPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
+  const { isLogin, setIsLogin } = useAuthToggle();
 
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
-  const { control: loginControl, handleSubmit: loginSubmit } =
+  const { control: loginControl, handleSubmit: loginSubmit,reset: loginReset } =
     useForm<LoginInput>({
       resolver: zodResolver(loginSchema),
       mode: "onBlur"
     });
-  const onLoginSubmit = createLoginHandler(loginUser, router);
+  const onLoginSubmit = createLoginHandler(loginUser, router,loginReset);
 
   // ✅ Register mutation + form
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
-  const { control: registerControl, handleSubmit: registerSubmit } =
+  const { control: registerControl, handleSubmit: registerSubmit,reset: registerReset } =
     useForm<RegisterInput>({
       resolver: zodResolver(registerSchema),
       mode: "onBlur"
     });
-  const onRegisterSubmit = createRegisterHandler(registerUser, router);
+  const onRegisterSubmit = createRegisterHandler(registerUser,registerReset, setIsLogin );
 
   // ✅ Social login
   const handleSocialLogin = (provider: "google" | "github" | "facebook") => {

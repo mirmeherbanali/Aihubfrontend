@@ -3,6 +3,7 @@
 import { SubmitHandler } from "react-hook-form";
 import { LoginInput, RegisterInput } from "@/lib/validators/userValidator";
 
+
 // Login handler
 export const createLoginHandler = (
   loginUser: (data: LoginInput) => Promise<any>,
@@ -30,8 +31,8 @@ export const createLoginHandler = (
 // Register handler
 export const createRegisterHandler = (
   registerUser: (data: RegisterInput) => Promise<any>,
-  router: any,
-  reset: () => void // <-- pass reset here
+  reset: () => void,
+  setIsLogin: (val: boolean) => void
 ): SubmitHandler<RegisterInput> => {
   return async (data) => {
     try {
@@ -41,8 +42,9 @@ export const createRegisterHandler = (
       const res = await registerUser(apiData).unwrap();
       reset(); // ✅ clear form
       console.log("Registration success:", res);
+      // ✅ After registration, switch to login screen
+      setIsLogin(true);
 
-      router.push("/auth/login");
     } catch (err: any) {
       console.error(
         "Registration failed:",

@@ -8,11 +8,14 @@ import {
   Controller
 } from "react-hook-form";
 import { DynamicFormProps, FormField } from "@/types/form.types";
-import DropzoneComponent from "./DropzoneComponent";
-import AsyncDropdown from "./AsyncDropdown";
+// import DropzoneComponent from "./DropzoneComponent";
+// import AsyncDropdown from "./AsyncDropdown";
+const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), { ssr: false });
+const AsyncDropdown = dynamic(() => import("./AsyncDropdown"), { ssr: false });
 import Input from "./Input";
 import Button from "./Button";
 import styles from "./style/DynamicForm.module.scss";
+import dynamic from "next/dynamic";
 
 function DynamicFormInner<T extends FieldValues>({
   fields,
