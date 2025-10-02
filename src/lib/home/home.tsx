@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../../components/ui/style/home.module.scss";
 import { FaSearch } from "react-icons/fa";
+import ScrollDownArrow from "@/components/shared/ScrollDownArrow";
 
 const Home = () => {
   return (
@@ -26,6 +27,9 @@ const Home = () => {
         {/* CTA */}
         <button className={styles.ctaBtn}>Add Your Tool</button>
       </div>
+
+      {/* Scroll Down Arrow */}
+      <ScrollDownArrow />
     </section>
   );
 };

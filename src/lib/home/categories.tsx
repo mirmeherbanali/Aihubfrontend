@@ -21,6 +21,13 @@ const Categories = () => {
           </div>
         ))}
       </div>
+
+      {/* View All Button */}
+      <div className={styles.viewAllWrapper}>
+        <button className={styles.viewAllBtn}>
+          View All <span>›</span>
+        </button>
+      </div>
     </section>
   );
 };
