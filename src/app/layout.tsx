@@ -7,6 +7,8 @@ import Navbar from "@/components/ui/common/Navbar";
 import { ClientProviders } from "./provider/ClientProviders";
 import Footer from "@/components/ui/common/Footer";
 import { Inter } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +43,7 @@ export default function RootLayout({
           <ClientProviders>
             <Navbar />
             <main style={{ minHeight: "100vh" }}>{children}</main>
+            <ToastContainer position="top-right" autoClose={3000} />
             <Footer />
           </ClientProviders>
         )}
