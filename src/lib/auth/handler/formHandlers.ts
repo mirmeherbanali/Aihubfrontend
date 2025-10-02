@@ -7,18 +7,18 @@ import { LoginInput, RegisterInput } from "@/lib/validators/userValidator";
 // Login handler
 export const createLoginHandler = (
   loginUser: (data: LoginInput) => Promise<any>,
-  router: any,
-  reset: () => void // <-- pass reset here
+  router: any
 ): SubmitHandler<LoginInput> => {
   return async (data) => {
     try {
       console.log("Login data:", data);
 
       const res = await loginUser(data).unwrap(); // ✅ unwrap RTK query
-      reset(); // ✅ clear form
+      if (res.success) {
+      router.push("/dashboard");
+      }
       console.log("Login success:", res);
 
-      router.push("/dashboard");
     } catch (err: any) {
       console.error(
         "Login failed:",
@@ -40,11 +40,11 @@ export const createRegisterHandler = (
       console.log("Register data:", apiData);
 
       const res = await registerUser(apiData).unwrap();
-      reset(); // ✅ clear form
-      console.log("Registration success:", res);
-      // ✅ After registration, switch to login screen
-      setIsLogin(true);
-
+       if (res.success) {
+        reset();
+        setIsLogin(true);
+      }
+      console.log("Registration response:", res);
     } catch (err: any) {
       console.error(
         "Registration failed:",

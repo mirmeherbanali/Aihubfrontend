@@ -15,6 +15,10 @@ interface BaseField {
   placeholder?: string;
   options?: string[];
   value?: string;
+  conditional?: {
+    field: string;
+    value: string;
+  };
   onChange?: (val: string) => void;
   fetchOptions?: () => Promise<string[]>;
   style?: React.CSSProperties;         // for input / select styling
@@ -73,9 +77,13 @@ export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
 }
 
 export interface AuthResponse {
-  message: string;
-  token?: string;
+  success: boolean;
+  result: {
+    message: string;
+    list?: any[]; // optional if sometimes empty
+  };
 }
+
 
 export interface UserProfile {
   id: number;

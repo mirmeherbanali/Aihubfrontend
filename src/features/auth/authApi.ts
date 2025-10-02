@@ -8,11 +8,11 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, LoginInput>({
       query: (body) => ({ url: "api/auth/login", method: "POST", body }),
-      ...withToast("login", "Login successful!"),
+      ...withToast<AuthResponse>("login", (res) => res.result?.message),
     }),
     register: builder.mutation<AuthResponse, RegisterInput>({
       query: (body) => ({ url: "api/auth/register", method: "POST", body }),
-      ...withToast("register", "Registration successful!"),
+      ...withToast<AuthResponse>("register", (res) => res.result?.message),
     }),
     getProfile: builder.query<UserProfile, void>({
       query: () => "/auth/me",

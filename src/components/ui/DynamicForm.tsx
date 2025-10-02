@@ -5,7 +5,8 @@ import {
   FieldValues,
   Control,
   SubmitHandler,
-  Controller
+  Controller,
+  useWatch 
 } from "react-hook-form";
 import { DynamicFormProps, FormField } from "@/types/form.types";
 // import DropzoneComponent from "./DropzoneComponent";
@@ -27,9 +28,12 @@ function DynamicFormInner<T extends FieldValues>({
 }: Omit<DynamicFormProps<T>, "register" | "formState"> & {
   control: Control<T>;
 }) {
+  
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
     {}
   );
+  // ✅ Watch all values to handle conditional fields
+  const watchedValues = useWatch({ control });
 
   const handleImageChange = (name: string, files: FileList | null) => {
     if (files && files[0]) {
@@ -55,6 +59,17 @@ function DynamicFormInner<T extends FieldValues>({
       {Object.values(groupedFields).map((rowFields, rowIdx) => (
         <div key={rowIdx} className={styles["form-row"]}>
           {rowFields.map((field, idx) => {
+          // Inside field rendering
+if (field.conditional) {
+  // ✅ Use watched value OR default value from field
+  const dependentValue =
+    watchedValues[field.conditional?.field] ??
+    fields.find(f => f.name === field.conditional?.field)?.value;
+
+  if (dependentValue !== field.conditional.value) {
+    return null; // hide field
+  }
+}
             switch (field.type) {
               case "input":
               case "password":
@@ -89,31 +104,25 @@ function DynamicFormInner<T extends FieldValues>({
                   />
                 ) : (
                   <div key={field.name || idx}>
-                    <Controller
-                      name={field.name!}
-                      control={control}
-                      render={({ field: controllerField, fieldState }) => (
-                        <>
-                          <select
-                            {...controllerField}
-                            className={styles["select"]}
-                            style={field.style}
-                          >
-                            <option value="">Select {field.label}</option>
-                            {field.options?.map((opt) => (
-                              <option key={opt} value={opt}>
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
-                          {fieldState.error && (
-                            <p className={styles["error"]}>
-                              {fieldState.error.message}
-                            </p>
-                          )}
-                        </>
-                      )}
-                    />
+                  <Controller
+  name={field.name!}
+  control={control}
+  defaultValue={(field.value || "") as any} // <-- default selected
+  render={({ field: controllerField, fieldState }) => (
+    <>
+      <select {...controllerField} className={styles["select"]} style={field.style}>
+        <option value="">Select {field.label}</option>
+        {field.options?.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+      {fieldState.error && <p className={styles["error"]}>{fieldState.error.message}</p>}
+    </>
+  )}
+/>
+
                   </div>
                 );
 

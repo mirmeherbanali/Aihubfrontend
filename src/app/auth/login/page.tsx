@@ -21,12 +21,12 @@ export default function AuthPage() {
   const { isLogin, setIsLogin } = useAuthToggle();
 
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
-  const { control: loginControl, handleSubmit: loginSubmit,reset: loginReset } =
+  const { control: loginControl, handleSubmit: loginSubmit } =
     useForm<LoginInput>({
       resolver: zodResolver(loginSchema),
       mode: "onBlur"
     });
-  const onLoginSubmit = createLoginHandler(loginUser, router,loginReset);
+  const onLoginSubmit = createLoginHandler(loginUser, router);
 
   // ✅ Register mutation + form
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
