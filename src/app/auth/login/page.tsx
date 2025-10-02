@@ -11,18 +11,17 @@ import {
   createRegisterHandler
 } from "@/lib/auth/handler/formHandlers";
 import { useLoginMutation, useRegisterMutation } from "@/features/auth/authApi";
-import { UserInput, userSchema } from "@/lib/validators/userValidator";
+import { LoginInput,loginSchema, registerSchema,RegisterInput } from "@/lib/validators/userValidator";
 import styles from "../../../components/ui/style/login.module.scss";
 
 export default function AuthPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
-  // ✅ Login mutation + form
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
   const { control: loginControl, handleSubmit: loginSubmit } =
-    useForm<UserInput>({
-      resolver: zodResolver(userSchema),
+    useForm<LoginInput>({
+      resolver: zodResolver(loginSchema),
       mode: "onBlur"
     });
   const onLoginSubmit = createLoginHandler(loginUser, router);
@@ -30,8 +29,8 @@ export default function AuthPage() {
   // ✅ Register mutation + form
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
   const { control: registerControl, handleSubmit: registerSubmit } =
-    useForm<UserInput>({
-      resolver: zodResolver(userSchema),
+    useForm<RegisterInput>({
+      resolver: zodResolver(registerSchema),
       mode: "onBlur"
     });
   const onRegisterSubmit = createRegisterHandler(registerUser, router);
@@ -67,7 +66,7 @@ export default function AuthPage() {
             ? "to continue to your account"
             : "Join us by creating an account"}
         </p>
-        {/* ✅ Dynamic Form (logic from old code) */}
+        {/* */}
         {isLogin ? (
           <DynamicForm
             fields={loginFields}

@@ -1,16 +1,16 @@
 import { baseApi } from "../api/baseApi";
-import { UserInput } from "@/lib/validators/userValidator";
+import { LoginInput,RegisterInput } from "@/lib/validators/userValidator";
 import { AuthResponse,UserProfile } from "../../types/form.types";
 
 
 // Inject auth endpoints into baseApi
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation<AuthResponse, UserInput>({
-      query: (body) => ({ url: "/auth/login", method: "POST", body }),
+    login: builder.mutation<AuthResponse, LoginInput>({
+      query: (body) => ({ url: "api/auth/login", method: "POST", body }),
     }),
-    register: builder.mutation<AuthResponse, UserInput>({
-      query: (body) => ({ url: "/auth/register", method: "POST", body }),
+    register: builder.mutation<AuthResponse, RegisterInput>({
+      query: (body) => ({ url: "api/auth/register", method: "POST", body }),
     }),
     getProfile: builder.query<UserProfile, void>({
       query: () => "/auth/me",

@@ -3,7 +3,6 @@ import { ENV } from "../../env";
 import { DynamicMutationArgs, DynamicQueryArgs } from "../../types/base.types";
 
 
-
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({

@@ -4,12 +4,13 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const isDev = process.env.NODE_ENV === "development";
 
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: isDev
-      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:;"
-      : "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self';",
+      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' http://192.168.1.9:8000; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+      : "default-src 'self'; connect-src 'self' https://your-production-api.com; img-src 'self' data: https:; script-src 'self'; style-src 'self';",
   },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
