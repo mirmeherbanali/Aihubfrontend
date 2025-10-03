@@ -1,15 +1,20 @@
 .hero {
   position: relative;
+  display: flex;                 /* flexbox for centering */
+  justify-content: center;       /* horizontal center */
+  align-items: center;           /* vertical center */
   text-align: center;
   overflow: hidden;
   min-height: 90vh;
   background-color: white;
+  padding: 20px;                 /* keep breathing room on mobile */
 }
 
 .content {
   position: relative;
   z-index: 2;
-  margin: 50px auto;
+  max-width: 900px;              /* prevent stretching on big screens */
+  margin: 0 auto;                /* center horizontally */
   padding: 0 20px;
 
   h1 {
