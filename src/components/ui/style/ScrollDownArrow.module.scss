@@ -1,32 +1,57 @@
 .scrollDown {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
+  z-index: 10;
+
+  .text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2979ff;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    animation: fadeIn 2s infinite alternate;
+  }
+
+  .arrows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   .arrow {
-    font-size: 22px;
+    font-size:20px;
     color: #2979ff;
     animation: bounce 1.5s infinite;
   }
 
   .arrow:nth-child(2) {
-    animation-delay: 0.3s; // slight delay for stagger effect
+    animation-delay: 0.3s; // staggered effect
   }
 }
 
 @keyframes bounce {
   0%, 100% {
     transform: translateY(0);
-    opacity: 0.6;
+    opacity: 0.5;
   }
   50% {
-    transform: translateY(6px);
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.4;
+  }
+  to {
     opacity: 1;
   }
 }

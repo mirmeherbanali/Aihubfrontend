@@ -1,0 +1,56 @@
+.categoryGrid {
+  padding: 20px;
+  background: #f9fbff;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 1200px;
+
+  .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2a5cff;
+    margin-bottom: 20px;
+  }
+
+  .grid {
+    display: grid;
+    gap: 15px;
+    justify-content: center;
+
+    // Mobile: 1 card per row
+    grid-template-columns: repeat(1, 1fr);
+
+    @media (min-width: 600px) {
+      grid-template-columns: repeat(3, 1fr); // Tablet/desktop
+    }
+
+    @media (min-width: 900px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr); // Keep 3 cards
+    }
+  }
+
+  .gridItem {
+    padding: 12px 20px;
+    background: #EAEBFC;
+    border: 1px solid #1e42f8;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 20px;
+    //  max-width: 300px; 
+
+    &:hover {
+      background: #6a71f8;
+      color: white;
+      border-color: #6a71f8;
+    }
+  }
+}
