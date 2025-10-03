@@ -1,150 +1,89 @@
 "use client";
 
-import { Layout, Menu, Dropdown, Button, Drawer } from "antd";
-import { DownOutlined, LoginOutlined, MenuOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import { COLORS } from "@/constants/colors";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import styles from "../../ui/style/Navbar.module.scss";
 import { useAuthToggle } from "@/context/AuthToggleContext";
 
-const { Header } = Layout;
-
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const { setIsLogin  } = useAuthToggle();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { setIsLogin } = useAuthToggle();
+  const pathname = usePathname();
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "auto"; // prevent scroll
+  }, [menuOpen]);
 
-  const handleMenuClick = () => setOpen(false);
-
-  const menuItems = [
-    {
-      key: "3",
-      label: (
-        <Link href="/categories" onClick={handleMenuClick}>
-          Category
-        </Link>
-      )
-    },
-    {
-      key: "2",
-      label: (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "21",
-                label: (
-                  <Link href="/products/ai" onClick={handleMenuClick}>
-                    AI Products
-                  </Link>
-                )
-              },
-              {
-                key: "22",
-                label: (
-                  <Link href="/products/saas" onClick={handleMenuClick}>
-                    SaaS Tools
-                  </Link>
-                )
-              }
-            ]
-          }}
-        >
-          <span>
-            Resources <DownOutlined style={{ fontSize: 10 }} />
-          </span>
-        </Dropdown>
-      )
-    }
-  ];
+  const isActive = (path: string) => pathname === path;
 
   return (
-    <Header className={styles.header}>
+    <header className={styles.header}>
       {/* Logo */}
       <div className={styles.logo}>Allisted</div>
 
       {/* Desktop Menu */}
-      {/* Desktop Menu & Buttons Wrapper */}
-      <div className={styles.desktopRight}>
-        <Menu
-          mode="horizontal"
-          theme="dark"
-          style={{
-            borderBottom: "none",
-            background: "transparent"
-          }}
-          items={menuItems}
-        />
-
-        <div className={styles.desktopButtons}>
-          <Link href="/auth/login">
-          <Button type="link" className={styles.loginBtn} onClick={() => setIsLogin(true)}>
-            Login
-          </Button>
+      <nav className={styles.desktopMenu}>
+        <Link href="/" className={isActive("/") ? styles.active : ""}>
+          Home
         </Link>
-          <Button className={styles.submitBtn}>Add Your Tool</Button>
-        </div>
-      </div>
-
-      {/* Desktop Buttons */}
-      {/* <div className={styles.desktopButtons}>
-        <Link href="/auth/login">
-          <Button type="link" className={styles.loginBtn}>
-            Login
-          </Button>
+        <Link
+          href="/categories"
+          className={isActive("/categories") ? styles.active : ""}
+        >
+          Category
         </Link>
-        <Button className={styles.submitBtn}>Add Your Tool</Button>
-      </div> */}
+        <Link
+          href="/auth/login"
+          onClick={() => setIsLogin(true)}
+          className={isActive("/auth/login") ? styles.active : ""}
+        >
+          Login
+        </Link>
 
-      {/* Mobile/Tablet Hamburger */}
-      <div className={styles.mobileTabletMenu}>
-        <Button
-          type="text"
-          icon={<MenuOutlined style={{ color: "white", fontSize: "20px" }} />}
-          onClick={() => setOpen(true)}
-        />
-      </div>
+        <button className={styles.submitBtn}>Add Your Tool</button>
+      </nav>
 
-      {/* Drawer for Mobile/Tablet */}
-      <Drawer
-        title="Menu"
-        placement="right"
-        onClose={() => setOpen(false)}
-        open={open}
+      {/* Mobile Hamburger / Cross */}
+      <div
+        className={styles.mobileMenuIcon}
+        onClick={() => setMenuOpen(!menuOpen)}
       >
-        <Menu
-          mode="vertical"
-          items={menuItems}
-          // onClick={handleMenuClick} // auto close after click
-        />
+        {menuOpen ? "✖" : "☰"}
+      </div>
 
-        {/* Buttons inside Drawer */}
-        <div className={styles.mobileButtons}>
-          <Link href="/auth/login" onClick={handleMenuClick}>
-            <Button
-              type="link"
-              icon={<LoginOutlined />}
-              style={{ color: COLORS.primaryBlue, fontWeight: 500 }}
-            >
-              Login
-            </Button>
-          </Link>
-          <Button
-            type="primary"
-            style={{
-              backgroundColor: COLORS.accentBlue,
-              borderColor: COLORS.accentBlue,
-              color: COLORS.white,
-              fontWeight: 500,
-              marginTop: 10
-            }}
-            onClick={handleMenuClick}
-          >
-            Submit a Tool
-          </Button>
-        </div>
-      </Drawer>
-    </Header>
+      {/* Mobile Menu */}
+      <div
+        className={`${styles.mobileMenu} ${menuOpen ? styles.menuOpen : ""}`}
+      >
+        <Link
+          href="/"
+          className={isActive("/") ? styles.active : ""}
+          onClick={() => setMenuOpen(false)}
+        >
+          Home
+        </Link>
+        <Link
+          href="/categories"
+          className={isActive("/categories") ? styles.active : ""}
+          onClick={() => setMenuOpen(false)}
+        >
+          Category
+        </Link>
+        <Link
+          href="/auth/login"
+          className={isActive("/auth/login") ? styles.active : ""}
+          onClick={() => {
+            setIsLogin(true);
+            setMenuOpen(false);
+          }}
+        >
+          Login
+        </Link>
+        <button className={styles.submitBtn} onClick={() => setMenuOpen(false)}>
+          Add Your Tool
+        </button>
+      </div>
+    </header>
   );
 }

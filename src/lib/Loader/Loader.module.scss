@@ -1,0 +1,79 @@
+.loaderContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #2979ff, #4facfe);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  flex-direction: column;
+  animation: backgroundPulse 5s ease-in-out infinite alternate;
+}
+
+.loaderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner {
+  width: 120px;
+  height: 120px;
+  border: 12px solid rgba(255, 255, 255, 0.2);
+  border-top: 12px solid white;
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.appName {
+  margin-top: 20px;
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  animation: glowText 1.5s ease-in-out infinite alternate, bounceText 2s ease-in-out infinite;
+  text-shadow: 0 0 10px white, 0 0 20px #ffffff88, 0 0 30px #ffffff55;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Text glow animation */
+@keyframes glowText {
+  0% {
+    text-shadow: 0 0 5px white, 0 0 10px #ffffff55, 0 0 15px #ffffff33;
+  }
+  100% {
+    text-shadow: 0 0 20px white, 0 0 30px #ffffff88, 0 0 40px #ffffffaa;
+  }
+}
+
+/* Text bounce animation */
+@keyframes bounceText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Background pulse animation */
+@keyframes backgroundPulse {
+  0% {
+    background: linear-gradient(135deg, #2979ff, #4facfe);
+  }
+  100% {
+    background: linear-gradient(135deg, #4facfe, #2979ff);
+  }
+}
