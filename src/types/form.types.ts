@@ -6,7 +6,14 @@ import {
   Path,
 } from "react-hook-form";
 
-export type FieldType = "input" | "dropdown" | "image" | "button" | "password";
+export type FieldType =
+  | "input"
+  | "dropdown"
+  | "image"
+  | "button"
+  | "password"
+  | "textarea"; // <-- added
+
 
 // Base props
 interface BaseField {
@@ -14,40 +21,50 @@ interface BaseField {
   label?: string;
   placeholder?: string;
   options?: string[];
-  value?: string;
+  value?: string | string[];   // allow array for multi-select
   conditional?: {
     field: string;
     value: string;
   };
-  onChange?: (val: string) => void;
+  onChange?: (val: string | string[]) => void;
   fetchOptions?: () => Promise<string[]>;
-  style?: React.CSSProperties;         // for input / select styling
-  wrapperStyle?: React.CSSProperties;  // for container div styling
-  icon?: React.ReactNode; // <-- left-side icon
-  row?: string | number;           // fields with same row appear together
-  col?: number;                     // default column span (for desktop)
-  breakpoints?: {                   // responsive column spans
-    sm?: number;  // mobile
-    md?: number;  // tablet
-    lg?: number;  // desktop
+  style?: React.CSSProperties;
+  wrapperStyle?: React.CSSProperties;
+  icon?: React.ReactNode;
+  row?: string | number;
+  col?: number;
+  breakpoints?: {
+    sm?: number;
+    md?: number;
+    lg?: number;
   };
 }
 
 // Input-like fields (must have name)
 export interface InputField<T extends FieldValues> extends BaseField {
-  type: "input" | "password" | "dropdown" | "image";
+  type: "input" | "password" | "image"| "textarea";
   name: Path<T>;
+}
+
+// Dropdown field (separate so it can allow multiple)
+export interface DropdownField<T extends FieldValues> extends BaseField {
+  type: "dropdown";
+  name: Path<T>;
+  multiple?: boolean;
+  value?: string | string[];
+  onChange?: (val: string | string[]) => void;
 }
 
 // Button fields (no name)
 export interface ButtonField extends BaseField {
   type: "button";
-  name?: never; // 🚫 forbid name
+  name?: never;
 }
 
 // Union type
 export type FormField<T extends FieldValues = FieldValues> =
   | InputField<T>
+  | DropdownField<T>
   | ButtonField;
 
 // Dropzone props interface
@@ -69,10 +86,11 @@ export interface DynamicFormProps<T extends FieldValues> {
   isLoading?: boolean;
 }
 
+// Async dropdown props
 export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
-  field: FormField<T>;
-  value?: string;
-  onChange?: (val: string) => void;
+  field: DropdownField<T>;   // only dropdowns allowed
+  value?: string | string[];
+  onChange?: (val: string | string[]) => void;
   error?: string;
 }
 
@@ -80,14 +98,12 @@ export interface AuthResponse {
   success: boolean;
   result: {
     message: string;
-    list?: any[]; // optional if sometimes empty
+    list?: any[];
   };
 }
-
 
 export interface UserProfile {
   id: number;
   name: string;
   email: string;
 }
-

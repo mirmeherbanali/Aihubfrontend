@@ -17,6 +17,7 @@ import Input from "./Input";
 import Button from "./Button";
 import styles from "./style/DynamicForm.module.scss";
 import dynamic from "next/dynamic";
+import TextAreaInput from "./TextAreaInput";
 
 function DynamicFormInner<T extends FieldValues>({
   fields,
@@ -86,45 +87,38 @@ if (field.conditional) {
                     icon={field.icon}
                   />
                 );
+              case "textarea":
+  return (
+    <TextAreaInput
+      key={field.name || idx}
+      name={field.name!}
+      label={field.label}
+      placeholder={field.placeholder}
+      control={control}
+      style={field.style}
+      wrapperStyle={field.wrapperStyle}
+    />
+  );
+  
 
-              case "dropdown":
-                return field.fetchOptions ? (
-                  <AsyncDropdown
-                    key={field.name || idx}
-                    field={field}
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={
-                      field.name
-                        ? field.value
-                          ? undefined
-                          : "Required"
-                        : undefined
-                    }
-                  />
-                ) : (
-                  <div key={field.name || idx}>
-                  <Controller
-  name={field.name!}
-  control={control}
-  defaultValue={(field.value || "") as any} // <-- default selected
-  render={({ field: controllerField, fieldState }) => (
-    <>
-      <select {...controllerField} className={styles["select"]} style={field.style}>
-        <option value="">Select {field.label}</option>
-        {field.options?.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-      {fieldState.error && <p className={styles["error"]}>{fieldState.error.message}</p>}
-    </>
-  )}
-/>
+             case "dropdown":
+  return (
+    <Controller
+      key={field.name || idx}
+      name={field.name!}
+      control={control}
+      defaultValue={field.multiple ? ([] as any) : ""}
+      render={({ field: controllerField, fieldState }) => (
+        <AsyncDropdown
+          field={field as import("@/types/form.types").DropdownField<FieldValues>}
+          value={controllerField.value}
+          onChange={controllerField.onChange}
+          error={fieldState.error?.message}
+        />
+      )}
+    />
+  );
 
-                  </div>
-                );
 
               case "image":
                 return (
