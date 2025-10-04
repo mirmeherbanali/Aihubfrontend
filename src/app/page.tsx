@@ -1,7 +1,6 @@
 "use client";
 
 import Categories from "@/lib/home/categories";
-import styles from "../components/ui/style/home.module.scss";
 import LatestNews from "@/lib/home/LatestNews";
 import FeaturedTools from "@/lib/home/FeaturedTools";
 import PageHero from "@/lib/hero/PageHero";

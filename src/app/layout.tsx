@@ -9,6 +9,7 @@ import Footer from "@/components/ui/common/Footer";
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "@/lib/Loader/Loading";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,9 +37,7 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body>
         {loading ? (
-          <div className="loader-container">
-            <div className="spinner" />
-          </div>
+          <Loader />
         ) : (
           <ClientProviders>
             <Navbar />
