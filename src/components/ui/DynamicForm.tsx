@@ -6,12 +6,14 @@ import {
   Control,
   SubmitHandler,
   Controller,
-  useWatch 
+  useWatch
 } from "react-hook-form";
 import { DynamicFormProps, FormField } from "@/types/form.types";
 // import DropzoneComponent from "./DropzoneComponent";
 // import AsyncDropdown from "./AsyncDropdown";
-const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), { ssr: false });
+const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), {
+  ssr: false
+});
 const AsyncDropdown = dynamic(() => import("./AsyncDropdown"), { ssr: false });
 import Input from "./Input";
 import Button from "./Button";
@@ -29,7 +31,6 @@ function DynamicFormInner<T extends FieldValues>({
 }: Omit<DynamicFormProps<T>, "register" | "formState"> & {
   control: Control<T>;
 }) {
-  
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
     {}
   );
@@ -60,17 +61,17 @@ function DynamicFormInner<T extends FieldValues>({
       {Object.values(groupedFields).map((rowFields, rowIdx) => (
         <div key={rowIdx} className={styles["form-row"]}>
           {rowFields.map((field, idx) => {
-          // Inside field rendering
-if (field.conditional) {
-  // ✅ Use watched value OR default value from field
-  const dependentValue =
-    watchedValues[field.conditional?.field] ??
-    fields.find(f => f.name === field.conditional?.field)?.value;
+            // Inside field rendering
+            if (field.conditional) {
+              // ✅ Use watched value OR default value from field
+              const dependentValue =
+                watchedValues[field.conditional?.field] ??
+                fields.find((f) => f.name === field.conditional?.field)?.value;
 
-  if (dependentValue !== field.conditional.value) {
-    return null; // hide field
-  }
-}
+              if (dependentValue !== field.conditional.value) {
+                return null; // hide field
+              }
+            }
             switch (field.type) {
               case "input":
               case "password":
@@ -88,72 +89,102 @@ if (field.conditional) {
                   />
                 );
               case "textarea":
-  return (
-    <TextAreaInput
-      key={field.name || idx}
-      name={field.name!}
-      label={field.label}
-      placeholder={field.placeholder}
-      control={control}
-      style={field.style}
-      wrapperStyle={field.wrapperStyle}
-    />
-  );
-  
+                return (
+                  <TextAreaInput
+                    key={field.name || idx}
+                    name={field.name!}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    control={control}
+                    style={field.style}
+                    wrapperStyle={field.wrapperStyle}
+                  />
+                );
 
-             case "dropdown":
-  return (
-    <Controller
-      key={field.name || idx}
-      name={field.name!}
-      control={control}
-      defaultValue={field.multiple ? ([] as any) : ""}
-      render={({ field: controllerField, fieldState }) => (
-        <AsyncDropdown
-          field={field as import("@/types/form.types").DropdownField<FieldValues>}
-          value={controllerField.value}
-          onChange={controllerField.onChange}
-          error={fieldState.error?.message}
-        />
-      )}
-    />
-  );
-
+              case "dropdown":
+                return (
+                  <Controller
+                    key={field.name || idx}
+                    name={field.name!}
+                    control={control}
+                    defaultValue={field.multiple ? ([] as any) : ""}
+                    render={({ field: controllerField, fieldState }) => (
+                      <AsyncDropdown
+                        field={
+                          field as import("@/types/form.types").DropdownField<FieldValues>
+                        }
+                        value={controllerField.value}
+                        onChange={controllerField.onChange}
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                );
 
               case "image":
-  return (
-    <Controller
-      key={field.name || idx}
-      name={field.name!}
-      control={control}
-      render={({ field: controllerField }) => (
-        <div className={styles["image-field"]}>
-          {field.label && <label>{field.label}</label>}
-          <DropzoneComponent
-            onDrop={(files) => {
-              const file = files?.[0] || null;
-              controllerField.onChange(file); // ✅ set in RHF
-              if (file) {
-                setImagePreviews((prev) => ({
-                  ...prev,
-                  [field.name!]: URL.createObjectURL(file),
-                }));
-              }
-            }}
-            error=""
-          />
-          {imagePreviews[field.name!] && (
-            <img
-              src={imagePreviews[field.name!]}
-              alt="preview"
-              className={styles["image-preview"]}
-            />
-          )}
-        </div>
-      )}
-    />
-  );
+                return (
+                  <Controller
+                    key={field.name || idx}
+                    name={field.name!}
+                    control={control}
+                    render={({ field: controllerField }) => (
+                      <div className={styles.imageUploadContainer}>
+                        {field.label && (
+                          <label className={styles.imageLabel}>
+                            {field.label}
+                          </label>
+                        )}
 
+                        <div className={styles.uploadCard}>
+                          {imagePreviews[field.name!] ? (
+                            <>
+                              <img
+                                src={imagePreviews[field.name!]}
+                                alt="preview"
+                                className={styles.imagePreviewCard}
+                              />
+                              <button
+                                type="button"
+                                className={styles.uploadIcon}
+                                onClick={() => {
+                                  setImagePreviews((prev) => ({
+                                    ...prev,
+                                    [field.name!]: ""
+                                  }));
+                                  controllerField.onChange(null);
+                                }}
+                              >
+                                ✖
+                              </button>
+                            </>
+                          ) : (
+                            <label className={styles.uploadPlaceholder}>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    controllerField.onChange(file);
+                                    setImagePreviews((prev) => ({
+                                      ...prev,
+                                      [field.name!]: URL.createObjectURL(file)
+                                    }));
+                                  }
+                                }}
+                                style={{ display: "none" }}
+                              />
+                              <div className={styles.uploadInner}>
+                                <span className={styles.plusIcon}>＋</span>
+                                <p>Upload Image</p>
+                              </div>
+                            </label>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  />
+                );
 
               case "button":
                 return (

@@ -10,6 +10,7 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "@/lib/Loader/Loading";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,6 +34,9 @@ export default function RootLayout({
     const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
+
+  // ✅ Check if current path starts with /dashboard
+  const isDashboardPage = pathname?.startsWith("/dashboard");
 
   return (
     <html lang="en" className={inter.className}>
@@ -43,7 +48,8 @@ export default function RootLayout({
             <Navbar />
             <main style={{ minHeight: "100vh" }}>{children}</main>
             <ToastContainer position="top-right" autoClose={3000} />
-            <Footer />
+            {/* ✅ Hide Footer on dashboard pages */}
+            {!isDashboardPage && <Footer />}
           </ClientProviders>
         )}
 
