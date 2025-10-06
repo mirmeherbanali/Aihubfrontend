@@ -121,25 +121,39 @@ if (field.conditional) {
 
 
               case "image":
-                return (
-                  <div
-                    key={field.name || idx}
-                    className={styles["image-field"]}
-                  >
-                    {field.label && <label>{field.label}</label>}
-                    <DropzoneComponent
-                      onDrop={(files) => handleImageChange(field.name!, files)}
-                      error=""
-                    />
-                    {imagePreviews[field.name!] && (
-                      <img
-                        src={imagePreviews[field.name!]}
-                        alt="preview"
-                        className={styles["image-preview"]}
-                      />
-                    )}
-                  </div>
-                );
+  return (
+    <Controller
+      key={field.name || idx}
+      name={field.name!}
+      control={control}
+      render={({ field: controllerField }) => (
+        <div className={styles["image-field"]}>
+          {field.label && <label>{field.label}</label>}
+          <DropzoneComponent
+            onDrop={(files) => {
+              const file = files?.[0] || null;
+              controllerField.onChange(file); // ✅ set in RHF
+              if (file) {
+                setImagePreviews((prev) => ({
+                  ...prev,
+                  [field.name!]: URL.createObjectURL(file),
+                }));
+              }
+            }}
+            error=""
+          />
+          {imagePreviews[field.name!] && (
+            <img
+              src={imagePreviews[field.name!]}
+              alt="preview"
+              className={styles["image-preview"]}
+            />
+          )}
+        </div>
+      )}
+    />
+  );
+
 
               case "button":
                 return (

@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+const fileSchema = z
+  .instanceof(File)
+  .or(z.string())
+  .optional()
+  .refine(
+    (file) => !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
+    "Image must be under 5MB"
+  );
+
+
 export const toolsSchema = z.object({
   toolName: z.string().min(2, "Tool Name is required"),
   shortDescription: z.string().min(10, "Short description is too short"),
@@ -31,10 +41,10 @@ export const toolsSchema = z.object({
   demoLink: z.string().url("Invalid YouTube link").optional(),
 
   // Image fields just placeholders for now (can refine later)
-  logo: z.any().optional(),
-  screenshot1: z.any().optional(),
-  screenshot2: z.any().optional(),
-  screenshot3: z.any().optional(),
+  logo: fileSchema,
+  screenshot1: fileSchema,
+  screenshot2: fileSchema,
+  screenshot3: fileSchema,
 });
 
 export type ToolsInput = z.infer<typeof toolsSchema>;

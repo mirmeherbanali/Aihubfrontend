@@ -47,5 +47,5 @@ export const toolsFields: FormField<any>[] = [
 
 
   // Submit
-  { type: "button", label: "Submit" },
+  { type: "button", label: "",style:{width:400} },
 ];
