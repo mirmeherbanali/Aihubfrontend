@@ -23,7 +23,7 @@
   }
 }
 
-.image-field {
+image.-field {
   margin-bottom: 1rem;
 }
 
@@ -33,6 +33,93 @@
   border-radius: 4px;
   object-fit: contain;
 }
+
+
+.imageUploadContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.imageLabel {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.uploadCard {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border: 1.5px solid #4b6bfb;
+  border-radius: 12px;
+  background-color: #f8faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  &:hover {
+    background-color: #f0f4ff;
+    transform: scale(1.02);
+  }
+}
+
+.uploadPlaceholder {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #4b6bfb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.plusIcon {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.imagePreviewCard {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.uploadIcon {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+
 
 .error {
   margin-top: 0.25rem;

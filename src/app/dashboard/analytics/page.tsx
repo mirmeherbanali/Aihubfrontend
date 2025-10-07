@@ -1,7 +1,9 @@
-import React from 'react'
+import DashboardLayout from "@/components/DashboardLayout/DashboardLayout";
 
-export default function page() {
+export default function AnalyticsPage() {
   return (
-    <div>page</div>
-  )
+    <DashboardLayout>
+      <h2>Welcome to your Dashboard Analytics👋</h2>
+    </DashboardLayout>
+  );
 }

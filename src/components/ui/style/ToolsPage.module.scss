@@ -1,0 +1,127 @@
+.pageContainer {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.summaryRow {
+  margin-bottom: 24px;
+}
+
+.summaryCard {
+  text-align: center;
+  background: #4b6bfb;
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  p {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 8px 0 0;
+  }
+}
+
+.submittedSection {
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+  }
+}
+
+.toolsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolCard,
+.addCard {
+  width: 150px;
+  height: 150px;
+  border: 2px solid #4b6bfb;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+  text-align: center;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+.toolCard.activeCard {
+  border-color: #1e3aff;
+}
+
+.toolImage {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.placeholder {
+  font-size: 36px;
+}
+
+.toolName {
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.addCard {
+  background: #4b6bfb;
+  color: white;
+  font-size: 24px;
+
+  span {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  p {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+}
+
+.formCard {
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .toolsGrid {
+    justify-content: center;
+  }
+
+  .toolCard,
+  .addCard {
+    width: 45%;
+    height: 130px;
+  }
+
+  .summaryCard {
+    h3 {
+      font-size: 14px;
+    }
+    p {
+      font-size: 20px;
+    }
+  }
+}
