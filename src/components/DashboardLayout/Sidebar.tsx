@@ -1,41 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaTools, FaUserCog, FaChartBar, FaBars, FaStar } from "react-icons/fa";
 import "./DashboardLayout.scss";
 
 const Sidebar: React.FC = () => {
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
   const menuItems = [
-    {
-      key: "tools",
-      label: "Tools",
-      icon: <FaTools />,
-      path: "/dashboard"
-    },
-    {
-      key: "profile",
-      label: "Profile",
-      icon: <FaUserCog />,
-      path: "/dashboard/profile"
-    },
-    {
-      key: "analytics",
-      label: "Analytics",
-      icon: <FaChartBar />,
-      path: "/dashboard/analytics"
-    },
-    {
-      key: "rating",
-      label: "Rating",
-      icon: <FaStar />,
-      path: "/dashboard/rating" // 👈 New Rating Page
-    }
+    { key: "tools", label: "Tools", icon: <FaTools />, tab: 1 },
+    { key: "profile", label: "Profile", icon: <FaUserCog />, tab: 2 },
+    { key: "analytics", label: "Analytics", icon: <FaChartBar />, tab: 3 },
+    { key: "rating", label: "Rating", icon: <FaStar />, tab: 4 }
   ];
+
+  // ✅ Reactively get current tab from URL
+  const currentTab = Number(searchParams.get("tab")) || 1;
 
   return (
     <>
@@ -48,15 +31,15 @@ const Sidebar: React.FC = () => {
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <nav className="sidebar-menu">
           {menuItems.map((item) => {
-            const isActive = pathname === item.path;
+            const isActive = currentTab === item.tab;
 
             return (
               <div
                 key={item.key}
                 className={`menu-item ${isActive ? "active" : ""}`}
                 onClick={() => {
-                  router.push(item.path);
-                  setOpen(false); // Close menu on mobile
+                  router.push(`/dashboard?tab=${item.tab}`);
+                  setOpen(false);
                 }}
               >
                 <span className="icon">{item.icon}</span>
