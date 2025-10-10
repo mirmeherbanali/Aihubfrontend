@@ -3,6 +3,8 @@
 import React, { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import "./DashboardLayout.scss";
+import Navbar from "../ui/common/Navbar";
+import Footer from "../ui/common/Footer";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -10,9 +12,21 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <div className="dashboard-container">
-      <Sidebar />
-      <main className="dashboard-content">{children}</main>
+    <div className="dashboard-layout">
+      {/* Top Header */}
+      <Navbar />
+
+      <div className="dashboard-body">
+        {/* Left Sidebar */}
+        <Sidebar />
+
+        {/* Main Content */}
+        <main className="dashboard-content">
+          {children}
+          {/* ✅ Footer inside main content */}
+          <Footer />
+        </main>
+      </div>
     </div>
   );
 };

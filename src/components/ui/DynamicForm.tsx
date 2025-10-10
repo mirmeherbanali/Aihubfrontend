@@ -6,7 +6,7 @@ import {
   Control,
   SubmitHandler,
   Controller,
-  useWatch,
+  useWatch
 } from "react-hook-form";
 import { DynamicFormProps, FormField } from "@/types/form.types";
 import dynamic from "next/dynamic";
@@ -16,7 +16,7 @@ import Button from "./Button";
 import styles from "./style/DynamicForm.module.scss";
 
 const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), {
-  ssr: false,
+  ssr: false
 });
 const AsyncDropdown = dynamic(() => import("./AsyncDropdown"), { ssr: false });
 
@@ -26,7 +26,7 @@ function DynamicFormInner<T extends FieldValues>({
   handleSubmit,
   onSubmit,
   isLoading = false,
-  buttonText = "Submit",
+  buttonText = "Submit"
 }: Omit<DynamicFormProps<T>, "register" | "formState"> & {
   control: Control<T>;
 }) {
@@ -40,7 +40,7 @@ function DynamicFormInner<T extends FieldValues>({
     if (files && files[0]) {
       setImagePreviews((prev) => ({
         ...prev,
-        [name]: URL.createObjectURL(files[0]),
+        [name]: URL.createObjectURL(files[0])
       }));
     }
   };
@@ -53,6 +53,8 @@ function DynamicFormInner<T extends FieldValues>({
     groupedFields[key].push(f);
   });
 
+  // Check if this row contains only image fields
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -61,24 +63,29 @@ function DynamicFormInner<T extends FieldValues>({
       {Object.values(groupedFields).map((rowFields, rowIdx) => {
         // Calculate total columns for this row
         const totalCols = rowFields.reduce((acc, f) => acc + (f.col || 1), 0);
+        const isImageRow = rowFields.every((f) => f.type === "image");
 
         return (
           <div
             key={rowIdx}
-            className={styles["form-row"]}
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${totalCols}, 1fr)`,
-              gap: "16px",
-              alignItems: "start",
-              marginBottom: "16px",
-            }}
+            className={isImageRow ? styles["image-row"] : styles["form-row"]}
+            style={
+              isImageRow
+                ? {} // grid styling handled in CSS
+                : {
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${totalCols}, 1fr)`,
+                    gap: "16px",
+                    alignItems: "start",
+                    marginBottom: "16px"
+                  }
+            }
           >
             {rowFields.map((field, idx) => {
               const colSpan = field.col || 1;
               const fieldWrapperStyle = {
                 gridColumn: `span ${colSpan}`,
-                ...field.wrapperStyle,
+                ...field.wrapperStyle
               };
 
               // Conditional logic
@@ -132,9 +139,7 @@ function DynamicFormInner<T extends FieldValues>({
                       render={({ field: controllerField, fieldState }) => (
                         <AsyncDropdown
                           field={
-                            field as import("@/types/form.types").DropdownField<
-                              FieldValues
-                            >
+                            field as import("@/types/form.types").DropdownField<FieldValues>
                           }
                           value={controllerField.value}
                           onChange={controllerField.onChange}
@@ -172,7 +177,7 @@ function DynamicFormInner<T extends FieldValues>({
                                   onClick={() => {
                                     setImagePreviews((prev) => ({
                                       ...prev,
-                                      [field.name!]: "",
+                                      [field.name!]: ""
                                     }));
                                     controllerField.onChange(null);
                                   }}
@@ -191,7 +196,7 @@ function DynamicFormInner<T extends FieldValues>({
                                       controllerField.onChange(file);
                                       setImagePreviews((prev) => ({
                                         ...prev,
-                                        [field.name!]: URL.createObjectURL(file),
+                                        [field.name!]: URL.createObjectURL(file)
                                       }));
                                     }
                                   }}
@@ -211,7 +216,6 @@ function DynamicFormInner<T extends FieldValues>({
 
                 case "button":
                   return (
-                   
                     <Button
                       key={idx}
                       label={field.label || buttonText}

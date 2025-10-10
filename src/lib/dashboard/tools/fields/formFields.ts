@@ -48,5 +48,5 @@ export const toolsFields: FormField<any>[] = [
   { type: "image", name: "screenshot3", label: "Screenshot 3", row: 16, col: 1 },
 
   // Submit button
-  { type: "button", label: "", style: { width: 400 }, row: 17, col: 1 },
+  { type: "button", label: "", style: { width: 200 }, row: 17, col: 1 },
 ];

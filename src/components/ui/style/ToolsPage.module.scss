@@ -5,7 +5,11 @@
   gap: 32px;
 }
 
+/* 🔹 Summary Section */
 .summaryRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
   margin-bottom: 24px;
 }
 
@@ -15,6 +19,7 @@
   color: white;
   border-radius: 12px;
   padding: 16px;
+  transition: all 0.3s ease;
 
   h3 {
     font-size: 16px;
@@ -26,8 +31,13 @@
     font-weight: 600;
     margin: 8px 0 0;
   }
+
+  &:hover {
+    transform: translateY(-4px);
+  }
 }
 
+/* 🔹 Submitted Tools Section */
 .submittedSection {
   h2 {
     font-size: 20px;
@@ -37,6 +47,7 @@
   }
 }
 
+/* 🔹 Tools Grid */
 .toolsGrid {
   display: flex;
   flex-wrap: wrap;
@@ -105,23 +116,69 @@
   padding: 24px;
 }
 
+/* 🔹 Responsive Design */
+@media (max-width: 1024px) {
+  .summaryRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
 @media (max-width: 768px) {
+  .pageContainer {
+    padding: 4px !important;
+    gap: 8px !important;
+  }
+
+  .summaryRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .summaryCard {
+    padding: 8px;
+    h3 {
+      font-size: 13px;
+      margin: 0;
+    }
+    p {
+      font-size: 18px;
+      margin: 4px 0 0;
+    }
+  }
+
+  .submittedSection {
+    h2 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+  }
+
   .toolsGrid {
     justify-content: center;
+    gap: 8px;
   }
 
   .toolCard,
   .addCard {
-    width: 45%;
-    height: 130px;
+    width: 46%;
+    height: 120px;
+    border-width: 1px;
+    border-radius: 8px;
   }
 
-  .summaryCard {
-    h3 {
-      font-size: 14px;
-    }
+  .addCard {
+    font-size: 18px;
     p {
-      font-size: 20px;
+      font-size: 12px;
     }
+  }
+
+  .formCard {
+    padding: 8px !important;
+    margin: 0 !important;
+    box-shadow: none;
+    border-radius: 6px;
   }
 }

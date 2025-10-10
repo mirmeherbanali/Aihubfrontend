@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
       key: "tools",
       label: "Tools",
       icon: <FaTools />,
-      path: "/dashboard/tools"
+      path: "/dashboard"
     },
     {
       key: "profile",
@@ -46,11 +46,6 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar */}
       <aside className={`sidebar ${open ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <span className="logo">⚙️</span>
-          <span className="logo-text">Dashboard</span>
-        </div>
-
         <nav className="sidebar-menu">
           {menuItems.map((item) => {
             const isActive = pathname === item.path;
