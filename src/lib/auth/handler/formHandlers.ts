@@ -2,7 +2,7 @@
 
 import { SubmitHandler } from "react-hook-form";
 import { LoginInput, RegisterInput } from "@/lib/validators/userValidator";
-
+import { saveAuthData } from "@/utils/authStorage";
 
 // Login handler
 export const createLoginHandler = (
@@ -15,6 +15,11 @@ export const createLoginHandler = (
 
       const res = await loginUser(data).unwrap(); // ✅ unwrap RTK query
       if (res.success) {
+      saveAuthData(
+          res?.result?.list?.token,
+          res?.result?.list?.user?._id,
+          res?.result?.list?.user?.userType
+        );
       router.push("/dashboard");
       }
       console.log("Login success:", res);

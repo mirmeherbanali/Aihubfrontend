@@ -7,20 +7,27 @@ import ToolsPage from "@/components/Dashboard/tools/page";
 import ProfilePage from "@/components/Dashboard/profile/page";
 import AnalyticsPage from "@/components/Dashboard/analytics/page";
 import RatingPage from "@/components/Dashboard/rating/page";
+import ProtectedRoute from "../ProtectedRoute";
+import { getUserType } from "@/utils/authStorage";
 
 const Dashboard = () => {
   const searchParams = useSearchParams();
-  const tab = searchParams.get("tab");
+  const userType = getUserType();
+
+  // ✅ Default to tab "1" (Tools) if not present
+  const tab = searchParams.get("tab") || "1";
 
   return (
-    <DashboardLayout>
-      <div>
-        {tab === "1" && <ToolsPage />}
-        {tab === "2" && <ProfilePage />}
-        {tab === "3" && <AnalyticsPage />}
-        {tab === "4" && <RatingPage />}
-      </div>
-    </DashboardLayout>
+    <ProtectedRoute>
+      <DashboardLayout>
+        <div>
+          {tab === "1" && <ToolsPage />}
+          {tab === "2" && <ProfilePage />}
+          {tab === "3" && userType === "Developer" && <AnalyticsPage />}
+          {tab === "4" && userType === "Developer" && <RatingPage />}
+        </div>
+      </DashboardLayout>
+    </ProtectedRoute>
   );
 };
 

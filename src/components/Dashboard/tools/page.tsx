@@ -11,8 +11,10 @@ import { toolsSchema, ToolsInput } from "@/lib/validators/toolsValidator";
 import styles from "@/components/ui/style/ToolsPage.module.scss";
 import SummaryGrid from "@/components/ui/SummaryGrid";
 import GridCards from "@/components/ui/GridCards";
+import { getUserType } from "@/utils/authStorage";
 
 export default function ToolsPage() {
+
   const [tools, setTools] = useState<ToolsInput[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [showGridForm, setShowGridForm] = useState(false);

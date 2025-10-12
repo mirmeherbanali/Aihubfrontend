@@ -1,6 +1,6 @@
 import { baseApi } from "../api/baseApi";
 import { LoginInput,RegisterInput } from "@/lib/validators/userValidator";
-import { AuthResponse,UserProfile } from "../../types/form.types";
+import { AuthResponse,User } from "../../types/form.types";
 import { withToast } from "@/store/middleware/toastMiddleware";
 
 // Inject auth endpoints into baseApi
@@ -14,11 +14,20 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({ url: "api/auth/register", method: "POST", body }),
       ...withToast<AuthResponse>("register", (res) => res.result?.message),
     }),
-    getProfile: builder.query<UserProfile, void>({
-      query: () => "/auth/me",
+    getProfile: builder.query<User, { token: string; userId: string }>({
+      query: ({ token, userId }) => ({
+        url: "api/user/getUserById",
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: {
+          id: userId,
+        },
+      }),
       providesTags: ["Profile"],
     }),
-    updateProfile: builder.mutation<UserProfile, Partial<UserProfile>>({
+    updateProfile: builder.mutation<User, Partial<User>>({
       query: (body) => ({ url: "/auth/me", method: "PUT", body }),
       ...withToast("updateProfile", "Profile updated!"),
       invalidatesTags: ["Profile"],

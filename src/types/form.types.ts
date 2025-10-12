@@ -101,9 +101,3 @@ export interface AuthResponse {
     list?: any[];
   };
 }
-
-export interface UserProfile {
-  id: number;
-  name: string;
-  email: string;
-}

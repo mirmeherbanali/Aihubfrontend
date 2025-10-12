@@ -51,6 +51,26 @@
     }
   }
 }
+.profileImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.logoutBtn {
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  color: #ff5252;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profileLink {
+  display: flex;
+  align-items: center;
+}
 
 .mobileMenuIcon {
   display: none;
