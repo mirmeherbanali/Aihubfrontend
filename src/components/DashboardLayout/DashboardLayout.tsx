@@ -25,6 +25,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     "2": "Profile",
     "3": userType === "Developer" ? "Analytics" : "Analytics",
     "4": userType === "Developer" ? "Rating" : "Users",
+    
   };
 
   const pageTitle = tabLabels[currentTab] || "Dashboard";

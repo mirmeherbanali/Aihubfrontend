@@ -20,6 +20,8 @@ const Sidebar: React.FC = () => {
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
       { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
+      { key: "users", label: "Users", tab: "4", icon: <FaUsers /> },
+
     ],
     Admin: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
@@ -30,6 +32,8 @@ const Sidebar: React.FC = () => {
     Reviewer: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
+      { key: "users", label: "Users", tab: "3", icon: <FaUsers /> },
+
     ],
   };
 

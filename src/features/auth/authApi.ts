@@ -27,6 +27,15 @@ export const authApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Profile"],
     }),
+    // 🔹 ✅ Get All Users
+       getAllUsers: builder.query<User[], void>({
+      query: () => ({
+        url: "api/user/getAllUsers",
+        method: "POST",
+        body: {}, // You can remove this if the API doesn't need it
+      }),
+      providesTags: ["Users"],
+    }),
     updateProfile: builder.mutation<User, Partial<User>>({
       query: (body) => ({ url: "/auth/me", method: "PUT", body }),
       ...withToast("updateProfile", "Profile updated!"),
@@ -46,6 +55,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetProfileQuery,
+  useGetAllUsersQuery,
   useUpdateProfileMutation,
   useLogoutMutation,
 } = authApi;

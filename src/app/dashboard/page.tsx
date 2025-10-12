@@ -7,6 +7,7 @@ import ToolsPage from "@/components/Dashboard/tools/page";
 import ProfilePage from "@/components/Dashboard/profile/page";
 import AnalyticsPage from "@/components/Dashboard/analytics/page";
 import RatingPage from "@/components/Dashboard/rating/page";
+import UserPage from "@/components/Dashboard/user/page"
 import ProtectedRoute from "../ProtectedRoute";
 import { getUserType } from "@/utils/authStorage";
 
@@ -24,7 +25,9 @@ const Dashboard = () => {
           {tab === "1" && <ToolsPage />}
           {tab === "2" && <ProfilePage />}
           {tab === "3" && userType === "Developer" && <AnalyticsPage />}
-          {tab === "4" && userType === "Developer" && <RatingPage />}
+          {tab === "4" && userType === "Developer" ? <RatingPage />: <UserPage />}
+          {/* {tab === "5" && userType === "Developer" && <UserPage />} */}
+
         </div>
       </DashboardLayout>
     </ProtectedRoute>
