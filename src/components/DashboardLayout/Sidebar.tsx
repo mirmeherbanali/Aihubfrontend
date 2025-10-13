@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FaTools, FaUserCog, FaChartBar, FaStar, FaUsers, FaBars } from "react-icons/fa";
+import {
+  FaTools,
+  FaUserCog,
+  FaChartBar,
+  FaStar,
+  FaUsers,
+  FaBars
+} from "react-icons/fa";
 import "./DashboardLayout.scss";
 import { getUserType } from "@/utils/authStorage";
 
@@ -20,24 +27,22 @@ const Sidebar: React.FC = () => {
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
       { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
-      { key: "users", label: "Users", tab: "4", icon: <FaUsers /> },
-
+      { key: "users", label: "Users", tab: "5", icon: <FaUsers /> }
     ],
     Admin: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
-      { key: "users", label: "Users", tab: "4", icon: <FaUsers /> },
+      { key: "users", label: "Users", tab: "4", icon: <FaUsers /> }
     ],
     Reviewer: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
-      { key: "users", label: "Users", tab: "3", icon: <FaUsers /> },
-
-    ],
+      { key: "users", label: "Users", tab: "3", icon: <FaUsers /> }
+    ]
   };
 
-  const menuItems = roleMenuItems[userType || "Reviewer"];
+  const menuItems = roleMenuItems[userType || "Developer"];
 
   // ✅ Get current tab from search param, default to "1" (Tools)
   const currentTab = searchParams.get("tab") || "1";
