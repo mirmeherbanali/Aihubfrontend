@@ -17,7 +17,17 @@ export interface User {
   role?: string;
   toolname?: string;
   category?: string;
+  categoryDescription?: string;
+  toolsCount?: number;
   submiteddate?: string;
+
+  // ✅ New review fields
+  reviewerId?: string | number;
+  reviewerName?: string;
+  reviewerEmail?: string;
+  reviewerRole?: string;
+  toolId?: string | number;
+  toolName?: string;
 }
 
 export interface UserResult {

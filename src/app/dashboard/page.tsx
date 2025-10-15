@@ -11,6 +11,8 @@ import UserPage from "@/components/Dashboard/user/page";
 import ProtectedRoute from "../ProtectedRoute";
 import { getUserType } from "@/utils/authStorage";
 import AdminTools from "@/components/Dashboard/tools/adminTools";
+import CategoryPage from "@/components/Dashboard/categories/page";
+import Reviews from "@/components/Dashboard/reviews/page";
 
 const Dashboard = () => {
   const searchParams = useSearchParams();
@@ -34,6 +36,8 @@ const Dashboard = () => {
           {tab === "3" && userType === null && <AnalyticsPage />}
           {tab === "4" && userType === null && <RatingPage />}
           {tab === "5" && userType === null && <UserPage />}
+          {tab === "6" && userType === null && <CategoryPage />}
+          {tab === "7" && userType === null && <Reviews />}
 
           {/* {tab === "5" && userType === "Developer" && <UserPage />} */}
         </div>

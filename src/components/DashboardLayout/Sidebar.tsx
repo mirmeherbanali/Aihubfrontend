@@ -8,8 +8,10 @@ import {
   FaChartBar,
   FaStar,
   FaUsers,
-  FaBars
+  FaBars,
+  FaCommentDots
 } from "react-icons/fa";
+import { TbCategoryFilled } from "react-icons/tb";
 import "./DashboardLayout.scss";
 import { getUserType } from "@/utils/authStorage";
 
@@ -27,7 +29,15 @@ const Sidebar: React.FC = () => {
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
       { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
-      { key: "users", label: "Users", tab: "5", icon: <FaUsers /> }
+      { key: "users", label: "Users", tab: "5", icon: <FaUsers /> },
+
+      {
+        key: "categories",
+        label: "Categories",
+        tab: "6",
+        icon: <TbCategoryFilled />
+      },
+      { key: "reviews", label: "Reviews", tab: "7", icon: <FaCommentDots /> }
     ],
     Admin: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
