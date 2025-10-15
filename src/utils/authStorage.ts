@@ -3,7 +3,11 @@ const TOKEN_KEY = "token";
 const USER_ID_KEY = "userId";
 const USER_TYPE_KEY = "userType";
 
-export const saveAuthData = (token: string, userId: string, userType: string) => {
+export const saveAuthData = (
+  token: string,
+  userId: string,
+  userType: string
+) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID_KEY, userId);

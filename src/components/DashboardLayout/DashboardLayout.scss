@@ -64,15 +64,17 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      background-color: #748FF4;
+
 
       .menu-item {
         display: flex;
         align-items: center;
-        padding: 10px 16px;
-        border-radius: 6px;
+        padding: 15px 20px;
+        // border-radius: 6px;
         cursor: pointer;
         transition: all 0.2s ease;
-        color: #444;
+        color: white;
         font-size: 15px;
 
         .icon {
@@ -84,13 +86,15 @@
         }
 
         &:hover {
-          background: #f0f7ff;
-          color: #007bff;
+          background: #3960EF;
+          // color: #007bff;
+          color: white;
         }
 
         &.active {
-          background: #e6f3ff;
-          color: #007bff;
+          background: #3960EF;
+          // color: #007bff;
+          color:white;
           font-weight: 500;
         }
       }

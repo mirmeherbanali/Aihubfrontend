@@ -5,31 +5,18 @@ import DynamicTable from "@/components/ui/common/DynamicTable";
 import { TableColumn, TableAction } from "@/types/table.types";
 import { User } from "@/types/user.types";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
-import AddUser from "./components/addUser";
 import { dataConstant } from "../constant";
 
-export default function UserPage() {
+export default function Reviews() {
   const [tab, setTab] = useState(1);
 
   const columns: TableColumn<User>[] = [
-    { key: "firstName", label: "First Name" },
-    { key: "lastName", label: "Last Name" },
-    { key: "userType", label: "User Type" },
-    { key: "companyName", label: "Company" },
-    { key: "companyEmail", label: "Email" },
-    { key: "country", label: "Country" },
-    { key: "status", label: "Status" },
-    { key: "role", label: "Role" },
-    {
-      key: "createdAt",
-      label: "Created",
-      render: (row) =>
-        new Date(row.createdAt).toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        })
-    }
+    { key: "reviewerId", label: "Reviewer ID" },
+    { key: "reviewerName", label: "Reviewer Name" },
+    { key: "reviewerEmail", label: "Reviewer Email" },
+    { key: "reviewerRole", label: "Reviewer Role" },
+    { key: "toolId", label: "Tool ID" },
+    { key: "toolName", label: "Tool Name" }
   ];
 
   const actions: TableAction<User>[] = [
@@ -52,10 +39,10 @@ export default function UserPage() {
 
   const tabActions = [
     {
-      label: "Manage Users",
+      label: "Manage Reviews",
       onClick: () => setTab(1)
     },
-    { label: "Add Users", onClick: () => setTab(2) }
+    { label: "Add Reviews", onClick: () => setTab(2) }
   ];
 
   return (
@@ -67,12 +54,13 @@ export default function UserPage() {
           data={dataConstant}
           actions={actions}
           bulkActions={bulkActions}
-          searchKey="firstName"
-          filterKeys={["userType", "status"]}
+          searchKey="reviewerName"
+          filterKeys={["reviewerRole"]}
           itemsPerPage={10}
         />
       ) : (
-        <AddUser />
+        // <AddCategory />
+        <div>Add Reviewers</div>
       )}
     </div>
   );

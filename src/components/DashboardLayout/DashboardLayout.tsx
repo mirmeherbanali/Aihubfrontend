@@ -24,8 +24,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     "1": "Tools",
     "2": "Profile",
     "3": userType === "Developer" ? "Analytics" : "Analytics",
-    "4": userType === "Developer" ? "Rating" : "Users",
-    
+    "4": userType === "Developer" ? "Rating" : "Users"
   };
 
   const pageTitle = tabLabels[currentTab] || "Dashboard";
@@ -39,7 +38,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
         <main className="dashboard-content">
           {/* ✅ Dynamic page title */}
-          <h2 className="dashboard-title">{pageTitle}</h2>
+          {/* <h2 className="dashboard-title">{pageTitle}</h2> */}
 
           {children}
           <Footer />
