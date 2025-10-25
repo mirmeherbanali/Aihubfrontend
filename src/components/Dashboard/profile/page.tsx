@@ -15,13 +15,17 @@ import { skipToken } from "@reduxjs/toolkit/query";
 // ✅ helper: flatten nested objects into a single-level object
 // ✅ Flatten nested objects
 const flattenObject = (obj: any, prefix = ""): Record<string, any> =>
-  Object.keys(obj || {}).reduce((acc, key) => {
-    const value = obj[key];
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === "object" && value !== null) Object.assign(acc, flattenObject(value, newKey));
-    else acc[newKey] = value;
-    return acc;
-  }, {} as Record<string, any>);
+  Object.keys(obj || {}).reduce(
+    (acc, key) => {
+      const value = obj[key];
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (typeof value === "object" && value !== null)
+        Object.assign(acc, flattenObject(value, newKey));
+      else acc[newKey] = value;
+      return acc;
+    },
+    {} as Record<string, any>
+  );
 
 export default function ProfilePage() {
   const token = getToken();
@@ -31,12 +35,19 @@ export default function ProfilePage() {
   const fields = generateProfileFields(userType ?? "");
   const schema = generateZodSchema(fields);
 
-  const { data: profile } = useGetProfileQuery(token && userId ? { token, userId } : skipToken);
+  const { data: profile } = useGetProfileQuery(
+    token && userId ? { token, userId } : skipToken
+  );
 
-  const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting }
+  } = useForm({
     resolver: zodResolver(schema),
     mode: "onBlur",
-    defaultValues: {},
+    defaultValues: {}
   });
 
   // ✅ Populate form dynamically
@@ -48,20 +59,22 @@ export default function ProfilePage() {
 
   // ✅ Submit only visible fields
   const onSubmit = (data: any) => {
-    const visibleFieldNames = fields.map(f => f.name);
+    const visibleFieldNames = fields.map((f) => f.name);
     const filteredData = Object.keys(data)
-      .filter(key => visibleFieldNames.includes(key))
-      .reduce((acc, key) => {
-        acc[key] = data[key];
-        return acc;
-      }, {} as Record<string, any>);
+      .filter((key) => visibleFieldNames.includes(key))
+      .reduce(
+        (acc, key) => {
+          acc[key] = data[key];
+          return acc;
+        },
+        {} as Record<string, any>
+      );
 
     console.log("Submitting filtered data:", filteredData);
 
     // Call your API here
     // await updateProfileAPI(filteredData);
   };
-
 
   return (
     <div className={styles.profileContainer}>
