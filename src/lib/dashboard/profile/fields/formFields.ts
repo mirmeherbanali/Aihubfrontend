@@ -1,92 +1,29 @@
+// profileFields.ts
 import { FormField } from "@/types/form.types";
+import { MailOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
 
-export const profileFields: FormField<any>[] = [
-  // Company Name
-  {
-    type: "input",
-    name: "companyName",
-    label: "Company Name",
-    placeholder: "Enter your company name",
-    row: 1,
-    col: 1,
-  },
+export const generateProfileFields = (userType: string): FormField<any>[] => {
+  const commonFields: FormField<any>[] = [
+    // Row 1: First Name + Last Name + Email
+    { type: "input", name: "firstName", label: "First Name", placeholder: "Enter first name", row: 1, col: 1 },
+    { type: "input", name: "lastName", label: "Last Name", placeholder: "Enter last name", row: 1, col: 2 },
+    { type: "input", name: "email", label: "Email", placeholder: "Enter email", row: 2, col: 3 },
 
-  // First Name
-  {
-    type: "input",
-    name: "firstName",
-    label: "First Name",
-    placeholder: "Enter first name",
-    row: 2,
-    col: 1,
-  },
+    // Row 2: Industry + Country
+    { type: "dropdown", name: "industry", label: "Industry", options: ["IT", "Finance", "Healthcare", "Education", "Other"], row: 3, col: 1 },
+    { type: "dropdown", name: "country", label: "Country", options: ["India", "USA", "UK", "Canada", "Other"], row: 3, col: 2 },
+  ];
 
-  // Last Name
-  {
-    type: "input",
-    name: "lastName",
-    label: "Last Name",
-    placeholder: "Enter last name",
-    row: 2,
-    col: 1,
-  },
- // Role Dropdown
-  {
-    type: "dropdown",
-    name: "role",
-    label: "Select Role",
-    options: ["Frontend Developer", "Backend Developer", "Fullstack Developer"],
-    row: 3,
-    col: 2,
-  },
-  // Email
-  {
-    type: "input",
-    name: "email",
-    label: "Email Address",
-    placeholder: "Enter your email",
-    row: 4,
-    col: 2,
-  },
+  const developerFields: FormField<any>[] = [
+    // Row 3: Company Info
+    { type: "input", name: "companyName", label: "Company Name", placeholder: "Enter company name", row: 4, col: 1 },
+    { type: "input", name: "companyEmail", label: "Company Email", placeholder: "Enter company email", row: 2, col: 2 },
+    { type: "input", name: "companyWebsite", label: "Company Website", placeholder: "Enter website", row: 4, col: 3 },
+  ];
 
-  // Industry Dropdown
-  {
-    type: "dropdown",
-    name: "industry",
-    label: "Industry",
-    options: [
-      "Information Technology",
-      "Finance",
-      "Healthcare",
-      "Education",
-      "E-commerce",
-      "Real Estate",
-      "Manufacturing",
-      "Other",
-    ],
-    row: 5,
-    col: 1,
-  },
 
-  // Country Dropdown
-  {
-    type: "dropdown",
-    name: "country",
-    label: "Country",
-    options: [
-      "India",
-      "United States",
-      "Canada",
-      "United Kingdom",
-      "Germany",
-      "Australia",
-      "France",
-      "Japan",
-      "China",
-      "Other",
-    ],
-    row: 5,
-    col: 1,
-  },
-
-];
+  return [
+    ...commonFields,
+    ...(userType === "Developer" ? developerFields : []),
+  ];
+};
