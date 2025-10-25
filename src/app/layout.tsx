@@ -10,16 +10,8 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { usePathname } from "next/navigation";
-import Loading from "./loading";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata = {
-  title: "Aidirectory",
-  description: "Your AI-powered directory solution",
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: "#007acc"
-};
 
 export default function RootLayout({
   children
@@ -27,15 +19,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [loading, setLoading] = useState(true);
+  
+  // ✅ Remove loading state or make it instant
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // simulate page load
-    const timer = setTimeout(() => setLoading(false), 800);
+    // Only show loading for a very short time if needed
+    const timer = setTimeout(() => setLoading(false), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // ✅ Check if current path starts with /dashboard
   const isDashboardPage = pathname?.startsWith("/dashboard");
 
   return (
@@ -44,33 +37,19 @@ export default function RootLayout({
         <ClientProviders>
           {!isDashboardPage && <Navbar />}
 
-          <main style={{ minHeight: "100vh" }}>{children}</main>
+          <main style={{ minHeight: "100vh" }}>
+            {loading ? (
+              <div className="loader-container">
+                <div className="spinner"></div>
+              </div>
+            ) : (
+              children
+            )}
+          </main>
+          
           <ToastContainer position="top-right" autoClose={3000} />
-          {/* ✅ Hide Footer on dashboard pages */}
           {!isDashboardPage && <Footer />}
         </ClientProviders>
-
-        <style jsx>{`
-          .loader-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-          }
-          .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #ddd;
-            border-top: 6px solid #007acc;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-          }
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
       </body>
     </html>
   );
