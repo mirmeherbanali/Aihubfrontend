@@ -18,14 +18,39 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   // ✅ Get current tab, default to "1" (Tools)
   const currentTab = searchParams.get("tab") || "1";
+  const getTabLabels = (userType: string): Record<string, string> => {
+  switch (userType) {
+    case "Developer":
+      return {
+        "1": "Tools",
+        "2": "Profile",
+        "3": "Analytics",
+        "4": "Rating",
+      };
+    case "Admin":
+      return {
+        "1": "Tools",
+        "2": "Profile",
+        "5": "Users",
+        "6": "Category",
+        "7": "Reviews",
+      };
+    case "Reviewer":
+      return {
+        "1": "Tools",
+        "2": "Profile",
+      };
+    default:
+      return {
+        "1": "Tools",
+        "2": "Profile",
+      };
+  }
+};
+
 
   // Map tab numbers to page names
-  const tabLabels: { [key: string]: string } = {
-    "1": "Tools",
-    "2": "Profile",
-    "3": userType === "Developer" ? "Analytics" : "Analytics",
-    "4": userType === "Developer" ? "Rating" : "Users"
-  };
+  const tabLabels = getTabLabels(userType ?? "");
 
   const pageTitle = tabLabels[currentTab] || "Dashboard";
 

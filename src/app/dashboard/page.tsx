@@ -21,25 +21,48 @@ const Dashboard = () => {
   // ✅ Default to tab "1" (Tools) if not present
   const tab = searchParams.get("tab") || "1";
 
-  console.log("USER-Type", userType);
+  // console.log("USER-Type", userType);
+
+  const renderTabContent = () => {
+  switch (tab) {
+    case "1":
+      if (userType === "Admin") return <AdminTools />;
+      return <ToolsPage />;
+
+    case "2":
+      return <ProfilePage />;
+
+    case "3":
+      if (userType === "Developer") return <AnalyticsPage />;
+      return null;
+
+    case "4":
+      if (userType === "Reviewer") return <RatingPage />;
+      return null;
+
+    case "5":
+      if (userType === "Admin") return <UserPage />;
+      return null;
+
+    case "6":
+      if (userType === "Admin") return <CategoryPage />;
+      return null;
+
+    case "7":
+      if (userType === "Admin") return <Reviews />;
+      return null;
+
+    default:
+      return null;
+  }
+};
+
 
   return (
     <ProtectedRoute>
       <DashboardLayout>
         <div>
-          {tab === "1" && userType === null ? (
-            <AdminTools />
-          ) : (
-            tab === "1" && <ToolsPage />
-          )}
-          {tab === "2" && <ProfilePage />}
-          {tab === "3" && userType === null && <AnalyticsPage />}
-          {tab === "4" && userType === null && <RatingPage />}
-          {tab === "5" && userType === null && <UserPage />}
-          {tab === "6" && userType === null && <CategoryPage />}
-          {tab === "7" && userType === null && <Reviews />}
-
-          {/* {tab === "5" && userType === "Developer" && <UserPage />} */}
+{renderTabContent()}
         </div>
       </DashboardLayout>
     </ProtectedRoute>

@@ -50,7 +50,7 @@ export default function CategoryPage() {
         <DynamicTable
           columns={columns}
           data={dataConstant}
-          actions={actions}
+          actions={actions}    
           bulkActions={bulkActions}
           searchKey="category"
           //   filterKeys={["userType", "status"]}

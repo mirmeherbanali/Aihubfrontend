@@ -24,13 +24,12 @@ const Sidebar: React.FC = () => {
 
   // ✅ Role-based menu items
   const roleMenuItems: { [key: string]: any[] } = {
-    Developer: [
+    Admin: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
       { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
       { key: "users", label: "Users", tab: "5", icon: <FaUsers /> },
-
       {
         key: "categories",
         label: "Categories",
@@ -39,16 +38,15 @@ const Sidebar: React.FC = () => {
       },
       { key: "reviews", label: "Reviews", tab: "7", icon: <FaCommentDots /> }
     ],
-    Admin: [
+    Developer: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
       { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
-      { key: "users", label: "Users", tab: "4", icon: <FaUsers /> }
     ],
     Reviewer: [
-      { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
-      { key: "users", label: "Users", tab: "3", icon: <FaUsers /> }
+      { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
+      // { key: "users", label: "Users", tab: "3", icon: <FaUsers /> }
     ]
   };
 

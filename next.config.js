@@ -9,8 +9,8 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: isDev
-      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' http://192.168.1.8:8000; img-src 'self' blob: data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
-      : "default-src 'self'; connect-src 'self' https://your-production-api.com; img-src 'self' data: https:; script-src 'self'; style-src 'self';",
+      ? "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' http://ec2-98-89-29-192.compute-1.amazonaws.com:8080; img-src 'self' blob: data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+      : "default-src 'self'; connect-src 'self' http://ec2-98-89-29-192.compute-1.amazonaws.com:8080; img-src 'self' data: https:; script-src 'self'; style-src 'self';",
   },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
