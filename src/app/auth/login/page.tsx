@@ -32,7 +32,7 @@ export default function AuthPage() {
           <span></span>
         </div>
 
-        <SocialLoginButtons />
+        {/* <SocialLoginButtons /> */}
 
         <p className={styles.footer}>
           {isLogin ? (

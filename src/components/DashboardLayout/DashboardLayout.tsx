@@ -16,42 +16,44 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const searchParams = useSearchParams();
   const userType = getUserType();
 
-  // ✅ Get current tab, default to "1" (Tools)
+  // ✅ Current tab from URL or default
   const currentTab = searchParams.get("tab") || "1";
-  const getTabLabels = (userType: string): Record<string, string> => {
-  switch (userType) {
-    case "Developer":
-      return {
-        "1": "Tools",
-        "2": "Profile",
-        "3": "Analytics",
-        "4": "Rating",
-      };
-    case "Admin":
-      return {
-        "1": "Tools",
-        "2": "Profile",
-        "5": "Users",
-        "6": "Category",
-        "7": "Reviews",
-      };
-    case "Reviewer":
-      return {
-        "1": "Tools",
-        "2": "Profile",
-      };
-    default:
-      return {
-        "1": "Tools",
-        "2": "Profile",
-      };
-  }
-};
 
+  // ✅ Define tab labels per role
+  const getTabLabels = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return {
+          "1": "Home",
+          "2": "Profile",
+          "3": "Tools",
+          "4": "Categories",
+          "5": "Users",
+          "6": "Reviews",
+          "7": "Blogs",
+          "8": "Advertisements",
+          "9": "Analytics"
+        };
+      case "Developer":
+        return {
+          "1": "Tools",
+          "2": "Profile",
+          "3": "Analytics"
+        };
+      case "Reviewer":
+        return {
+          "1": "Profile",
+          "2": "Ratings & Reviews"
+        };
+      default:
+        return {
+          "1": "Tools",
+          "2": "Profile"
+        };
+    }
+  };
 
-  // Map tab numbers to page names
-  const tabLabels = getTabLabels(userType ?? "");
-
+  const tabLabels = getTabLabels(userType || "");
   const pageTitle = tabLabels[currentTab] || "Dashboard";
 
   return (
@@ -62,10 +64,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <Sidebar />
 
         <main className="dashboard-content">
-          {/* ✅ Dynamic page title */}
+          {/* ✅ Optional Page Title */}
           {/* <h2 className="dashboard-title">{pageTitle}</h2> */}
 
-          {children}
+          {/* ✅ Responsive Padding Wrapper */}
+          <div className="dashboard-content-wrapper">{children}</div>
+
           <Footer />
         </main>
       </div>

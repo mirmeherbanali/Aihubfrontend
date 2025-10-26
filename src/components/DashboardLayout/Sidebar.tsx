@@ -6,10 +6,12 @@ import {
   FaTools,
   FaUserCog,
   FaChartBar,
-  FaStar,
   FaUsers,
   FaBars,
-  FaCommentDots
+  FaCommentDots,
+  FaBlog,
+  FaBullhorn,
+  FaHome
 } from "react-icons/fa";
 import { TbCategoryFilled } from "react-icons/tb";
 import "./DashboardLayout.scss";
@@ -19,45 +21,53 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
-
   const userType = getUserType();
 
-  // ✅ Role-based menu items
-  const roleMenuItems: { [key: string]: any[] } = {
+  const roleMenuItems: Record<string, any[]> = {
     Admin: [
-      { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
+      { key: "home", label: "Home", tab: "1", icon: <FaHome /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
-      { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
-      { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
-      { key: "users", label: "Users", tab: "5", icon: <FaUsers /> },
+      { key: "tools", label: "Tools", tab: "3", icon: <FaTools /> },
       {
         key: "categories",
         label: "Categories",
-        tab: "6",
+        tab: "4",
         icon: <TbCategoryFilled />
       },
-      { key: "reviews", label: "Reviews", tab: "7", icon: <FaCommentDots /> }
+      { key: "users", label: "Users", tab: "5", icon: <FaUsers /> },
+      { key: "reviews", label: "Reviews", tab: "6", icon: <FaCommentDots /> },
+      { key: "blogs", label: "Blogs", tab: "7", icon: <FaBlog /> },
+      {
+        key: "advertisements",
+        label: "Advertisements",
+        tab: "8",
+        icon: <FaBullhorn />
+      },
+      { key: "analytics", label: "Analytics", tab: "9", icon: <FaChartBar /> }
     ],
+
     Developer: [
       { key: "tools", label: "Tools", tab: "1", icon: <FaTools /> },
       { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
-      { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> },
+      { key: "analytics", label: "Analytics", tab: "3", icon: <FaChartBar /> }
     ],
+
     Reviewer: [
-      { key: "profile", label: "Profile", tab: "2", icon: <FaUserCog /> },
-      { key: "rating", label: "Rating", tab: "4", icon: <FaStar /> },
-      // { key: "users", label: "Users", tab: "3", icon: <FaUsers /> }
+      { key: "profile", label: "Profile", tab: "1", icon: <FaUserCog /> },
+      {
+        key: "rating",
+        label: "Ratings & Reviews",
+        tab: "2",
+        icon: <FaCommentDots />
+      }
     ]
   };
 
   const menuItems = roleMenuItems[userType || "Developer"];
-
-  // ✅ Get current tab from search param, default to "1" (Tools)
   const currentTab = searchParams.get("tab") || "1";
 
   return (
     <>
-      {/* Mobile menu toggle */}
       <button className="mobile-menu-btn" onClick={() => setOpen(!open)}>
         <FaBars size={20} />
       </button>
@@ -66,7 +76,6 @@ const Sidebar: React.FC = () => {
         <nav className="sidebar-menu">
           {menuItems.map((item) => {
             const isActive = currentTab === item.tab;
-
             return (
               <div
                 key={item.key}
