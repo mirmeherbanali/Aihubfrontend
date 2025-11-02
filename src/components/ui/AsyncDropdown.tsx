@@ -9,25 +9,36 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({ field, value, onChange, error }
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (field.fetchOptions) {
+    const loadOptions = async () => {
       setLoading(true);
-      field.fetchOptions()
-        .then((res) =>
-          setItems(res.map((opt) => ({ label: opt, value: opt })))
-        )
-        .finally(() => setLoading(false));
-    } else if (field.options) {
-      setItems(field.options.map((opt) => ({ label: opt, value: opt })));
-    }
+      try {
+        if (field.fetchOptions) {
+          // fetchOptions should return array of { label, value: _id }
+          const res = await field.fetchOptions();
+          setItems(res);
+        } else if (field.options) {
+          // static options
+          setItems(
+            field.options.map((opt) =>
+              typeof opt === "string" ? { label: opt, value: opt } : opt
+            )
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOptions();
   }, [field]);
 
-  // convert react-hook-form value into react-select compatible
+  // Convert RHF value to react-select compatible
   const getValue = () => {
     if (!value) return field.multiple ? [] : null;
+
     if (field.multiple) {
-      return (value as string[]).map((v) => ({ label: v, value: v }));
+      return (value as string[]).map((v) => items.find((i) => i.value === v)).filter(Boolean);
     }
-    return { label: value as string, value: value as string };
+    return items.find((i) => i.value === value) || null;
   };
 
   const handleChange = (selected: any) => {
@@ -46,7 +57,7 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({ field, value, onChange, error }
         options={items}
         value={getValue()}
         onChange={handleChange}
-        placeholder={`Select ${field.label}`}
+        placeholder={field.placeholder || `Select ${field.label}`}
         classNamePrefix="react-select"
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}

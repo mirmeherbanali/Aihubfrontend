@@ -37,17 +37,29 @@ export const createLoginHandler = (
 export const createRegisterHandler = (
   registerUser: (data: RegisterInput) => Promise<any>,
   reset: () => void,
-  setIsLogin: (val: boolean) => void
+  setIsLogin?: (val: boolean) => void,
+  userType?: string,
+  userId?:string
 ): SubmitHandler<RegisterInput> => {
   return async (data) => {
     try {
-      const { confirmPassword, ...apiData } = data;
+      const { confirmPassword, ...rest } = data;
+       // Base payload
+      const apiData: any = { ...rest };
+
+      // If AdminUser → add extra fields + remove userType
+      if (userType === "AdminUser" && userId) {
+        apiData.status = "Active";
+        apiData.AdminId = userId;
+      }
       console.log("Register data:", apiData);
 
       const res = await registerUser(apiData).unwrap();
        if (res.success) {
         reset();
-        setIsLogin(true);
+        if (userType !== "Admin" && setIsLogin) {
+          setIsLogin(true);
+        }
       }
       console.log("Registration response:", res);
     } catch (err: any) {

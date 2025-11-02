@@ -1,25 +1,38 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
-type AuthToggleContextType = {
+interface AuthToggleContextType {
   isLogin: boolean;
-  setIsLogin: (val: boolean) => void;
-};
+  setIsLogin: (value: boolean) => void;
+}
 
 const AuthToggleContext = createContext<AuthToggleContextType | undefined>(undefined);
 
-export const AuthToggleProvider = ({ children }: { children: ReactNode }) => {
-  const [isLogin, setIsLogin] = useState(true);
+export function AuthToggleProvider({ children }: { children: React.ReactNode }) {
+  const [isLogin, setLogin] = useState(true);
+  
+  // Memoize the setter function
+  const setIsLogin = useCallback((value: boolean) => {
+    setLogin(value);
+  }, []);
+
+  // Memoize the context value
+  const value = useMemo(() => ({
+    isLogin,
+    setIsLogin
+  }), [isLogin, setIsLogin]);
 
   return (
-    <AuthToggleContext.Provider value={{ isLogin, setIsLogin }}>
+    <AuthToggleContext.Provider value={value}>
       {children}
     </AuthToggleContext.Provider>
   );
-};
+}
 
-export const useAuthToggle = () => {
+export function useAuthToggle() {
   const context = useContext(AuthToggleContext);
-  if (!context) throw new Error("useAuthToggle must be used inside AuthToggleProvider");
+  if (context === undefined) {
+    throw new Error('useAuthToggle must be used within an AuthToggleProvider');
+  }
   return context;
-};
+}

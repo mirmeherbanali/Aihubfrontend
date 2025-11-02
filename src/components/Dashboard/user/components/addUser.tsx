@@ -3,34 +3,37 @@
 import React from "react";
 import styles from "../../../ui/style/AddUser.module.scss";
 import { useForm } from "react-hook-form";
-import { AddUserInput, addUserSchema } from "@/lib/validators/addUserValidator";
+import {
+  createRegisterHandler,
+} from "@/lib/auth/handler/formHandlers";
+import {  useRegisterMutation } from "@/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import DynamicForm from "@/components/ui/DynamicForm";
-import { addUserFields } from "@/lib/dashboard/user/fields/formFields";
+import {
+  RegisterInput,
+  registerSchema,
+} from "@/lib/validators/userValidator";
+import { getUserId, getUserType } from "@/utils/authStorage";
+import { registerFields } from "@/lib/auth/fields/formFields";
 
 export default function AddUser() {
+  const userType = getUserType();
+  const userId = getUserId();
   // ✅ Initialize the form with validation
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting }
-  } = useForm<AddUserInput>({
-    resolver: zodResolver(addUserSchema),
-    mode: "onBlur",
-    defaultValues: {}
-  });
+  const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
+    const { control: registerControl, handleSubmit: registerSubmit, reset } =
+      useForm<RegisterInput>({
+        resolver: zodResolver(registerSchema),
+        mode: "onBlur",
+      });
 
-  // ✅ Handle Form Submission
-  const onSubmit = async (data: AddUserInput) => {
-    try {
-      console.log("Profile Data Submitted:", data);
-      // You can call API here (e.g., await axios.post("/api/profile", data))
-      reset(); // reset form after successful submission
-    } catch (error) {
-      console.error("Profile Update Error:", error);
-    }
-  };
+  const onRegisterSubmit = createRegisterHandler(
+    registerUser,
+    reset,
+    undefined,
+    userType??undefined,
+    userId ?? undefined // 👈 pass Admin ID
+  );
 
   return (
     <div className={styles.profileContainer}>
@@ -47,18 +50,17 @@ export default function AddUser() {
         {/* Profile Form */}
         <div className={styles.formSection}>
           <DynamicForm
-            fields={addUserFields}
-            control={control}
-            handleSubmit={handleSubmit}
-            onSubmit={onSubmit}
-            // buttonText={isSubmitting ? "Updating..." : "Update"}
-            // notshow={true} // ✅ hide default submit button, you already have below
-          />
+      fields={registerFields(userType ?? undefined)}
+      control={registerControl}
+      handleSubmit={registerSubmit}
+      onSubmit={onRegisterSubmit}
+      isLoading={registerLoading}
+    />
         </div>
       </div>
 
       {/* Buttons */}
-      <div className={styles.buttonGroup}>
+      {/* <div className={styles.buttonGroup}>
         <button
           className={styles.updateBtn}
           onClick={handleSubmit(onSubmit)}
@@ -66,7 +68,7 @@ export default function AddUser() {
         >
           {isSubmitting ? "Updating..." : "Createe"}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

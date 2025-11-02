@@ -14,6 +14,7 @@ import Input from "./Input";
 import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 import styles from "./style/DynamicForm.module.scss";
+import FAQFieldComponent from "./FaqAccordion";
 
 const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), {
   ssr: false
@@ -33,7 +34,7 @@ function DynamicFormInner<T extends FieldValues>({
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
     {}
   );
-
+  if (!control) return null; 
   const watchedValues = useWatch({ control });
 
   const handleImageChange = (name: string, files: FileList | null) => {
@@ -47,7 +48,7 @@ function DynamicFormInner<T extends FieldValues>({
 
   // Group fields by row
   const groupedFields: Record<string | number, FormField<T>[]> = {};
-  fields.forEach((f) => {
+  fields?.forEach((f) => {
     const key = f.row ?? `row-${Math.random()}`;
     if (!groupedFields[key]) groupedFields[key] = [];
     groupedFields[key].push(f);
@@ -90,13 +91,19 @@ function DynamicFormInner<T extends FieldValues>({
 
               // Conditional logic
               if (field.conditional) {
-                const dependentValue =
-                  watchedValues[field.conditional?.field] ??
-                  fields.find((f) => f.name === field.conditional?.field)
-                    ?.value;
+  const dependentValue =
+    watchedValues[field.conditional?.field] ??
+    fields.find((f) => f.name === field.conditional?.field)?.value;
 
-                if (dependentValue !== field.conditional.value) return null;
-              }
+  const allowed = field.conditional.value || field.conditional.value;
+
+  if (Array.isArray(allowed)) {
+    if (!allowed.includes(dependentValue)) return null;
+  } else {
+    if (dependentValue !== allowed) return null;
+  }
+}
+
 
               // Field types
               switch (field.type) {
@@ -213,6 +220,99 @@ function DynamicFormInner<T extends FieldValues>({
                       )}
                     />
                   );
+
+
+                case "multi-image":
+                  return (
+                    <Controller
+                      key={field.name || idx}
+                      name={field.name!}
+                      control={control}
+                      defaultValue={[]}
+                      render={({ field: controllerField, fieldState }) => (
+                        <DropzoneComponent
+                          files={controllerField.value || []}
+                          onDrop={controllerField.onChange}
+                          maxFiles={field.maxFiles || 5}
+                          error={fieldState.error?.message}
+                        />
+                      )}
+                    />
+                  );
+
+case "chips":
+  return (
+    <Controller
+      key={field.name || idx}
+      name={field.name!}
+      control={control} // make sure control is passed from useForm
+      defaultValue={[]}
+      render={({ field: controllerField }) => (
+        <div style={fieldWrapperStyle}>
+          {field.label && <label>{field.label}</label>}
+          <input
+            placeholder={field.placeholder || "Type and press enter"}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                e.preventDefault();
+                controllerField.onChange([...controllerField.value, e.currentTarget.value.trim()]);
+                e.currentTarget.value = "";
+              }
+            }}
+            style={{
+              padding: "8px",
+              width: "100%",
+              marginBottom: "8px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+            }}
+          />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {(controllerField.value || []).map((chip: string, index: number) => (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "4px 8px",
+                  background: "#f0f0f0",
+                  borderRadius: "16px",
+                  fontSize: "14px",
+                }}
+              >
+                {chip}
+                <span
+                  onClick={() => {
+                    const newChips = [...controllerField.value];
+                    newChips.splice(index, 1);
+                    controllerField.onChange(newChips);
+                  }}
+                  style={{
+                    marginLeft: "6px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                  }}
+                >
+                  ×
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    />
+  );
+
+
+               case "faq":
+  return (
+    <FAQFieldComponent
+      key={field.name}
+      name={field.name!}
+      control={control}
+    />
+  );
+
 
                 case "button":
                   return (

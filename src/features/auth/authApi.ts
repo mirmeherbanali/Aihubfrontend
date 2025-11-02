@@ -11,7 +11,16 @@ export const authApi = baseApi.injectEndpoints({
       ...withToast<AuthResponse>("login", (res) => res.result?.message),
     }),
     register: builder.mutation<AuthResponse, RegisterInput>({
-      query: (body) => ({ url: "api/auth/register", method: "POST", body }),
+      query: (body) => {
+        const isAdminUser = body?.userType === "AdminUser";
+        return {
+          url: isAdminUser
+            ? "api/adminUser/addAdminUser"
+            : "api/auth/register",
+          method: "POST",
+          body,
+        };
+      },
       ...withToast<AuthResponse>("register", (res) => res.result?.message),
     }),
     getProfile: builder.query<User, { token: string; userId: string }>({

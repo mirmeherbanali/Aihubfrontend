@@ -4,7 +4,7 @@ const forbiddenDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"
 
 export const registerSchema = z
   .object({
-    userType: z.enum(["Reviewer", "Developer"], { required_error: "Role is required" }),
+    userType: z.enum(["Reviewer", "Developer","AdminUser"], { required_error: "Role is required" }),
     firstName: z.string().min(2, "First Name is too short"),
     lastName: z.string().min(2, "Last Name is too short"),
     email: z.string().email("Invalid email").optional(), // optional for Developer
@@ -63,7 +63,7 @@ export const registerSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["email"],
-          message: "Email is required for Reviewers",
+          message: "Email is required",
         });
       }
     }

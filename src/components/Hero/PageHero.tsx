@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import styles from "../../components/ui/style/pageHero.module.scss";
+import styles from "../ui/style/pageHero.module.scss";
 import { FaSearch } from "react-icons/fa";
-import ScrollDownArrow from "@/components/shared/ScrollDownArrow";
+import ScrollDownArrow from "../shared/ScrollDownArrow";
 
 interface PageHeroProps {
   content: string;
@@ -10,6 +10,7 @@ interface PageHeroProps {
   onSearch?: (query: string) => void;
   btnText?: string;
   onBtnClick?: () => void;
+  liveSearch?: boolean; // 👈 new prop
 }
 
 const PageHero: React.FC<PageHeroProps> = ({
@@ -18,7 +19,8 @@ const PageHero: React.FC<PageHeroProps> = ({
   queryPlaceholder = "Search...",
   onSearch,
   btnText = "Add Your Tool",
-  onBtnClick
+  onBtnClick,
+  liveSearch = false
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -32,14 +34,17 @@ const PageHero: React.FC<PageHeroProps> = ({
         <h1 dangerouslySetInnerHTML={{ __html: content }} />
         <p>{subcontent}</p>
 
-        {/* Search */}
         {onSearch && (
           <div className={styles.searchBox}>
             <input
               type="text"
               placeholder={queryPlaceholder}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (liveSearch && onSearch) onSearch(val); // 👈 instant update
+              }}
             />
             <button onClick={handleSearch}>
               <FaSearch />
@@ -48,15 +53,12 @@ const PageHero: React.FC<PageHeroProps> = ({
           </div>
         )}
 
-        {/* CTA */}
         {btnText && onBtnClick && (
           <button className={styles.ctaBtn} onClick={onBtnClick}>
             {btnText}
           </button>
         )}
       </div>
-
-      {/* Scroll Down Arrow */}
       <ScrollDownArrow />
     </section>
   );
