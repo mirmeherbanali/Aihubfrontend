@@ -2,7 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { getToken, getUserId, clearAuthData, getUserType } from "@/utils/authStorage";
+import {
+  getToken,
+  getUserId,
+  clearAuthData,
+  getUserType
+} from "@/utils/authStorage";
 import { useGetProfileQuery } from "@/features/auth/authApi";
 import { skipToken } from "@reduxjs/toolkit/query";
 
@@ -12,7 +17,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const token = getToken();
   const userId = getUserId();
@@ -22,9 +26,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isChecking, setIsChecking] = useState(true);
 
   // ✅ Fetch profile only if token + userId exist
-  const { data: profile, error, isLoading } = useGetProfileQuery(
-    token && userId ? { token, userId } : skipToken
-  );
+  const {
+    data: profile,
+    error,
+    isLoading
+  } = useGetProfileQuery(token && userId ? { token, userId } : skipToken);
 
   useEffect(() => {
     if (!token || !userId) {
@@ -33,16 +39,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       return;
     }
 
-    // Role-based allowed tabs
-    const roleTabs: { [key: string]: string[] } = {
-      Developer: ["1", "2", "3", "4"], // Tools, Profile, Analytics, Rating
-      Admin: ["1", "2", "5","6","7"], // Tools, Profile, Users,category,reviews
-      Reviewer: ["1", "2"], // Tools, Profile
+    // ✅ Role-based allowed tabs (fixed)
+    const roleTabs: Record<string, string[]> = {
+      Admin: ["1", "2", "3", "4", "5", "6", "7", "8", "9"], // ✅ All 9 tabs
+      Developer: ["1", "2", "3"], // Tools, Profile, Analytics
+      Reviewer: ["1", "2"] // Profile, Ratings
     };
 
     const allowedTabs = roleTabs[userType || "Reviewer"] || ["1"];
 
-    // ✅ Redirect to first allowed tab if no tab is present or tab is invalid
+    // ✅ Redirect if tab missing or invalid
     if (!tab || !allowedTabs.includes(tab)) {
       router.replace(`/dashboard?tab=${allowedTabs[0]}`);
       return;

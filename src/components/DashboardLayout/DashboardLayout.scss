@@ -184,3 +184,13 @@
     }
   }
 }
+
+
+.dashboard-content-wrapper {
+  padding: 20px;
+  min-height: 90vh;
+
+  @media (max-width: 768px) {
+    padding: 5px;
+  }
+}

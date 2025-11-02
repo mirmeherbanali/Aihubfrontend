@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../components/ui/style/CategoryGrid.module.scss";
+import { useRouter } from "next/navigation";
 
 interface CategoryGridProps {
   title: string;

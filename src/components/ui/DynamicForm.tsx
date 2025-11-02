@@ -78,7 +78,10 @@ function DynamicFormInner<T extends FieldValues>({
                     gridTemplateColumns: `repeat(${totalCols}, 1fr)`,
                     gap: "16px",
                     alignItems: "start",
-                    marginBottom: "16px"
+                    marginBottom:
+                      rowIdx === Object.values(groupedFields).length - 1
+                        ? "0"
+                        : "3px"
                   }
             }
           >
