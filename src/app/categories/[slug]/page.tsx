@@ -1,15 +1,31 @@
 "use client";
 
-import { useGetAllCategoriesQuery, useGetCategoryByIdQuery } from "@/features/dashboard/category/categoryApi";
+import {
+  useGetAllCategoriesQuery,
+  useGetCategoryByIdQuery
+} from "@/features/dashboard/category/categoryApi";
 import { notFound } from "next/navigation";
 import styles from "@/components/ui/style/CategoryPage.module.scss";
+import Loader from "@/components/Loader/Loader";
+import ToolDetails from "../tooldetails/page";
+import CategoryToolCard from "@/components/Category/CategoryToolCard";
+import FaqSection from "@/components/Category/FaqSection";
+import CategoryDescription from "@/components/Category/CategoryDescription";
 
-export default function CategorySlugPage({ params }: { params: { slug: string } }) {
+export default function CategorySlugPage({
+  params
+}: {
+  params: { slug: string };
+}) {
   // Decode URL slug
   const decodedSlug = decodeURIComponent(params.slug);
 
   // Fetch all categories to find the one that matches slug
-  const { data: allCategories, isLoading: catLoading, isError: catError } = useGetAllCategoriesQuery();
+  const {
+    data: allCategories,
+    isLoading: catLoading,
+    isError: catError
+  } = useGetAllCategoriesQuery();
 
   if (catLoading) {
     return (
@@ -23,8 +39,7 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
 
   // Find category by slug or name (depending on your logic)
   const category = allCategories.result.list.find(
-    (cat: any) =>
-      cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
+    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
   );
 
   if (!category) return notFound();
@@ -37,12 +52,15 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
   } = useGetCategoryByIdQuery({ categoryId: category._id! });
 
   if (detailLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <p>Loading tools...</p>
-      </div>
-    );
+    return <Loader />;
   }
+  // if (detailLoading) {
+  //   return (
+  //     <div className="h-screen flex items-center justify-center">
+  //       <p>Loading tools...</p>
+  //     </div>
+  //   );
+  // }
 
   if (detailError || !categoryDetail?.result?.list?.category) return notFound();
 
@@ -51,6 +69,19 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
 
   return (
     <div className={styles.categoryDetailPage}>
+      {/* <ToolDetails /> */}
+
+      <>
+        <CategoryDescription />
+        <CategoryToolCard />
+        <CategoryToolCard />
+        <CategoryToolCard />
+        <CategoryToolCard />
+        <CategoryToolCard />
+        <CategoryToolCard />
+        <FaqSection />
+      </>
+
       <h1 className="text-4xl font-bold mb-2">{categoryInfo.categoryName}</h1>
       <p className="text-gray-600 mb-6">{categoryInfo.categoryDescription}</p>
 

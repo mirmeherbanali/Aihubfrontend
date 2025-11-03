@@ -1,0 +1,79 @@
+/* --- Design Variables --- */
+$border-color: #e8e8e8;
+$text-color-primary: #111827;
+$text-color-secondary: #6b7280;
+$card-radius: 8px;
+$transition-speed: 0.3s;
+
+/* --- Main Section Container --- */
+.faqSection {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // Space between each question
+}
+
+/* --- Individual FAQ Item --- */
+.faqItem {
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: $card-radius;
+  overflow: hidden; // This is key for the max-height animation
+  transition: all $transition-speed ease;
+}
+
+/* --- Question Header (Clickable Area) --- */
+.faqHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.question {
+  font-size: 18px;
+  font-weight: 600;
+  color: $text-color-primary;
+  margin: 0;
+}
+
+.icon {
+  font-size: 24px;
+  color: $text-color-primary;
+  flex-shrink: 0;
+  transition: transform $transition-speed ease;
+}
+
+/* --- Answer Panel (Hidden by Default) --- */
+.answerWrapper {
+  // We animate max-height from 0 to a large-enough value
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height $transition-speed ease-out, padding $transition-speed ease-out;
+}
+
+.answer {
+  padding: 0 24px 20px 24px;
+  font-size: 16px;
+  color: $text-color-secondary;
+  line-height: 1.6;
+}
+
+/* --- OPEN STATE --- */
+// This class is added to .faqItem when it's open
+.faqItem.open {
+  .icon {
+    // Rotates the '+' into an 'x'
+    transform: rotate(45deg);
+  }
+
+  .answerWrapper {
+    // Set to a height larger than any possible answer
+    max-height: 200px;
+    transition: max-height $transition-speed ease-in;
+  }
+}
