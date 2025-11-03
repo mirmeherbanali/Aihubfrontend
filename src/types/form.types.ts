@@ -12,7 +12,10 @@ export type FieldType =
   | "image"
   | "button"
   | "password"
-  | "textarea"; // <-- added
+  | "textarea" // <-- added
+  | "faq" // 👈 added
+  | "multi-image"
+  | "chips";
 
 
 // Base props
@@ -20,11 +23,11 @@ interface BaseField {
   type: FieldType;
   label?: string;
   placeholder?: string;
-  options?: string[];
-  value?: string | string[];   // allow array for multi-select
+  options?: string[]  | { label: string; value: string }[];
+  value?: string | string[] | { label: string; value: string }[];   // allow array for multi-select and labeled options
   conditional?: {
     field: string;
-    value: string;
+    value: string | string[] ;
   };
   onChange?: (val: string | string[]) => void;
   fetchOptions?: () => Promise<string[]>;
@@ -42,7 +45,8 @@ interface BaseField {
 
 // Input-like fields (must have name)
 export interface InputField<T extends FieldValues> extends BaseField {
-  type: "input" | "password" | "image"| "textarea";
+  type: "input" | "password" | "image"| "textarea"| "multi-image"
+  | "chips";
   name: Path<T>;
 }
 
@@ -51,9 +55,10 @@ export interface DropdownField<T extends FieldValues> extends BaseField {
   type: "dropdown";
   name: Path<T>;
   multiple?: boolean;
-  value?: string | string[];
+  value?: string | string[] | { label: string; value: string }[];
   onChange?: (val: string | string[]) => void;
 }
+
 
 // Button fields (no name)
 export interface ButtonField extends BaseField {
@@ -61,11 +66,17 @@ export interface ButtonField extends BaseField {
   name?: never;
 }
 
+// FAQ Field Type
+export interface FAQField<T extends FieldValues> extends BaseField {
+  type: "faq";
+  name: Path<T>;
+}
 // Union type
 export type FormField<T extends FieldValues = FieldValues> =
   | InputField<T>
   | DropdownField<T>
-  | ButtonField;
+  | ButtonField
+  | FAQField<T>;
 
 // Dropzone props interface
 export interface DropzoneProps {
@@ -89,15 +100,23 @@ export interface DynamicFormProps<T extends FieldValues> {
 // Async dropdown props
 export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
   field: DropdownField<T>;   // only dropdowns allowed
-  value?: string | string[];
+  value?: string | string[] | { label: string; value: string }[];
   onChange?: (val: string | string[]) => void;
   error?: string;
 }
 
-export interface AuthResponse {
+export interface FAQFieldComponentProps {
+  name: string;
+  register: UseFormRegister<any>;
+}export interface AuthResponse {
   success: boolean;
   result: {
     message: string;
-    list?: any[];
+    list?: {
+      _id: string | undefined;
+      categoryName: ReactNode;
+      list?: any[];
+    }[];
   };
 }
+

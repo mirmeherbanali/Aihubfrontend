@@ -1,14 +1,38 @@
+"use client";
+
 import React from "react";
-import styles from "../../components/ui/style/CategoryGrid.module.scss";
 import { useRouter } from "next/navigation";
+import styles from "../../components/ui/style/CategoryGrid.module.scss";
+
 
 interface CategoryGridProps {
   title: string;
-  items: string[];
+  items: any[];
+  onSelect?: (item: any) => void;
+  searchQuery?: string;
 }
 
-const CategoryGrid: React.FC<CategoryGridProps> = ({ title, items }) => {
+const CategoryGrid: React.FC<CategoryGridProps> = ({
+  title,
+  items,
+  onSelect,
+  searchQuery = "",
+}) => {
   const router = useRouter();
+
+  const highlightMatch = (text: string) => {
+    if (!searchQuery) return text;
+    const regex = new RegExp(`(${searchQuery})`, "gi");
+    return text.replace(regex, "<mark>$1</mark>");
+  };
+
+  const handleClick = (item: any) => {
+    onSelect?.(item);
+    const slug =
+      item.categoryName
+        .toLowerCase()
+    router.push(`/categories/${slug}`); // 👈 navigate dynamically
+  };
 
   return (
     <section className={styles.categoryGrid}>
@@ -16,14 +40,13 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ title, items }) => {
       <div className={styles.grid}>
         {items.map((item, index) => (
           <button
-            onClick={() => {
-              router.push(`/categories/${item}`);
-            }}
             key={index}
             className={styles.gridItem}
-          >
-            {item}
-          </button>
+            onClick={() => handleClick(item)}
+            dangerouslySetInnerHTML={{
+              __html: highlightMatch(item.categoryName),
+            }}
+          />
         ))}
       </div>
     </section>

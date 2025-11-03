@@ -1,50 +1,31 @@
 import { z } from "zod";
 
+// ✅ File upload validator
 const fileSchema = z
   .instanceof(File)
   .or(z.string())
   .optional()
   .refine(
-    (file) => !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
-    "Image must be under 5MB"
+    (file) =>
+      !file || (file instanceof File && file.size <= 10 * 1024 * 1024),
+    "File must be under 10MB"
   );
 
-
+// ✅ Main Tools Schema (matches backend model)
 export const toolsSchema = z.object({
-  toolName: z.string().min(2, "Tool Name is required"),
-  shortDescription: z.string().min(10, "Short description is too short"),
-  detailedDescription: z.string().min(20, "Detailed description is too short"),
-
-  category: z.string().nonempty("Category is required"),
-  useCases: z.array(z.string()).min(1, "At least one Use Case is required"),
-  targetUsers: z.string().nonempty("Target User is required"),
-
-  pricingModel: z.enum(["Free", "Premium", "Subscription"], {
-    required_error: "Pricing model is required",
+  toolName: z.string().min(2, "Tool name is required"),
+  category: z.string().min(1, "Category is required"),
+  description: z.string().min(10, "Description is too short"),
+  pricingType: z.enum(["Free", "Paid", "Freemium"], {
+    required_error: "Pricing Type is required",
   }),
-
-  monthlyPrice: z
-    .string()
-    .optional()
-    .refine((val) => !val || !isNaN(Number(val)), {
-      message: "Monthly Price must be a number",
-    }),
-
   websiteUrl: z.string().url("Invalid website URL"),
-
-  feature1: z.string().optional(),
-  feature2: z.string().optional(),
-  feature3: z.string().optional(),
-  feature4: z.string().optional(),
-  feature5: z.string().optional(),
-
-  demoLink: z.string().url("Invalid YouTube link").optional(),
-
-  // Image fields just placeholders for now (can refine later)
-  logo: fileSchema,
-  screenshot1: fileSchema,
-  screenshot2: fileSchema,
-  screenshot3: fileSchema,
+  demoVideoUrl: z.string().url("Invalid demo video URL").optional(),
+  tags: z.array(z.string()).optional(),
+  features: z.array(z.string()).optional(),
+  logo: fileSchema.optional(),
+  screenshots: z.array(fileSchema).optional(),
+  
 });
 
 export type ToolsInput = z.infer<typeof toolsSchema>;

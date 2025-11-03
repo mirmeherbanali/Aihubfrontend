@@ -1,0 +1,40 @@
+.categorySection {
+  padding: 4rem 2rem;
+  background: #f9fafb;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  color: #555;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.error {
+  color: #d9534f;
+  text-align: center;
+
+  button {
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: #007bff;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background: #0056b3;
+    }
+  }
+}
+
+.empty {
+  color: #777;
+  font-size: 1.1rem;
+  text-align: center;
+}

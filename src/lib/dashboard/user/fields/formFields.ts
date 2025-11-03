@@ -20,7 +20,6 @@ export const addUserFields: FormField<any>[] = [
     row: 1,
     col: 1
   },
-
   // Last Name
   {
     type: "input",

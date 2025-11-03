@@ -46,9 +46,11 @@ export default function Navbar() {
   }, []);
 
   const handleLoginClick = useCallback(() => {
-    setIsLogin(true);
-    setMenuOpen(false);
-  }, [setIsLogin]);
+  console.time("⏩ Navigate to login");
+  setIsLogin(true);
+  setMenuOpen(false);
+  console.log("🖱️ Login clicked");
+}, [setIsLogin]);
 
   // ✅ Prefetch important routes
   useEffect(() => {
@@ -57,6 +59,8 @@ export default function Navbar() {
     router.prefetch("/categories");
     router.prefetch("/auth/login");
   }, [router]);
+
+  
 
   return (
     <header className={styles.header}>

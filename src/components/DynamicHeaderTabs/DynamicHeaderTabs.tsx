@@ -11,16 +11,24 @@ interface TabAction {
 interface DynamicHeaderTabsProps {
   actions: TabAction[];
   defaultActive?: number;
+  activeIndex?: number; // new
+  onTabChange?: (index: number) => void; // optional callback
 }
 
 const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
   actions,
-  defaultActive = 0
+  defaultActive = 0,
+  activeIndex: externalActiveIndex,
+  onTabChange
 }) => {
-  const [activeIndex, setActiveIndex] = useState<number>(defaultActive);
+  const [internalActiveIndex, setInternalActiveIndex] = useState<number>(defaultActive);
+
+  const isControlled = externalActiveIndex !== undefined;
+  const activeIndex = isControlled ? externalActiveIndex : internalActiveIndex;
 
   const handleTabClick = (index: number, action: TabAction) => {
-    setActiveIndex(index);
+    if (!isControlled) setInternalActiveIndex(index);
+    if (onTabChange) onTabChange(index); // notify parent
     if (action.onClick) action.onClick();
   };
 
@@ -28,7 +36,6 @@ const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
     <div className="dynamic-tabs">
       {actions.map((action, index) => {
         const isActive = index === activeIndex;
-
         return (
           <button
             key={index}
@@ -44,3 +51,4 @@ const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
 };
 
 export default DynamicHeaderTabs;
+
