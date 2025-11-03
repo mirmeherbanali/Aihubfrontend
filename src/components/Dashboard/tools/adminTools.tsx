@@ -72,7 +72,7 @@ const AdminTools = () => {
       const formData = new FormData();
       const submissionData = {
         ...data,
-        developerId: userId,
+        userId:userId,
         created_by: userId,
         status: "Approved",
       };

@@ -1,14 +1,21 @@
-.detailPage {
-  padding: 3rem;
-  text-align: center;
-  h1 {
-    font-size: 2.5rem;
-    color: #333;
-    text-transform: capitalize;
+.categoryDetailPage {
+  padding: 2rem;
+
+  .toolsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
   }
-  .desc {
-    margin-top: 1rem;
-    color: #555;
-    font-size: 1.2rem;
+
+  .toolCard {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
   }
 }

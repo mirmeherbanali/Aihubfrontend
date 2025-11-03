@@ -48,9 +48,9 @@ export const createRegisterHandler = (
       const apiData: any = { ...rest };
 
       // If AdminUser → add extra fields + remove userType
-      if (userType === "AdminUser" && userId) {
+      if (userType === "Admin" && userId) {
         apiData.status = "Active";
-        apiData.AdminId = userId;
+        apiData.adminId = userId;
       }
       console.log("Register data:", apiData);
 
