@@ -2,19 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import PageHero from "../Hero/PageHero";
-import Categories from "./categories";
+import Categories from "./Categories";
 import FeaturedTools from "./FeaturedTools";
 import LatestNews from "./LatestNews";
+import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
+import { useGetAllToolsQuery } from "@/features/tools/toolsApi";
 
 export default function HomePage() {
   const router = useRouter();
 
-  // Dummy navigation to Dashboard
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: toolsData } = useGetAllToolsQuery();
+
+  const categories = categoriesData?.result?.list || [];
+  const tools = toolsData?.result?.list?.list || [];
+
+  // Navigate to dashboard
   const handleClick = () => {
-    console.log("CTA clicked");
     router.push("/dashboard?tab=1");
   };
-
+console.log("categories",categories)
   return (
     <>
       <PageHero
@@ -26,9 +33,23 @@ export default function HomePage() {
         onBtnClick={handleClick}
       />
 
-      <Categories />
+      <Categories
+        categoryData={categories}
+        onViewAll={(slug: string) =>
+          router.push(`/categories/${encodeURIComponent(slug)}`)
+        }
+      />
+
       <LatestNews />
-      <FeaturedTools />
+
+      <FeaturedTools
+        toolData={tools}
+        onToolClick={(tool, category) =>
+          router.push(
+            `/categories/${encodeURIComponent(category.categoryName)}/tooldetails/${encodeURIComponent(tool.toolName)}`
+          )
+        }
+      />
     </>
   );
 }
