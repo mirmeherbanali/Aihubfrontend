@@ -3,27 +3,40 @@
 import React from "react";
 import styles from "../../components/ui/style/featuredTools.module.scss";
 
+interface Category {
+  _id: string;
+  categoryName: string;
+  slug?: string;
+}
+
 interface Tool {
   _id: string;
   toolName: string;
   desc?: string;
-  category: { _id: string; categoryName: string }[];
+  category: Category[];
   imageUrl?: string;
 }
 
 interface FeaturedToolsProps {
   toolData: Tool[];
-  onToolClick: (tool: Tool, category: { _id: string; categoryName: string }) => void;
+  allCategories: Category[];
+  onToolClick: (tool: Tool, category: Category) => void;
 }
 
-const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, onToolClick }) => {
+const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, onToolClick }) => {
   return (
     <section className={styles.featuredTools}>
       <h2>Featured Tools</h2>
 
       <div className={styles.grid}>
         {toolData.map((tool) => {
-          const category = tool.category?.[0];
+          // Find category using _id match
+          const categoryId = tool?.category?.[0]?._id;
+          const category = allCategories.find((c) => c._id === categoryId);
+
+          // Debug logs
+          console.log("🧠 Tool:", tool.toolName, "| Category:", category);
+
           return (
             <div
               key={tool._id}
@@ -35,7 +48,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, onToolClick }) 
                 alt={tool.toolName}
               />
               <h3>{tool.toolName}</h3>
-              <p>{tool.desc}</p>
+              <p>{tool.desc || "No description available."}</p>
             </div>
           );
         })}

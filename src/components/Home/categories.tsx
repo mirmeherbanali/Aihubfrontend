@@ -11,20 +11,27 @@ interface Category {
 
 interface CategoriesProps {
   categoryData: Category[];
-  onViewAll: (slug: string) => void;
+  onCategoryClick: (slug: string) => void;
+  onViewAllClick: () => void;
 }
 
-const Categories: React.FC<CategoriesProps> = ({ categoryData, onViewAll }) => {
-  console.log("categoryData",categoryData)
+const Categories: React.FC<CategoriesProps> = ({
+  categoryData,
+  onCategoryClick,
+  onViewAllClick,
+}) => {
+  console.log("categoryData", categoryData);
+
   return (
     <section className={styles.categoriesSection}>
       <h1 className={styles.heading}>Top Categories</h1>
+
       <div className={styles.grid}>
         {categoryData.map((cat) => (
           <div
             key={cat._id}
             className={styles.card}
-            onClick={() => onViewAll(cat.categoryName)}
+            onClick={() => onCategoryClick(cat.categoryName)} // 👈 only category click
           >
             <div className={styles.icon}>{cat.icon || "📌"}</div>
             <p>{cat.categoryName}</p>
@@ -34,10 +41,9 @@ const Categories: React.FC<CategoriesProps> = ({ categoryData, onViewAll }) => {
 
       <div className={styles.viewAllWrapper}>
         <button
+          type="button"
           className={styles.viewAllBtn}
-          onClick={() =>
-            categoryData.length > 0 && onViewAll(categoryData[0].categoryName)
-          }
+          onClick={() => onViewAllClick()} // 👈 only view all click
         >
           View All <span>›</span>
         </button>

@@ -17,11 +17,22 @@ export default function HomePage() {
   const categories = categoriesData?.result?.list || [];
   const tools = toolsData?.result?.list?.list || [];
 
-  // Navigate to dashboard
-  const handleClick = () => {
-    router.push("/dashboard?tab=1");
+  // 🧭 Handlers
+  const handleCategoryClick = (slug: string) => {
+    router.push(`/categories/${encodeURIComponent(slug)}`);
   };
-console.log("categories",categories)
+
+  const handleViewAllClick = () => {
+    router.push("/categories");
+  };
+
+  const handleToolClick = (tool: any, category: any) => {
+    const categorySlug = category.categoryName;
+    router.push(
+      `/categories/${encodeURIComponent(categorySlug)}/tooldetails/${encodeURIComponent(tool.toolName)}`
+    );
+  };
+
   return (
     <>
       <PageHero
@@ -30,25 +41,21 @@ console.log("categories",categories)
         queryPlaceholder="Search for Tools & Categories"
         onSearch={(query) => console.log("Searching:", query)}
         btnText="Add Your Tool"
-        onBtnClick={handleClick}
+        onBtnClick={() => router.push("/dashboard?tab=1")}
       />
 
       <Categories
         categoryData={categories}
-        onViewAll={(slug: string) =>
-          router.push(`/categories/${encodeURIComponent(slug)}`)
-        }
+        onCategoryClick={handleCategoryClick}
+        onViewAllClick={handleViewAllClick}
       />
 
       <LatestNews />
 
       <FeaturedTools
         toolData={tools}
-        onToolClick={(tool, category) =>
-          router.push(
-            `/categories/${encodeURIComponent(category.categoryName)}/tooldetails/${encodeURIComponent(tool.toolName)}`
-          )
-        }
+        allCategories={categories}
+        onToolClick={handleToolClick}
       />
     </>
   );
