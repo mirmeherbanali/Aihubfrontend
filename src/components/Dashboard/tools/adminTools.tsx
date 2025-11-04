@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import moment from "moment";
-
+import { useRouter } from "next/navigation";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import DynamicTable from "@/components/ui/common/DynamicTable";
 import DynamicForm from "@/components/ui/DynamicForm";
@@ -21,7 +21,7 @@ const AdminTools = () => {
   const userId = getUserId();
   const [tab, setTab] = useState(1);
   const [editTool, setEditTool] = useState<Tool | null>(null);
-  console.log("editTool",editTool)
+  const router = useRouter();
 
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
@@ -103,7 +103,7 @@ const AdminTools = () => {
       key: "category",
       label: "Category",
       render: (tool) => {
-        const category = categories.find((c) => c._id === tool?.category?._id);
+        const category = categories.find((c) => c._id === tool?.category[0]?._id);
         return category ? category.categoryName : "—";
       },
     },
@@ -121,8 +121,26 @@ const AdminTools = () => {
   const actions: TableAction<Tool>[] = [
     {
       label: "View",
-      onClick: (row) => alert(`👤 Viewing: ${row.toolName}`),
+      onClick: (row) => {
+      if (!row.category || row.category.length === 0) return;
+
+      // Find the full category object from categories array
+      const category = categories.find(
+        (c) => c._id === row.category[0]?._id
+      );
+
+      // If category not found, do nothing
+      if (!category) return;
+
+      const categoryName = category.categoryName;
+      const toolName = row.toolName;
+
+      // Navigate to dynamic tool details page
+      router.push(
+        `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`
+      );
     },
+  },
     {
       label: "Edit",
       onClick: (row) => {

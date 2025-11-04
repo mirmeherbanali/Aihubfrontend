@@ -2,113 +2,76 @@
 
 import {
   useGetAllCategoriesQuery,
-  useGetCategoryByIdQuery
+  useGetCategoryByIdQuery,
 } from "@/features/dashboard/category/categoryApi";
+import { skipToken } from "@reduxjs/toolkit/query/react";
 import { notFound } from "next/navigation";
-import styles from "@/components/ui/style/CategoryPage.module.scss";
 import Loader from "@/components/Loader/Loader";
-import ToolDetails from "../tooldetails/page";
+import CategoryDescription from "@/components/Category/CategoryDescription";
 import CategoryToolCard from "@/components/Category/CategoryToolCard";
 import FaqSection from "@/components/Category/FaqSection";
-import CategoryDescription from "@/components/Category/CategoryDescription";
 
-export default function CategorySlugPage({
-  params
-}: {
-  params: { slug: string };
-}) {
-  // Decode URL slug
+export default function CategorySlugPage({ params }: { params: { slug: string } }) {
   const decodedSlug = decodeURIComponent(params.slug);
 
-  // Fetch all categories to find the one that matches slug
-  const {
-    data: allCategories,
-    isLoading: catLoading,
-    isError: catError
-  } = useGetAllCategoriesQuery();
+  // Step 1: Fetch all categories
+  const { data: allCategories, isLoading: catLoading, isError: catError } =
+    useGetAllCategoriesQuery();
 
-  if (catLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <p>Loading category...</p>
-      </div>
-    );
-  }
-
+  if (catLoading) return <Loader />;
   if (catError || !allCategories?.result?.list) return notFound();
 
-  // Find category by slug or name (depending on your logic)
-  const category = allCategories.result.list.find(
-    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
-  );
+  // Step 2: Find category by slug
+  const category =
+    allCategories.result.list.find(
+      (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
+    ) ?? null;
 
   if (!category) return notFound();
 
-  // Fetch category details + tools by categoryId
-  const {
-    data: categoryDetail,
-    isLoading: detailLoading,
-    isError: detailError
-  } = useGetCategoryByIdQuery({ categoryId: category._id! });
+  const categoryId = category._id;
 
-  if (detailLoading) {
-    return <Loader />;
-  }
-  // if (detailLoading) {
-  //   return (
-  //     <div className="h-screen flex items-center justify-center">
-  //       <p>Loading tools...</p>
-  //     </div>
-  //   );
-  // }
+  // Step 3: Fetch category details
+  const { data: categoryDetail, isLoading: detailLoading, isError: detailError } =
+    useGetCategoryByIdQuery(categoryId ? { categoryId } : skipToken);
 
-  if (detailError || !categoryDetail?.result?.list?.category) return notFound();
+  // Show 404 if category details fail
+  if (detailError) return notFound();
 
-  const tools = categoryDetail.result.list.tools || [];
-  const categoryInfo = categoryDetail.result.list.category;
+  // Extract info if data is available
+  const categoryInfo = categoryDetail?.result?.list?.category;
+  const tools = categoryDetail?.result?.list?.tools || [];
+  const faqs = categoryInfo?.faqs || [];
 
   return (
-    <div className={styles.categoryDetailPage}>
-      {/* <ToolDetails /> */}
+    <div className="flex flex-col gap-8 p-6">
+      {/* Always show category description immediately */}
+      <CategoryDescription
+        title={category.categoryName}
+        description={category.categoryDescription}
+      />
 
-      <>
-        <CategoryDescription />
-        <CategoryToolCard />
-        <CategoryToolCard />
-        <CategoryToolCard />
-        <CategoryToolCard />
-        <CategoryToolCard />
-        <CategoryToolCard />
-        <FaqSection />
-      </>
-
-      <h1 className="text-4xl font-bold mb-2">{categoryInfo.categoryName}</h1>
-      <p className="text-gray-600 mb-6">{categoryInfo.categoryDescription}</p>
-
-      {tools.length > 0 ? (
-        <div className={styles.toolsGrid}>
-          {tools.map((tool: any) => (
-            <div key={tool._id} className={styles.toolCard}>
-              <h3 className="font-semibold">{tool.toolName}</h3>
-              <p className="text-gray-500 mb-2">{tool.description}</p>
-              <p className="text-sm text-gray-400">
-                Type: {tool.pricingType} | Status: {tool.status}
-              </p>
-              {tool.websiteUrl && (
-                <a
-                  href={tool.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 text-sm mt-2 inline-block"
-                >
-                  Visit Website
-                </a>
-              )}
-            </div>
-          ))}
+      {/* Show loader for tools & FAQs while category details are loading */}
+      {detailLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader />
         </div>
       ) : (
-        <p>No tools found in this category.</p>
+        <>
+          {/* Tools Section */}
+          {tools.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tools.map((tool: any) => (
+                <CategoryToolCard key={tool._id} tool={tool} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center">No tools found in this category.</p>
+          )}
+
+          {/* FAQ Section */}
+          {faqs.length > 0 && <FaqSection faqs={faqs} />}
+        </>
       )}
     </div>
   );

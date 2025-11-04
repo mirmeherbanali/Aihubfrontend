@@ -1,59 +1,95 @@
 "use client";
+
 import React from "react";
 import styles from "@/components/ui/style/ToolMainContent.module.scss";
 import { FaPlay } from "react-icons/fa6";
 import ReviewSection from "./ReviewSection";
 
-const ToolMainContent = () => {
+interface ToolMainContentProps {
+  tool: any; // Replace 'any' with your Tool type if available
+}
+
+const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool }) => {
+  if (!tool) return null; // Safety check for progressive loading
+
   return (
     <>
       <div className={styles.mainContent}>
         {/* Description */}
         <div className={styles.descriptionBox}>
-          <h2>Tool C Description</h2>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non
-            tortor sodales, tempor orci et, facilisis odio. Suspendisse varius,
-            nibh finibus tincidunt lobortis, sapien nunc maximus eros.
-          </p>
-          <p>
-            Curabitur pellentesque sed urna vitae cursus. Donec molestie orci
-            molestie massa condimentum, non interdum lacus elementum.
-          </p>
+          <h2>{tool.toolName || "Tool Name"} Description</h2>
+          <p>{tool.description || "No description available."}</p>
         </div>
 
         {/* Features */}
-        <div className={styles.featuresBox}>
-          <h3>Key Features</h3>
-          <ul>
-            <li>Key Feature 1</li>
-            <li>Key Feature 2</li>
-            <li>Key Feature 3</li>
-            <li>Key Feature 4</li>
-            <li>Key Feature 5</li>
-          </ul>
-        </div>
+        {tool.features?.length > 0 && (
+          <div className={styles.featuresBox}>
+            <h3>Key Features</h3>
+            <ul>
+              {tool.features.map((feature: string, idx: number) => (
+                <li key={idx}>{feature}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Screenshots */}
-        <div className={styles.screenshotsBox}>
-          <h3>Screenshots</h3>
-          <div className={styles.screenshotGrid}>
-            <div className={styles.mainScreenshot}>Screenshot 1</div>
-            <div className={styles.sideScreenshots}>
-              <button className={styles.active}>Screenshot 1</button>
-              <button>Screenshot 2</button>
-              <button>Screenshot 3</button>
+        {tool.screenshots?.length > 0 && (
+          <div className={styles.screenshotsBox}>
+            <h3>Screenshots</h3>
+            <div className={styles.screenshotGrid}>
+              <div className={styles.mainScreenshot}>
+                <img
+                  src={tool.screenshots[0]}
+                  alt="Main Screenshot"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>
+              <div className={styles.sideScreenshots}>
+                {tool.screenshots.map((shot: string, idx: number) => (
+                  <button
+                    key={idx}
+                    className={idx === 0 ? styles.active : ""}
+                    onClick={() => {
+                      // Optional: Implement screenshot switching logic here
+                    }}
+                  >
+                    Screenshot {idx + 1}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Video */}
-        <div className={styles.videoBox}>
-          <h3>Video</h3>
-          <div className={styles.videoPlayer}>
-            <FaPlay className={styles.playIcon} />
+        {tool.demoVideoUrl && (
+          <div className={styles.videoBox}>
+            <h3>Video</h3>
+            <div className={styles.videoPlayer}>
+              <a
+                href={tool.demoVideoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.playIconWrapper}
+              >
+                <FaPlay className={styles.playIcon} />
+              </a>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Tags */}
+        {tool.tags?.length > 0 && (
+          <div className={styles.tagsBox}>
+            <h3>Tags</h3>
+            <div className={styles.tagsGrid}>
+  <span className={styles.tag}>{tool.tags.join(", ")}</span>
+</div>
+
+
+          </div>
+        )}
       </div>
 
       <ReviewSection />

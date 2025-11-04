@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import styles from "../../ui/style/ToolCardHeader.module.scss";
 import {
@@ -8,36 +9,58 @@ import {
   FaArrowUpRightFromSquare
 } from "react-icons/fa6";
 
-const ToolCardHeader = () => {
+interface ToolCardHeaderProps {
+  tool: any;      // You can replace 'any' with your tool type
+  category: any;  // You can replace 'any' with your category type
+}
+
+const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({ tool, category }) => {
+  if (!tool || !category) return null; // Safety check for progressive loading
+
+  console.log("tool",tool)
+  // Example: dynamically compute star rating
+  const rating = tool.rating || 3.5; // default if no rating
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
   return (
     <div className={styles.toolCard}>
       <div className={styles.toolLeft}>
         <img
-          src="https://via.placeholder.com/80"
-          alt="Tool Logo"
+          src={tool.logo || "https://via.placeholder.com/80"}
+          alt={tool.toolName || "Tool Logo"}
           className={styles.toolLogo}
         />
         <div className={styles.toolInfo}>
-          <h3 className={styles.toolName}>Tool C</h3>
+          <h3 className={styles.toolName}>{tool.toolName || "Tool Name"}</h3>
+          <p className={styles.categoryName}>{category.categoryName}</p>
         </div>
       </div>
 
       <div className={styles.toolRight}>
         <div className={styles.ratingSection}>
           <div className={styles.stars}>
-            <FaStar />
-            <FaStar />
-            <FaStar />
-            <FaStarHalf />
-            <FaRegStar />
+            {Array(fullStars).fill(null).map((_, i) => (
+              <FaStar key={"full-" + i} />
+            ))}
+            {halfStar && <FaStarHalf />}
+            {Array(emptyStars).fill(null).map((_, i) => (
+              <FaRegStar key={"empty-" + i} />
+            ))}
           </div>
-          <div className={styles.ratingText}>3.5/5</div>
-          <div className={styles.reviewCount}>(721)</div>
+          <div className={styles.ratingText}>{rating.toFixed(1)}/5</div>
+          <div className={styles.reviewCount}>({tool.reviewCount || 0})</div>
         </div>
 
-        <button className={styles.visitBtn}>
+        <a
+          href={tool.website || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.visitBtn}
+        >
           Visit <FaArrowUpRightFromSquare />
-        </button>
+        </a>
       </div>
     </div>
   );
