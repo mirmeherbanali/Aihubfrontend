@@ -1,0 +1,209 @@
+/* --- Design Variables --- */
+$border-color: #e8e8e8;
+$light-grey-bg: #f9fafb;
+$text-color-primary: #111827;
+$text-color-secondary: #6b7280;
+$star-color: #f59e0b; // Amber/gold
+$card-radius: 12px;
+$card-padding: 24px;
+
+/* --- Breakpoints --- */
+$breakpoint-tablet: 1024px;
+$breakpoint-mobile: 768px;
+
+/* --- Main Card Container --- */
+.toolCard {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  border: 1px solid $border-color;
+  border-radius: $card-radius;
+  padding: $card-padding;
+  max-width: 900px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  overflow: hidden; // Prevents weird overflow issues
+
+  // --- Mobile Padding ---
+  @media (max-width: $breakpoint-mobile) {
+    padding: 16px;
+  }
+}
+
+/* --- Card Header Section --- */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+
+  // --- Tablet: Wrap rating/price to new line ---
+  @media (max-width: $breakpoint-tablet) {
+    flex-wrap: wrap;
+    // Justify content to space out items on their respective lines
+    justify-content: space-between;
+  }
+
+  // --- Mobile: Stack everything ---
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+    align-items: stretch; // Make all items full-width
+  }
+}
+
+// 1. Logo
+.logoContainer {
+  width: 80px;
+  height: 80px;
+  background-color: #dde1e6;
+  border-radius: 10px;
+  flex-shrink: 0;
+
+  // --- Mobile: Center and shrink logo ---
+  @media (max-width: $breakpoint-mobile) {
+    width: 60px;
+    height: 60px;
+    align-self: center; // Center logo in the flex column
+  }
+}
+
+// 2. Tool Name
+.toolName {
+  flex-grow: 1; // Takes up remaining space
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-color-primary;
+
+  // --- Mobile: Center and shrink text ---
+  @media (max-width: $breakpoint-mobile) {
+    flex-grow: 0; // Don't grow in a column
+    font-size: 24px;
+    text-align: center;
+  }
+}
+
+// 3. Rating
+.rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex-shrink: 0;
+
+  .stars {
+    color: $star-color;
+    font-size: 20px;
+    display: flex;
+    gap: 2px;
+  }
+
+  .ratingCount {
+    font-size: 14px;
+    color: $text-color-secondary;
+  }
+
+  // --- Tablet: Grow to fill 50% of the wrapped line ---
+  @media (max-width: $breakpoint-tablet) {
+    flex-grow: 1;
+    flex-basis: 200px; // Give it a base width to ensure wrapping
+  }
+
+  // --- Mobile: Center-align stars and text ---
+  @media (max-width: $breakpoint-mobile) {
+    flex-grow: 0;
+    align-items: center; // Center the star container and text
+  }
+}
+
+// 4. Price Box
+.priceBox {
+  background-color: $light-grey-bg;
+  border: 1px solid $border-color;
+  border-radius: $card-radius;
+  padding: 12px 16px;
+  text-align: left;
+  flex-shrink: 0;
+
+  .priceLabel {
+    display: block;
+    font-size: 12px;
+    color: $text-color-secondary;
+    margin-bottom: 4px;
+  }
+
+  .priceAmount {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-color-primary;
+  }
+
+  // --- Tablet: Grow to fill 50% of the wrapped line ---
+  @media (max-width: $breakpoint-tablet) {
+    flex-grow: 1;
+    flex-basis: 200px; // Give it a base width
+  }
+
+  // --- Mobile: Center text ---
+  @media (max-width: $breakpoint-mobile) {
+    flex-grow: 0;
+    text-align: center;
+  }
+}
+
+/* --- Short Description --- */
+.shortDescription {
+  font-size: 16px;
+  color: $text-color-secondary;
+  margin: 0;
+  margin-bottom: 24px;
+
+  // --- Mobile: Center text ---
+  @media (max-width: $breakpoint-mobile) {
+    text-align: center;
+    font-size: 15px;
+  }
+}
+
+/* --- Key Features Section --- */
+.features {
+  .featuresTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: $text-color-primary;
+    margin-bottom: 12px;
+
+    // --- Mobile: Center text ---
+    @media (max-width: $breakpoint-mobile) {
+      text-align: center;
+    }
+  }
+
+  .featuresList {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      color: $text-color-primary;
+
+      &::before {
+        content: '◆';
+        font-size: 14px;
+        color: $text-color-primary;
+      }
+
+      // --- Mobile: Shrink font ---
+      @media (max-width: $breakpoint-mobile) {
+        font-size: 15px;
+      }
+    }
+  }
+}

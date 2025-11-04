@@ -1,0 +1,48 @@
+.toolPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background: #f9fafc;
+  padding: 1rem;
+}
+
+.headerSection {
+  width: 100%;
+}
+
+/* Layout wrapper for both main + sidebar */
+.pageLayout {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 90%;
+  margin-top: 2rem;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    width: 95%;
+  }
+}
+
+/* White box for main content */
+.mainSection {
+  flex: 0 0 70%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  @media (max-width: 1024px) {
+    flex: 1 1 100%;
+  }
+}
+
+/* Sidebar area */
+.sidebarSection {
+  flex: 0 0 15%;
+  @media (max-width: 1024px) {
+    flex: 1 1 100%;
+  }
+}

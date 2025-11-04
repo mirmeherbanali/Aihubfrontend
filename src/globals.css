@@ -107,7 +107,12 @@ body {
 .error {
   color: #d32f2f;
   font-size: 0.875rem;
-  margin-top: 0.25rem;
+  /* margin-top: 0.25rem; */
+}
+
+.Input_error__Tbbjl{
+  margin-top: 0px;
+  margin-bottom: -20px;
 }
 
 .password-input {
