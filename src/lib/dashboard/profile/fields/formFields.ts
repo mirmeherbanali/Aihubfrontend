@@ -10,8 +10,8 @@ export const generateProfileFields = (userType: string): FormField<any>[] => {
     { type: "input", name: "email", label: "Email", placeholder: "Enter email", row: 2, col: 3 },
 
     // Row 2: Industry + Country
-    { type: "dropdown", name: "industry", label: "Industry", options: ["IT", "Finance", "Healthcare", "Education", "Other"], row: 3, col: 1 },
-    { type: "dropdown", name: "country", label: "Country", options: ["India", "USA", "UK", "Canada", "Other"], row: 3, col: 2 },
+    { type: "input", name: "industry", label: "Industry",placeholder: "Enter Industry name", row: 3, col: 1 },
+    { type: "input", name: "country", label: "Country",placeholder: "Enter Country name" , row: 3, col: 2 },
   ];
 
   const developerFields: FormField<any>[] = [

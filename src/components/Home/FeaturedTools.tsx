@@ -33,7 +33,6 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, 
           // Find category using _id match
           const categoryId = tool?.category?.[0]?._id;
           const category = allCategories.find((c) => c._id === categoryId);
-
           // Debug logs
           console.log("🧠 Tool:", tool.toolName, "| Category:", category);
 

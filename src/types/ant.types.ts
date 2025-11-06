@@ -9,6 +9,7 @@ export interface InputProps {
   style?: React.CSSProperties;
   wrapperStyle?: React.CSSProperties;
   icon?: React.ReactNode; // ← accept icon here
+  disabled?: boolean;
 }
 
 export interface ButtonProps {

@@ -55,7 +55,7 @@ export default function AuthForm() {
     />
   ) : (
     <DynamicForm
-      fields={registerFields}
+      fields={registerFields()}
       control={registerControl}
       handleSubmit={registerSubmit}
       onSubmit={onRegisterSubmit}

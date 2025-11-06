@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import styles from "../../ui/style/Navbar.module.scss";
 import { useAuthToggle } from "@/context/AuthToggleContext";
 import { getToken, clearAuthData } from "@/utils/authStorage";
-import Image from "next/image"
+import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
@@ -14,57 +14,59 @@ export default function Navbar() {
   const { setIsLogin } = useAuthToggle();
   const [menuOpen, setMenuOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
-  // ✅ Optimized token loading - only once
+  // ✅ Load token once
   useEffect(() => {
     setToken(getToken());
   }, []);
 
-  // ✅ Prevent body scroll with cleanup
+  // ✅ Prevent scroll when menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
-    return () => {
-      document.body.style.overflow = "auto";
-    };
+    return () => (document.body.style.overflow = "auto");
   }, [menuOpen]);
 
-  // ✅ Memoize active path check
   const isActive = useCallback((path: string) => pathname === path, [pathname]);
 
-  // ✅ Optimized logout handler
+  // ✅ Logout handler with popup + loading + redirect
   const handleLogout = useCallback(() => {
+    setShowConfirm(true);
+  }, []);
+
+  const confirmLogout = useCallback(async () => {
+    setLoadingLogout(true);
+    setShowConfirm(false);
+    await new Promise((resolve) => setTimeout(resolve, 1200)); // fake loading delay
     clearAuthData();
     setToken(null);
     setMenuOpen(false);
-    // Use replace instead of push for immediate navigation
     router.replace("/auth/login");
+    setLoadingLogout(false);
   }, [router]);
 
-  // ✅ Memoize navigation handlers
   const handleLinkClick = useCallback(() => {
     setMenuOpen(false);
   }, []);
 
   const handleLoginClick = useCallback(() => {
-  console.time("⏩ Navigate to login");
-  setIsLogin(true);
-  setMenuOpen(false);
-  console.log("🖱️ Login clicked");
-}, [setIsLogin]);
+    console.time("⏩ Navigate to login");
+    setIsLogin(true);
+    setMenuOpen(false);
+    console.log("🖱️ Login clicked");
+  }, [setIsLogin]);
 
-  // ✅ Prefetch important routes
+  // ✅ Prefetch likely pages
   useEffect(() => {
-    // Prefetch likely next pages
     router.prefetch("/");
     router.prefetch("/categories");
     router.prefetch("/auth/login");
   }, [router]);
 
-  
-
   return (
     <header className={styles.header}>
-      {/* Logo with optimized Link */}
+      {/* Logo */}
       <div className={styles.logo}>
         <Link href="/" prefetch>
           Allisted
@@ -73,8 +75,8 @@ export default function Navbar() {
 
       {/* Desktop Menu */}
       <nav className={styles.desktopMenu}>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className={isActive("/") ? styles.active : ""}
           prefetch
         >
@@ -98,7 +100,7 @@ export default function Navbar() {
                 src="/default-avatar.png"
                 alt="Profile"
                 className={styles.profileImage}
-                loading="eager" // ✅ Important for above-fold images
+                loading="eager"
               />
             </Link>
           </>
@@ -123,14 +125,16 @@ export default function Navbar() {
         onClick={() => setMenuOpen(!menuOpen)}
         role="button"
         tabIndex={0}
-        onKeyPress={(e) => e.key === 'Enter' && setMenuOpen(!menuOpen)}
+        onKeyPress={(e) => e.key === "Enter" && setMenuOpen(!menuOpen)}
       >
         {menuOpen ? "✖" : "☰"}
       </div>
 
       {/* Mobile Menu */}
       <div
-        className={`${styles.mobileMenu} ${menuOpen ? styles.menuOpen : ""}`}
+        className={`${styles.mobileMenu} ${
+          menuOpen ? styles.menuOpen : ""
+        }`}
       >
         <Link
           href="/"
@@ -161,13 +165,13 @@ export default function Navbar() {
               prefetch
             >
               <Image
-  src="/default-avatar.png"
-  alt="Profile"
-  width={32}
-  height={32}
-  className={styles.profileImage}
-  priority // ✅ For above-fold images
-/>  
+                src="/default-avatar.png"
+                alt="Profile"
+                width={32}
+                height={32}
+                className={styles.profileImage}
+                priority
+              />
             </Link>
           </>
         ) : (
@@ -186,6 +190,34 @@ export default function Navbar() {
           </>
         )}
       </div>
+
+      {/* ✅ Logout Confirmation Popup */}
+      {showConfirm && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmBox}>
+            <p>Are you sure you want to logout?</p>
+            <div className={styles.confirmActions}>
+              <button onClick={confirmLogout} className={styles.yesBtn}>
+                Yes
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className={styles.noBtn}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Loading Animation */}
+      {loadingLogout && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loader}></div>
+          <p>Logging out...</p>
+        </div>
+      )}
     </header>
   );
 }

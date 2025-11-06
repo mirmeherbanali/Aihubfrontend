@@ -20,6 +20,8 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "POST",
       }),
       providesTags: ["Category"],
+      keepUnusedDataFor: 300,
+      
     }),
     getCategoryById: builder.query<AuthResponse, { categoryId: string }>({
       query: ({ categoryId }) => ({
@@ -28,6 +30,7 @@ export const categoryApi = baseApi.injectEndpoints({
         body: { categoryId },
       }),
       providesTags: ["Category"],
+      
     }),
     updateCategory: builder.mutation<AuthResponse, AddCategoryInput & { id: string }>({
       query: ({ id, ...body }) => ({

@@ -139,6 +139,101 @@
   cursor: pointer;
   font-weight: 500;
 }
+.deleteBtn:hover {
+  background: #b71c1c;
+}
+
+/* Popup Overlay */
+.popupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Popup Box */
+.popupBox {
+  background: #fff;
+  padding: 24px 30px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transform: scale(0.9);
+  animation: scaleIn 0.25s ease-out forwards;
+}
+
+.popupBox h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #d32f2f;
+}
+
+.popupBox p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.popupButtons {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.confirmBtn {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.cancelBtn {
+  background: #eee;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.confirmBtn:hover {
+  background: #b71c1c;
+}
+
+.cancelBtn:hover {
+  background: #ddd;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 
 /* 📱 Responsive design */
 @media (max-width: 768px) {

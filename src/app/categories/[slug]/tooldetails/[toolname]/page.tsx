@@ -1,67 +1,71 @@
 "use client";
 
-import React from "react";
-import { useParams, notFound, useRouter } from "next/navigation";
+import React, { useMemo } from "react";
+import { useParams, notFound } from "next/navigation";
 import Loader from "@/components/Loader/Loader";
 import styles from "@/components/ui/style/ToolPageDetails.module.scss";
-// Components
 import ToolCardHeader from "@/components/Category/details/ToolCardHeader";
 import ToolMainContent from "@/components/Category/details/ToolMainContent";
 import ToolRightSidebar from "@/components/Category/details/ToolRightSidebar";
-
-// API hooks
 import { useGetAllCategoriesQuery, useGetCategoryByIdQuery } from "@/features/dashboard/category/categoryApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams();
-  const decodedSlug = decodeURIComponent(slug as string);
-  const decodedToolName = decodeURIComponent(toolname as string);
-  const router = useRouter();
+  
+  // Memoize decoded values
+  const { decodedSlug, decodedToolName } = useMemo(() => ({
+    decodedSlug: decodeURIComponent(slug as string),
+    decodedToolName: decodeURIComponent(toolname as string)
+  }), [slug, toolname]);
 
-  // --- Step 1: Fetch all categories
+  // Fetch all categories
   const { data: allCategories, isLoading: catLoading, isError: catError } = useGetAllCategoriesQuery();
-  if (catLoading) return <Loader />;
-  if (catError || !allCategories?.result?.list) return notFound();
 
-  // --- Step 2: Find category by slug
-  const category = allCategories.result.list.find(
-    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
-  );
-  if (!category) return notFound();
+  // Find category and its ID
+  const { category, categoryId } = useMemo(() => {
+    const foundCategory = allCategories?.result?.list?.find(
+      (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
+    );
+    return {
+      category: foundCategory,
+      categoryId: foundCategory?._id
+    };
+  }, [allCategories, decodedSlug]);
 
-  const categoryId = category._id;
-
-  // --- Step 3: Fetch category details (tools etc.)
+  // Fetch category details
   const { data: categoryDetail, isLoading: detailLoading, isError: detailError } =
     useGetCategoryByIdQuery(categoryId ? { categoryId } : skipToken);
 
-  if (detailLoading) return <Loader />;
+  // Find the current tool and compute alternatives
+  const { tool, alternativeTools } = useMemo(() => {
+    const tools = categoryDetail?.result?.list?.tools || [];
+    const foundTool = tools.find(
+      (t: any) => t.toolName?.toLowerCase() === decodedToolName.toLowerCase()
+    );
+    
+    const alternatives = foundTool ? tools
+      .filter((t: any) => String(t._id) !== String(foundTool._id))
+      .slice(0, 4) : [];
+
+    return { tool: foundTool, alternativeTools: alternatives };
+  }, [categoryDetail, decodedToolName]);
+
+  // Handle loading
+  if (catLoading || detailLoading) return <Loader />;
+
+  // Handle errors (after all hooks)
+  if (catError || !allCategories?.result?.list) return notFound();
+  if (!category) return notFound();
   if (detailError || !categoryDetail?.result?.list?.tools) return notFound();
-
-  const tools = categoryDetail.result.list.tools;
-
-  // --- Step 4: Find the current tool
-  const tool = tools.find(
-    (t: any) => t.toolName?.toLowerCase() === decodedToolName.toLowerCase()
-  );
   if (!tool) return notFound();
 
-  // --- Step 5: Compute alternative tools (exclude current tool)
-  const alternativeTools = tools
-    .filter((t: any) => String(t._id) !== String(tool._id))
-    .slice(0, 4); // show max 4
-  console.log("Current Tool:", tool);
-  console.log("Alternative Tools:", alternativeTools);
-
-  // --- Step 6: Handle view all click
   const handleViewAll = () => {
-    router.push(`/categories/${encodeURIComponent(category.categoryName)}`);
+    window.open(`/categories/${encodeURIComponent(category.categoryName)}`, "_blank");
   };
 
-  // --- Render the page
   return (
-       <div className={styles.toolPage}>
+    <div className={styles.toolPage}>
       <header className={styles.headerSection}>
         <ToolCardHeader tool={tool} category={category} />
       </header>
@@ -72,16 +76,14 @@ const ToolDetailsPage = () => {
         </main>
 
         <aside className={styles.sidebarSection}>
-         <ToolRightSidebar
-        tool={tool}
-        category={{ ...category, tools: alternativeTools }}
-        onViewAll={handleViewAll}
-      />
+          <ToolRightSidebar
+            tool={tool}
+            category={{ ...category, tools: alternativeTools }}
+            onViewAll={handleViewAll}
+          />
         </aside>
       </div>
     </div>
-
-    
   );
 };
 

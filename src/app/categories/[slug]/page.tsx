@@ -1,9 +1,5 @@
 "use client";
-
-import {
-  useGetAllCategoriesQuery,
-  useGetCategoryByIdQuery,
-} from "@/features/dashboard/category/categoryApi";
+import { useGetAllCategoriesQuery, useGetCategoryByIdQuery } from "@/features/dashboard/category/categoryApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import { notFound } from "next/navigation";
 import Loader from "@/components/Loader/Loader";
@@ -15,28 +11,35 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
   const decodedSlug = decodeURIComponent(params.slug);
 
   // Step 1: Fetch all categories
-  const { data: allCategories, isLoading: catLoading, isError: catError } =
-    useGetAllCategoriesQuery();
+  const { 
+    data: allCategories, 
+    isLoading: catLoading, 
+    isError: catError 
+  } = useGetAllCategoriesQuery();
 
+  // Find category by slug (but don't use it for conditional hook calls)
+  const category = allCategories?.result?.list?.find(
+    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
+  );
+
+  const categoryId = category?._id;
+
+  // Step 2: Fetch category details - ALWAYS call the hook, but conditionally enable it
+  const { 
+    data: categoryDetail, 
+    isLoading: detailLoading, 
+    isError: detailError 
+  } = useGetCategoryByIdQuery(
+    categoryId ? { categoryId } : skipToken
+  );
+
+  // Loading state
   if (catLoading) return <Loader />;
-  if (catError || !allCategories?.result?.list) return notFound();
 
-  // Step 2: Find category by slug
-  const category =
-    allCategories.result.list.find(
-      (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
-    ) ?? null;
-
-  if (!category) return notFound();
-
-  const categoryId = category._id;
-
-  // Step 3: Fetch category details
-  const { data: categoryDetail, isLoading: detailLoading, isError: detailError } =
-    useGetCategoryByIdQuery(categoryId ? { categoryId } : skipToken);
-
-  // Show 404 if category details fail
-  if (detailError) return notFound();
+  // Error states - check these after the hooks are always called
+  if (catError || !allCategories?.result?.list || !category || detailError) {
+    return notFound();
+  }
 
   // Extract info if data is available
   const categoryInfo = categoryDetail?.result?.list?.category;
@@ -46,9 +49,9 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
   return (
     <div className="flex flex-col gap-8 p-6">
       {/* Always show category description immediately */}
-      <CategoryDescription
-        title={category.categoryName}
-        description={category.categoryDescription}
+      <CategoryDescription 
+        title={category.categoryName} 
+        description={category.categoryDescription} 
       />
 
       {/* Show loader for tools & FAQs while category details are loading */}

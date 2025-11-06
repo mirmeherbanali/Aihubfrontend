@@ -20,25 +20,28 @@ const Dashboard = () => {
   const [userType, setUserType] = useState<string | null>(null);
   const tab = searchParams.get("tab") || "1";
 
+  // ✅ Check user immediately (no loading state)
   useEffect(() => {
     const storedType = getUserType();
+
+    if (!storedType) {
+      // 🚀 Instant redirect — prevents UI from flashing
+      router.replace("/auth/login");
+      return;
+    }
+
     setUserType(storedType);
 
-    // ✅ Ensure valid tab query (avoid default redirect)
+    // ✅ Ensure tab query always exists
     if (!searchParams.get("tab")) {
       router.replace("/dashboard?tab=1");
     }
   }, []);
 
-  if (!userType) {
-    return (
-      <DashboardLayout>
-        <div style={{ padding: 20 }}>Loading Dashboard...</div>
-      </DashboardLayout>
-    );
-  }
+  // ✅ Don’t render anything while redirecting
+  if (!userType) return null;
 
-  // ✅ Admin Tab Logic
+  // ✅ Admin Tabs
   const renderAdminTabs = () => {
     switch (tab) {
       case "1":

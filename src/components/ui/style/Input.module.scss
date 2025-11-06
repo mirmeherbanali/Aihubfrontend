@@ -5,38 +5,62 @@
   flex-direction: column;
 }
 
-.input-label {
+.input-label { 
   display: block;
   margin-bottom: 0.4rem;
   font-weight: 500;
   color: #333;
   font-size: 0.95rem;
-  text-align: left; // ✅ ensures label text is aligned left
+  text-align: left;
+}
+
+/* Container that aligns icon + input + password toggle */
+.input-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  background: #fff;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+}
+
+.input-icon {
+  margin-right: 0.5rem;
+  color: #595959;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
 }
 
 .input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #d9d9d9;
+  flex: 1;
+  border: none;
   font-size: 1rem;
-  transition: all 0.2s ease;
+  outline: none;
+  padding: 0.4rem 0;
+  background: transparent;
+}
 
-  &:focus {
-    border-color: #40a9ff;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-    outline: none;
-  }
+.input-error {
+  border-color: #ff4d4f;
 }
 
 .password-toggle {
   cursor: pointer;
-  color: #595959; // subtle icon color
+  color: #595959;
   font-size: 1rem;
   margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
 
   &:hover {
-    color: #1890ff; // highlight on hover
+    color: #1890ff;
   }
 }
 

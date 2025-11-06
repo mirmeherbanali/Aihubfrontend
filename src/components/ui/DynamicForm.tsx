@@ -123,6 +123,7 @@ function DynamicFormInner<T extends FieldValues>({
                       style={field.style}
                       wrapperStyle={fieldWrapperStyle}
                       icon={field.icon}
+                      disabled={field.disabled}
                     />
                   );
 

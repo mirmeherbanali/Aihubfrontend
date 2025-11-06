@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   getToken,
   getUserId,
@@ -25,13 +25,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const [isChecking, setIsChecking] = useState(true);
 
-  // ✅ Fetch profile only if token + userId exist
-  const {
-    data: profile,
-    error,
-    isLoading
-  } = useGetProfileQuery(token && userId ? { token, userId } : skipToken);
+  // ✅ Fetch profile in background — don't block UI
+  const { data: profile, isLoading, isError, error } = useGetProfileQuery(
+    token && userId ? { token, userId } : skipToken,
+    {
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
+  // ✅ Allow instant UI load if token exists
+  useEffect(() => {
+    if (token && userId) setIsChecking(false);
+  }, [token, userId]);
+
+  // ✅ Handle token absence or role-based access
   useEffect(() => {
     if (!token || !userId) {
       clearAuthData();
@@ -39,42 +48,37 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       return;
     }
 
-    // ✅ Role-based allowed tabs (fixed)
+    // 🎯 Role-based allowed tabs
     const roleTabs: Record<string, string[]> = {
-      Admin: ["1", "2", "3", "4", "5", "6", "7", "8", "9"], // ✅ All 9 tabs
-      Developer: ["1", "2", "3"], // Tools, Profile, Analytics
-      Reviewer: ["1", "2"] // Profile, Ratings
+      Admin: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      Developer: ["1", "2", "3"], // Example: Tools, Profile, Analytics
+      Reviewer: ["1", "2"],       // Example: Profile, Ratings
     };
 
     const allowedTabs = roleTabs[userType || "Reviewer"] || ["1"];
 
-    // ✅ Redirect if tab missing or invalid
-    if (!tab || !allowedTabs.includes(tab)) {
-      router.replace(`/dashboard?tab=${allowedTabs[0]}`);
-      return;
-    }
+    // 🧭 Redirect to default tab if invalid or missing
+    // if (!tab || !allowedTabs.includes(tab)) {
+    //   router.replace(`/dashboard?tab=${allowedTabs[0]}`);
+    //   return;
+    // }
 
-    if (error) {
+    // 🚨 Handle profile fetch errors
+    if (isError) {
       console.error("Profile fetch failed:", error);
       clearAuthData();
       router.replace("/auth/login");
       return;
     }
 
-    if (!isLoading) {
-      setIsChecking(false);
-    }
-  }, [token, userId, error, isLoading, router, tab, userType]);
+    if (!isLoading) setIsChecking(false);
+  }, [token, userId, isLoading, isError, error, router, tab, userType]);
 
-  if (isChecking || isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-lg font-semibold">
-        Verifying session...
-      </div>
-    );
-  }
+  // ✅ Don't block UI while verifying
+  if (isLoading && !profile) return <>{children}</>;
 
-  if (error || !profile) {
+  // 🚫 If API failed or no profile (should rarely happen)
+  if (isError || !profile) {
     return (
       <div className="flex justify-center items-center h-screen text-red-500 text-lg font-bold">
         Access Denied 🚫

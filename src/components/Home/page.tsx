@@ -23,7 +23,7 @@ export default function HomePage() {
   };
 
   const handleViewAllClick = () => {
-    router.push("/categories");
+    window.open("/categories", "_blank");
   };
 
   const handleToolClick = (tool: any, category: any) => {

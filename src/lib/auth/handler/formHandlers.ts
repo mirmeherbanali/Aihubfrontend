@@ -11,7 +11,6 @@ export const createLoginHandler = (
 ): SubmitHandler<LoginInput> => {
   return async (data) => {
     try {
-      console.log("Login data:", data);
 
       const res = await loginUser(data).unwrap(); // ✅ unwrap RTK query
       if (res.success) {
@@ -20,9 +19,10 @@ export const createLoginHandler = (
           res?.result?.list?.user?._id,
           res?.result?.list?.user?.userType
         );
+      router.prefetch("/dashboard");  
       router.push("/dashboard");
       }
-      console.log("Login success:", res);
+
 
     } catch (err: any) {
       console.error(
@@ -52,7 +52,6 @@ export const createRegisterHandler = (
         apiData.status = "Active";
         apiData.adminId = userId;
       }
-      console.log("Register data:", apiData);
 
       const res = await registerUser(apiData).unwrap();
        if (res.success) {
@@ -61,7 +60,7 @@ export const createRegisterHandler = (
           setIsLogin(true);
         }
       }
-      console.log("Registration response:", res);
+
     } catch (err: any) {
       console.error(
         "Registration failed:",

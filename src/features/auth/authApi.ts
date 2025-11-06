@@ -35,6 +35,7 @@ export const authApi = baseApi.injectEndpoints({
         },
       }),
       providesTags: ["Profile"],
+      keepUnusedDataFor: 300,
     }),
     // 🔹 ✅ Get All Users
        getAllUsers: builder.query<User[], void>({
@@ -45,16 +46,25 @@ export const authApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Users"],
     }),
-    updateProfile: builder.mutation<User, Partial<User>>({
-      query: (body) => ({ url: "/auth/me", method: "PUT", body }),
-      ...withToast("updateProfile", "Profile updated!"),
-      invalidatesTags: ["Profile"],
-    }),
-    logout: builder.mutation<{ message: string }, void>({
-      query: () => ({ url: "/auth/logout", method: "POST" }),
-      ...withToast("logout", "Logged out successfully!"),
-      invalidatesTags: ["Profile"],
-    }),
+    updateProfile: builder.mutation<AuthResponse, Partial<User>>({
+  query: (body) => ({
+    url: "api/user/updateUser",
+    method: "PUT",
+    body,
+  }),
+  ...withToast<AuthResponse>("updateProfile", (res) => res.result?.message),
+  invalidatesTags: ["Profile", "Users"],
+}),
+
+deleteProfile: builder.mutation<AuthResponse, { id: string }>({
+  query: (body) => ({
+    url: "api/user/deleteUser",
+    method: "PUT",
+    body,
+  }),
+  ...withToast<AuthResponse>("deleteProfile", (res) => res.result?.message),
+  invalidatesTags: ["Profile", "Users"],
+}),
   }),
   overrideExisting: false,
 });
@@ -66,5 +76,5 @@ export const {
   useGetProfileQuery,
   useGetAllUsersQuery,
   useUpdateProfileMutation,
-  useLogoutMutation,
+  useDeleteProfileMutation,
 } = authApi;
