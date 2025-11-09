@@ -15,7 +15,8 @@ export default function HomePage() {
   const { data: toolsData } = useGetAllToolsQuery();
 
   const categories = categoriesData?.result?.list || [];
-  const tools = toolsData?.result?.list?.list || [];
+  const tools = toolsData?.result?.list || [];
+  
 
   // 🧭 Handlers
   const handleCategoryClick = (slug: string) => {
@@ -23,7 +24,7 @@ export default function HomePage() {
   };
 
   const handleViewAllClick = () => {
-    window.open("/categories", "_blank");
+    window.open("/categories");
   };
 
   const handleToolClick = (tool: any, category: any) => {

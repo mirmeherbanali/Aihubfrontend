@@ -1,0 +1,47 @@
+.ratingWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937; // neutral dark gray
+  margin-bottom: 4px;
+}
+
+.starContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  justify-content: flex-start;
+}
+
+.star {
+  transition: transform 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+    color: #facc15 !important; // yellow-400
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+/* Optional subtle glow on hover */
+.starContainer:hover .star {
+  filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.6));
+}
+
+/* error message support if used later */
+.errorText {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+}

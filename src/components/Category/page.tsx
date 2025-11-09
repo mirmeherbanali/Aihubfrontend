@@ -10,6 +10,7 @@ export default function CategoryPage() {
   const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  
 
   const categories = data?.result?.list || [];
 

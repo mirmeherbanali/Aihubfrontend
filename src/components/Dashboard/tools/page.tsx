@@ -12,22 +12,25 @@ import SummaryGrid from "@/components/ui/SummaryGrid";
 import GridCards from "@/components/ui/GridCards";
 import {
   useCreateToolMutation,
-  useGetAllToolsQuery,
+  useGetAllToolsQuery
 } from "@/features/tools/toolsApi";
 import { getUserId } from "@/utils/authStorage";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
 
 export default function ToolsPage() {
-  const userId = getUserId()
+  const userId = getUserId()??""
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [showGridForm, setShowGridForm] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-
+  
+  console.log("userId",userId)
   // API hooks
-  const { data: toolsData, refetch } = useGetAllToolsQuery();
+  const { data: toolsData, refetch } = useGetAllToolsQuery({ userId });
+
   const [createTool] = useCreateToolMutation();
+  console.log("tools",toolsData)
 
   // Tools list from backend
   const tools = toolsData?.result?.list || [];
@@ -49,7 +52,7 @@ const handleAddSubmit = async (data: ToolsInput) => {
   try {
     // Create FormData for file uploads
     const formData = new FormData();
-    const submissionData = { ...data, developerId: userId };
+    const submissionData = { ...data, userId: userId };
 
     Object.entries(submissionData).forEach(([key, value]) => {
       if (Array.isArray(value)) {

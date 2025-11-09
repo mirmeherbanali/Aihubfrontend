@@ -1,0 +1,169 @@
+.btn {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 20px; // vertical | horizontal
+  border-radius: 999px; // pill
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: 600 15.5px/1 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #ffffff;
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01))
+      padding-box,
+    conic-gradient(from 120deg at 50% 50%, #7c3aed, #06b6d4, #8b5cf6) border-box;
+  background-size: 200% 200%;
+  animation: gradientShift 6s linear infinite;
+
+  box-shadow:
+    0 8px 30px rgba(2, 6, 23, 0.56),
+    0 3px 10px rgba(6, 182, 212, 0.04) inset;
+
+  position: relative;
+  overflow: hidden;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1),
+    box-shadow 0.28s,
+    filter 0.28s;
+  -webkit-tap-highlight-color: transparent;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: 3px;
+    border-radius: 996px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    pointer-events: none;
+    backdrop-filter: blur(8px) saturate(120%);
+    mix-blend-mode: overlay;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: -45%;
+    top: -30%;
+    width: 65%;
+    height: 160%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0)
+    );
+    transform: rotate(-20deg) translateX(0);
+    transition:
+      transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1),
+      opacity 0.4s;
+    opacity: 0.95;
+    pointer-events: none;
+    filter: blur(6px);
+  }
+
+  .content {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    flex: 0 0 18px;
+    transition: transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  &:hover {
+  transform: perspective(800px) translateY(-4px) rotateX(2deg) scale(1.01);
+  box-shadow:
+    0 16px 30px rgba(2, 6, 23, 0.4),
+    0 6px 14px rgba(6, 182, 212, 0.05) inset;
+
+  .icon {
+    transform: translateX(5px) rotate(4deg);
+  }
+
+  &::after {
+    transform: rotate(-20deg) translateX(180%);
+    opacity: 0.9;
+  }
+}
+
+
+  &:active {
+    transform: perspective(800px) translateY(-3px) rotateX(2deg) scale(0.995);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 6px rgba(124, 58, 237, 0.08),
+      0 18px 40px rgba(2, 6, 23, 0.5);
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 6px rgba(2, 6, 23, 0.35);
+    transform: translateZ(30px);
+    z-index: 1;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &::after {
+      transition: none;
+    }
+
+    .icon {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 15px;
+
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

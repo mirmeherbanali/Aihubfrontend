@@ -7,6 +7,7 @@ import Footer from "../ui/common/Footer";
 import "./DashboardLayout.scss";
 import { useSearchParams } from "next/navigation";
 import { getUserType } from "@/utils/authStorage";
+import NavbarDash from "../ui/common/NavbarDash";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -58,7 +59,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="dashboard-layout">
-      <Navbar />
+      <NavbarDash />
 
       <div className="dashboard-body">
         <Sidebar />

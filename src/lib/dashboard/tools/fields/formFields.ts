@@ -17,6 +17,7 @@ export const toolsFields = (categories: { label: string; value: string }[]): For
     type: "dropdown",
     name: "category",
     label: "Category",
+    multiple: true,
     options: categories.map(c => ({ label: c.categoryName, value: c._id })),
     row: 2,
     col: 1,

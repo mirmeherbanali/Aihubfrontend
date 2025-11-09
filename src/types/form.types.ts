@@ -15,6 +15,7 @@ export type FieldType =
   | "textarea" // <-- added
   | "faq" // 👈 added
   | "multi-image"
+  | "rating"
   | "chips";
 
 
@@ -45,7 +46,7 @@ interface BaseField {
 
 // Input-like fields (must have name)
 export interface InputField<T extends FieldValues> extends BaseField {
-  type: "input" | "password" | "image"| "textarea"| "multi-image"
+  type: "input" | "password" | "image"| "textarea"| "multi-image" | "rating"
   | "chips";
   name: Path<T>;
 }

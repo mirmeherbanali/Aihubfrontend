@@ -14,7 +14,7 @@ const fileSchema = z
 // ✅ Main Tools Schema (matches backend model)
 export const toolsSchema = z.object({
   toolName: z.string().min(2, "Tool name is required"),
-  category: z.string().min(1, "Category is required"),
+  category: z.array(z.string()).min(1, "At least one category is required"),
   description: z.string().min(10, "Description is too short"),
   pricingType: z.enum(["Free", "Paid", "Freemium"], {
     required_error: "Pricing Type is required",

@@ -42,8 +42,8 @@
 
 .uploadCard {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
+  width: 100px;          /* 👈 fixed width */
+  height: 100px;         /* 👈 fixed height */
   border: 2px dashed #4b6bfb;
   border-radius: 12px;
   background-color: #f8faff;
@@ -59,6 +59,52 @@
   }
 }
 
+.multiImageContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.imagePreviewWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.imagePreviewCard {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 20px;
+  text-align: center;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+}
+
+
 .uploadPlaceholder {
   text-align: center;
   color: #4b6bfb;
@@ -67,15 +113,16 @@
   align-items: center;
 
   .plusIcon {
-    font-size: 36px;
+    font-size: 20px;     /* smaller icon */
     font-weight: 600;
   }
 
   p {
-    margin-top: 4px;
-    font-size: 14px;
+    margin-top: 2px;
+    font-size: 12px;     /* smaller text */
   }
 }
+
 
 .error {
   color: #ff4d4f;

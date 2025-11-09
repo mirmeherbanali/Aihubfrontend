@@ -22,15 +22,29 @@ const AdminTools = () => {
   const [tab, setTab] = useState(1);
   const [editTool, setEditTool] = useState<Tool | null>(null);
   const router = useRouter();
-
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
-
+  console.log("editTool",editTool)
   const { data: toolsData, refetch } = useGetAllToolsQuery();
-  const raw: any = toolsData?.result?.list;
-  const toolData: Tool[] = Array.isArray(raw)
-    ? raw.flatMap((i: any) => i?.list || [])
-    : raw?.list || raw || [];
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+ const raw: any = toolsData?.result?.list;
+
+// handle both cases gracefully
+const baseTools: Tool[] = Array.isArray(raw)
+  ? raw
+  : Array.isArray(toolsData?.result)
+  ? toolsData?.result
+  : raw?.list || [];
+
+// ✅ Expand tools by category (each category -> separate row)
+const toolData: Tool[] = baseTools.flatMap((tool) =>
+  (tool.category || []).map((cat: any) => ({
+    ...tool,
+    category: [cat], // single category per row
+    rowId: `${tool._id}-${cat._id}`, // ✅ unique per row
+  }))
+);
 
   const [createTool] = useCreateToolMutation();
 
@@ -39,7 +53,6 @@ const AdminTools = () => {
     setEditTool(null);
     addForm.reset();
   };
-
   const tabActions = [
     {
       label: "Manage Tools",
@@ -68,45 +81,68 @@ const AdminTools = () => {
   });
 
   const handleAddSubmit = async (data: ToolsInput) => {
-    try {
-      const formData = new FormData();
-      const submissionData = {
-        ...data,
-        userId:userId,
-        created_by: userId,
-        status: "Approved",
-      };
+  try {
+    setIsSubmitting(true);
+    const formData = new FormData();
+    const submissionData = {
+      ...data,
+      userId:userId,
+      created_by: userId,
+      status: "Approved",
+    };
 
-      Object.entries(submissionData).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else if (value instanceof File) {
-          formData.append(key, value);
-        } else if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
-        }
+    // ✅ Handle screenshots separately
+    if (Array.isArray(data.screenshots)) {
+      // Separate new File uploads and existing URLs
+      const uploadedFiles = data.screenshots.filter((file) => file instanceof File);
+      const existingUrls = data.screenshots.filter((file) => typeof file === "string");
+
+      uploadedFiles.forEach((file) => {
+        formData.append("screenshots", file);
       });
 
-      await createTool(formData).unwrap();
-      resetFormAndState(); // Use the reset function here too
-      refetch();
-      setTab(1);
-    } catch (error) {
-      console.error("Error adding tool:", error);
+      // Add existing URLs as JSON if any
+      if (existingUrls.length > 0) {
+        formData.append("existingScreenshots", JSON.stringify(existingUrls));
+      }
     }
-  };
+
+    // ✅ Handle all other fields normally
+    Object.entries(submissionData).forEach(([key, value]) => {
+      if (key === "screenshots") return; // already handled above
+
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else if (value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    await createTool(formData).unwrap();
+    resetFormAndState();
+    refetch();
+    setTab(1);
+  } catch (error) {
+    console.error("Error adding tool:", error);
+  } finally {
+    setIsSubmitting(false); // ✅ Stop loading
+  }
+};
+
 
   const columns: TableColumn<Tool>[] = [
     { key: "_id", label: "ID" },
     { key: "toolName", label: "Tool Name" },
     {
-      key: "category",
-      label: "Category",
-      render: (tool) => {
-        const category = categories.find((c) => c._id === tool?.category[0]?._id);
-        return category ? category.categoryName : "—";
-      },
+    key: "category",
+    label: "Category",
+    render: (tool) => {
+      const category = categories.find((c) => c._id === tool?.category[0]?._id);
+      return category ? category.categoryName : "—";
     },
+  },
     { key: "status", label: "Status" },
     {
       key: "createdAt",
@@ -136,22 +172,31 @@ const AdminTools = () => {
       const toolName = row.toolName;
 
       // Navigate to dynamic tool details page
-      router.push(
-        `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`
+      window.open(
+        `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`,"_blank"
       );
     },
   },
-    {
-      label: "Edit",
-      onClick: (row) => {
-        setEditTool(row);
-        addForm.reset({
-          ...row,
-          category: row.category?._id || "", // <-- use _id only
-        });
-        setTab(2);
-      },
-    },
+   {
+  label: "Edit",
+  onClick: (row) => {
+    // Find the full tool (not flattened) by ID
+    const fullTool = baseTools.find((t) => t._id === row._id);
+
+    // Extract all category IDs for that tool
+    const allCategoryIds = fullTool?.category?.map((c: any) => c._id) || [];
+
+    setEditTool(fullTool || row);
+
+    addForm.reset({
+      ...fullTool,
+      category: allCategoryIds, // ✅ Show all categories on edit
+    });
+
+    setTab(2);
+  },
+},
+
     {
       label: "Delete",
       onClick: (row) => alert(`🗑️ Deleting: ${row.toolName}`),
@@ -203,7 +248,7 @@ const AdminTools = () => {
             control={addForm.control}
             handleSubmit={addForm.handleSubmit}
             onSubmit={handleAddSubmit}
-            buttonText={editTool ? "Update Tool" : "Add Tool"}
+            buttonText={isSubmitting ? "Submitting..." : editTool ? "Update Tool" : "Add Tool"}
           />
         </div>
       )}

@@ -9,9 +9,13 @@ import ToolMainContent from "@/components/Category/details/ToolMainContent";
 import ToolRightSidebar from "@/components/Category/details/ToolRightSidebar";
 import { useGetAllCategoriesQuery, useGetCategoryByIdQuery } from "@/features/dashboard/category/categoryApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
+import { getUserId, getUserType } from "@/utils/authStorage";
+import { useGetToolReviewsQuery } from "@/features/review/reviewApi";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams();
+  const userType = getUserType()
+  const userId = getUserId()
   
   // Memoize decoded values
   const { decodedSlug, decodedToolName } = useMemo(() => ({
@@ -51,6 +55,11 @@ const ToolDetailsPage = () => {
     return { tool: foundTool, alternativeTools: alternatives };
   }, [categoryDetail, decodedToolName]);
 
+  // ✅ Call hook with object (matches injected endpoint signature)
+    const { data: reviewsData, isLoading: isReviewsLoading } = useGetToolReviewsQuery(
+      { toolId: tool?._id }
+    )
+
   // Handle loading
   if (catLoading || detailLoading) return <Loader />;
 
@@ -67,12 +76,11 @@ const ToolDetailsPage = () => {
   return (
     <div className={styles.toolPage}>
       <header className={styles.headerSection}>
-        <ToolCardHeader tool={tool} category={category} />
+        <ToolCardHeader tool={tool} category={category} userType={userType??""} userId={userId??""} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading}/>
       </header>
-
       <div className={styles.pageLayout}>
         <main className={styles.mainSection}>
-          <ToolMainContent tool={tool} />
+          <ToolMainContent tool={tool}  reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
         </main>
 
         <aside className={styles.sidebarSection}>

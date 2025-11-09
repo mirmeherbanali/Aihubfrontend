@@ -5,7 +5,6 @@ import styles from "../../../components/ui/style/ProfilePage.module.scss";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skipToken } from "@reduxjs/toolkit/query";
-import { useRouter } from "next/navigation";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
@@ -35,10 +34,11 @@ export default function ProfilePage() {
   const token = getToken();
   const userId = getUserId();
   const userType = getUserType();
-  const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const [updateProfile] = useUpdateProfileMutation();
   const [deleteProfile] = useDeleteProfileMutation();
@@ -80,24 +80,31 @@ export default function ProfilePage() {
 
       const body = { ...filteredData, id: userId };
       await updateProfile(body).unwrap();
-
       await refetch();
-      setIsEditing(false); // 🔒 Disable fields again after update
+      setIsEditing(false);
     } catch (error) {
       console.error("Update failed:", error);
     }
   };
 
-  // ✅ Delete handler
+  // ✅ Delete account handler
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete your account?")) return;
     try {
       await deleteProfile({ id: userId ?? "" }).unwrap();
       clearAuthData();
-      router.push("/auth/login");
+      window.location.href = "/auth/login";
     } catch (error) {
       console.error("Delete failed:", error);
     }
+  };
+
+  // ✅ Logout logic
+  const confirmLogout = async () => {
+    setLoadingLogout(true);
+    setShowLogoutPopup(false);
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    clearAuthData();
+    window.location.href = "/auth/login"; // redirect without router
   };
 
   return (
@@ -125,7 +132,7 @@ export default function ProfilePage() {
             <DynamicForm
               fields={fields.map((f) => ({
                 ...f,
-                disabled: !isEditing, // ✅ disable fields until edit clicked
+                disabled: !isEditing,
               }))}
               control={control}
               handleSubmit={handleSubmit}
@@ -146,21 +153,30 @@ export default function ProfilePage() {
           </button>
         )}
 
-        <button className={styles.deleteBtn}  onClick={() => setShowDeletePopup(true)} >
+        <button
+          className={styles.deleteBtn}
+          onClick={() => setShowDeletePopup(true)}
+        >
           Delete Account
         </button>
+
+        {/* ✅ Logout button */}
+        <button
+          className={styles.logoutBtn}
+          onClick={() => setShowLogoutPopup(true)}
+        >
+          Logout
+        </button>
       </div>
-      {/* Popup Confirmation */}
+
+      {/* ✅ Delete confirmation popup */}
       {showDeletePopup && (
         <div className={styles.popupOverlay}>
           <div className={styles.popupBox}>
             <h3>Confirm Delete</h3>
             <p>Are you sure you want to delete this account?</p>
             <div className={styles.popupButtons}>
-              <button
-                className={styles.confirmBtn}
-                onClick={handleDelete}
-              >
+              <button className={styles.confirmBtn} onClick={handleDelete}>
                 Yes, Delete
               </button>
               <button
@@ -171,6 +187,35 @@ export default function ProfilePage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ✅ Logout confirmation popup */}
+      {showLogoutPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popupBox}>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className={styles.popupButtons}>
+              <button className={styles.confirmBtn} onClick={confirmLogout}>
+                Yes, Logout
+              </button>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setShowLogoutPopup(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Loading overlay */}
+      {loadingLogout && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loader}></div>
+          <p>Logging out...</p>
         </div>
       )}
     </div>

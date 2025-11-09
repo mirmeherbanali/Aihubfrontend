@@ -28,12 +28,16 @@ export default function DynamicTable<T extends { _id: string }>({
   const [currentPage, setCurrentPage] = useState(1);
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string }>({});
   const [openDropdown, setOpenDropdown] = useState<T["_id"] | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // 🧩 Close dropdown when clicking outside
   // useEffect(() => {
   //   const handleClickOutside = (event: MouseEvent) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+  //     // check if the click happened inside any registered dropdown element
+  //     const clickedInsideAny = Object.values(dropdownRefs.current).some((el) =>
+  //       el ? el.contains(event.target as Node) : false
+  //     );
+  //     if (!clickedInsideAny) {
   //       setOpenDropdown(null);
   //     }
   //   };
@@ -175,55 +179,62 @@ export default function DynamicTable<T extends { _id: string }>({
         </thead>
 
         <tbody>
-          {paginatedData.map((row) => (
-            <tr key={row._id}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedRows.has(row._id)}
-                  onChange={() => toggleRow(row._id)}
-                />
-              </td>
+  {paginatedData.map((row, index) => {
+    const rowId = `${row._id}-${index}`;
+    return (
+      <tr key={rowId}>
+        <td>
+          <input
+            type="checkbox"
+            checked={selectedRows.has(rowId)}
+            onChange={() => toggleRow(rowId)}
+          />
+        </td>
 
-              {columns.map((col) => (
-                <td key={String(col.key)}>
-                  {col.render ? col.render(row) : String(row[col.key]) || "-"}
-                </td>
-              ))}
+        {columns.map((col) => (
+          <td key={String(col.key)}>
+            {col.render ? col.render(row) : String(row[col.key]) || "-"}
+          </td>
+        ))}
 
-              {actions.length > 0 && (
-                <td className={styles.actions}>
-                  <div className={styles.dropdownWrapper} ref={dropdownRef}>
+        {actions.length > 0 && (
+          <td className={styles.actions}>
+            <div
+              className={styles.dropdownWrapper}
+              ref={(el) => (dropdownRefs.current[rowId] = el)}
+            >
+              <button
+                className={styles.threeDots}
+                onClick={() =>
+                  setOpenDropdown(openDropdown === rowId ? null : rowId)
+                }
+              >
+                ⋮
+              </button>
+              {openDropdown === rowId && (
+                <div className={styles.dropdownMenu}>
+                  {actions.map((act) => (
                     <button
-                      className={styles.threeDots}
-                      onClick={() =>
-                        setOpenDropdown(openDropdown === row._id ? null : row._id)
-                      }
+                      key={act.label}
+                      disabled={act.disabled?.(row)}
+                      onClick={() => {
+                        act.onClick(row);
+                        setOpenDropdown(null);
+                      }}
                     >
-                      ⋮
+                      {act.label}
                     </button>
-                    {openDropdown === row._id && (
-                      <div className={styles.dropdownMenu}>
-                        {actions.map((act) => (
-                          <button
-                            key={act.label}
-                            disabled={act.disabled?.(row)}
-                            onClick={() => {
-                              act.onClick(row);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            {act.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </td>
+                  ))}
+                </div>
               )}
-            </tr>
-          ))}
-        </tbody>
+            </div>
+          </td>
+        )}
+      </tr>
+    );
+  })}
+</tbody>
+
       </table>
 
       {/* 🌟 Pagination */}

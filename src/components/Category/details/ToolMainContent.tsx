@@ -7,9 +7,11 @@ import ReviewSection from "./ReviewSection";
 
 interface ToolMainContentProps {
   tool: any; // Replace 'any' with your Tool type if available
+  reviewsData?:any;
+  isReviewsLoading?:boolean;
 }
 
-const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool }) => {
+const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool,reviewsData,isReviewsLoading }) => {
   if (!tool) return null; // Safety check for progressive loading
 
   return (
@@ -92,7 +94,7 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool }) => {
         )}
       </div>
 
-      <ReviewSection />
+      <ReviewSection tool={tool}  reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
     </>
   );
 };

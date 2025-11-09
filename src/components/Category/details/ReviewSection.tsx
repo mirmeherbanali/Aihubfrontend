@@ -1,116 +1,86 @@
 "use client";
+
 import React from "react";
 import styles from "@/components/ui/style/ReviewSection.module.scss";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar, FaRegStar, FaStarHalf } from "react-icons/fa";
+import { useRatingData } from "@/utils/useRatingData";
+import { formatReviewDate } from "@/utils/useFormatDate";
+import StarRating from "@/components/ui/common/StarRating";
 
-const ReviewSection = () => {
-  const reviews = [
-    {
-      name: "Reviewer Name",
-      role: "Reviewer Role",
-      company: "Reviewer Company Name",
-      date: "12/27/2025",
-      rating: 4,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non tortor sodales, tempor orci et, facilisis odio. Suspendisse varius, nibh finibus tincidunt lobortis, sapien nunc maximus eros, vulputate tempor lectus elit sed elit."
-    },
-    {
-      name: "Reviewer Name",
-      role: "Reviewer Role",
-      company: "Reviewer Company Name",
-      date: "12/27/2025",
-      rating: 4,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non tortor sodales, tempor orci et, facilisis odio."
-    },
-    {
-      name: "Reviewer Name",
-      role: "Reviewer Role",
-      company: "Reviewer Company Name",
-      date: "12/27/2025",
-      rating: 4,
-      text: "Suspendisse varius, nibh finibus tincidunt lobortis, sapien nunc maximus eros, vulputate tempor lectus elit sed elit."
-    }
-  ];
+interface ReviewSectionProps {
+  tool: any;
+  reviewsData: any;
+  isReviewsLoading?: boolean;
+}
 
-  const ratingCounts = [290, 380, 30, 11, 10];
-  const totalReviews = ratingCounts.reduce((a, b) => a + b, 0);
-  const averageRating = (
-    ratingCounts.reduce((a, b, i) => a + b * (5 - i), 0) / totalReviews
-  ).toFixed(1);
+const ReviewSection: React.FC<ReviewSectionProps> = ({
+  tool,
+  reviewsData,
+  isReviewsLoading,
+}) => {
+  const {
+    reviewsList,
+    averageRating,
+    rating,
+    fullStars,
+    halfStar,
+    emptyStars,
+    reviewCount,
+  } = useRatingData(reviewsData, tool);
+
+  if (isReviewsLoading) {
+    return <div className={styles.loading}>Loading reviews...</div>;
+  }
 
   return (
     <div className={styles.reviewContainer}>
       <h2 className={styles.reviewHeader}>Reviews</h2>
 
-      {/* ⭐ New Rating Summary Section */}
+      {/* ⭐ Rating Summary Section (Dynamic) */}
       <div className={styles.ratingSummary}>
         <div className={styles.leftSummary}>
-          <h1 className={styles.avgRating}>{averageRating}</h1>
-          <div className={styles.avgStars}>
-            {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className={styles.starIcon} />
-            ))}
-          </div>
-          <p className={styles.totalReviews}>{totalReviews} total ratings</p>
-        </div>
+          <h1 className={styles.avgRating}>{rating.toFixed(1)}</h1>
 
-        <div className={styles.rightBars}>
-          {ratingCounts.map((count, i) => {
-            const ratingValue = 5 - i;
+          <StarRating  rating={rating} size="lg"  />
+
+          <p className={styles.totalReviews}>{reviewCount} total reviews</p>
+        </div>
+      </div>
+
+      {/* ✅ Dynamic Review List */}
+      <div className={styles.reviewList}>
+        {reviewsList.length === 0 ? (
+          <p className={styles.noReviews}>No reviews yet. Be the first to review!</p>
+        ) : (
+          reviewsList.map((review: any, index: number) => {
+            const { relative, formatted } = formatReviewDate(review?.createdAt);
+
             return (
-              <div className={styles.barItem} key={i}>
-                <span className={styles.barLabel}>{ratingValue} ★</span>
-                <div className={styles.bar}>
-                  <div
-                    className={styles.barFill}
-                    style={{ width: `${(count / totalReviews) * 100}%` }}
-                  ></div>
+              <div className={styles.reviewCard} key={index}>
+                <div className={styles.avatar}>
+                  {review?.userId?.email?.charAt(0)?.toUpperCase() || "U"}
                 </div>
-                <span className={styles.barCount}>{count}</span>
+
+                <div className={styles.reviewInfo}>
+                  <div className={styles.reviewHeaderRow}>
+                    <div>
+                      <h4>{review?.userId?.email || "Anonymous User"}</h4>
+                      <p>
+                        {relative} • <span>{formatted}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <StarRating rating={review.rating} size="sm" showValue  />
+
+                  {review.reviewText && (
+                    <p className={styles.reviewText}>{review.reviewText}</p>
+                  )}
+                </div>
               </div>
             );
-          })}
-        </div>
-      </div>
-
-      {/* Review List */}
-      <div className={styles.reviewList}>
-        {reviews.map((review, index) => (
-          <div className={styles.reviewCard} key={index}>
-            <div className={styles.avatar}>C</div>
-            <div className={styles.reviewInfo}>
-              <div className={styles.reviewHeaderRow}>
-                <div>
-                  <h4>{review.name}</h4>
-                  <p>
-                    {review.role} <br /> {review.company}
-                  </p>
-                </div>
-                <span className={styles.reviewDate}>{review.date}</span>
-              </div>
-
-              <div className={styles.ratingRow}>
-                {[...Array(4)].map((_, i) => (
-                  <FaStar key={i} className={styles.starFilled} />
-                ))}
-                <FaRegStar className={styles.starEmpty} />
-                <span className={styles.ratingValue}>4/5</span>
-              </div>
-
-              <p className={styles.reviewText}>{review.text}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className={styles.pagination}>
-        <button>{"<"}</button>
-        {[1, 2, 3, 4, 5].map((num) => (
-          <button key={num} className={num === 1 ? styles.active : ""}>
-            {num}
-          </button>
-        ))}
-        <button>{">"}</button>
+          })
+        )}
       </div>
     </div>
   );

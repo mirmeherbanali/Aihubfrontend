@@ -1,108 +1,145 @@
 "use client";
 
-import React, { useState } from "react";
-import DashboardLayout from "@/components/DashboardLayout/DashboardLayout";
+import React, { useState, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FaStar } from "react-icons/fa";
+import moment from "moment";
+
 import styles from "../../../ui/style/RatingPage.module.scss";
+import {
+  useGetUserReviewsQuery,
+  useUpdateReviewMutation,
+} from "@/features/review/reviewApi";
+import { getUserId } from "@/utils/authStorage";
+import { reviewSchema, ReviewInput } from "@/lib/validators/reviewValidator";
+import DynamicForm from "@/components/ui/DynamicForm";
+import { FormField } from "@/types/form.types";
+import { reviewFields } from "@/lib/review/fields/formFields";
+import StarRating from "@/components/ui/common/StarRating";
+import { formatReviewDate } from "@/utils/useFormatDate";
 
-interface Tool {
-  id: number;
-  name: string;
-  description?: string;
-  image?: string;
-}
+const RatingPage = () => {
+  const userId = getUserId() ?? "";
+  const { data: reviewsData, isLoading } = useGetUserReviewsQuery({ userId });
+  const [updateReview, { isLoading: isSubmitLoading }] = useUpdateReviewMutation();
 
-interface RatingPageProps {
-  toolsList: Tool[];
-}
+  const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [rating, setRating] = useState<number>(0);
 
-const RatingPage: React.FC<RatingPageProps> = ({ toolsList }) => {
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(
-    toolsList.length ? toolsList[0] : null
-  );
-  const [rating, setRating] = useState(4);
-  const [review, setReview] = useState("");
+  const reviewForm = useForm<ReviewInput>({
+    resolver: zodResolver(reviewSchema),
+    mode: "onBlur",
+  });
 
-  return (
-    <div className={styles.ratingContainer}>
-      <h2 className={styles.title}>Tools You Have Rated & Reviewed</h2>
+  // ✅ Extract reviews safely
+  const reviewsList = useMemo(() => {
+    const candidate = reviewsData?.result?.list ?? reviewsData?.result;
+    return Array.isArray(candidate) ? candidate : [];
+  }, [reviewsData]);
 
-      {/* Tool Cards */}
-      <div className={styles.toolsGrid}>
-        {toolsList.map((tool) => (
+  if (isLoading) return <div className={styles.loading}>Loading your reviews...</div>;
+  if (!reviewsList.length)
+    return <div className={styles.noReviews}>You haven’t reviewed any tools yet.</div>;
+console.log("selectedToolId",selectedToolId)
+  // ✅ Handle Review Update — only pass edit ID + tool ID separately
+  const handleUpdate = async (data: ReviewInput) => {
+    if (!editingReviewId || !selectedToolId) return;
+    try {
+      await updateReview({
+      toolId: selectedToolId,
+        userId: userId ?? "",
+        ...data,
+    }).unwrap()
+      setEditingReviewId(null);
+      setSelectedToolId(null);
+      reviewForm.reset();
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("Failed to update review");
+    }
+  };
+
+ return (
+  <div className={styles.ratingContainer}>
+    <h2 className={styles.title}>Tools You Have Rated & Reviewed</h2>
+
+    {/* 🔹 Tools Grid */}
+    <div className={styles.toolsGrid}>
+      {reviewsList.map((review: any) => {
+        const { relative, formatted } = formatReviewDate(review.createdAt);
+
+        return (
           <div
-            key={tool.id}
+            key={review._id}
             className={`${styles.toolCard} ${
-              selectedTool?.id === tool.id ? styles.active : ""
+              selectedToolId === review.toolId._id ? styles.active : ""
             }`}
-            onClick={() => setSelectedTool(tool)}
+            onClick={() => {
+              setSelectedToolId(review.toolId._id);
+              setRating(review.rating);
+              setEditingReviewId(review._id);
+              reviewForm.setValue("rating", review.rating);
+              reviewForm.setValue("reviewText", review.reviewText || "");
+            }}
           >
-            <div className={styles.imagePlaceholder}>
-              {tool.image ? (
-                <img src={tool.image} alt={tool.name} />
-              ) : (
-                <span>No Image</span>
-              )}
+            {/* 🧩 Left: Logo + Tool Name */}
+            <div className={styles.toolLeft}>
+              <div className={styles.imagePlaceholder}>
+                {review.toolId.logo ? (
+                  <img src={review.toolId.logo} alt={review.toolId.toolName} />
+                ) : (
+                  <span>No Image</span>
+                )}
+              </div>
+              <p className={styles.toolName}>{review.toolId.toolName}</p>
             </div>
-            <p>{tool.name}</p>
+
+            {/* ⭐ Right: Rating + Date */}
+            <div className={styles.toolRight}>
+              <StarRating rating={review.rating} size="sm" />
+              <p className={styles.reviewDate}>
+                Reviewed {relative}, {formatted}
+              </p>
+            </div>
+
+            {/* 🗑️ Delete Icon */}
             <button
               className={styles.deleteIcon}
               onClick={(e) => {
                 e.stopPropagation();
-                alert(`Deleted ${tool.name}`);
+                alert(`Delete review for ${review.toolId.toolName}`);
               }}
             >
               🗑️
             </button>
           </div>
-        ))}
-      </div>
-
-      {/* Selected Tool Section */}
-      {selectedTool && (
-        <div className={styles.reviewSection}>
-          <h3>{selectedTool.name}</h3>
-          <p>
-            {selectedTool.description ||
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
-          </p>
-
-          {/* Star Rating */}
-          <div className={styles.stars}>
-            {[1, 2, 3, 4, 5].map((num) => (
-              <span
-                key={num}
-                className={`${styles.star} ${
-                  rating >= num ? styles.filled : ""
-                }`}
-                onClick={() => setRating(num)}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-
-          {/* Review Textarea */}
-          <textarea
-            placeholder="Write your review..."
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
-
-          {/* Update Button */}
-          <button
-            className={styles.updateBtn}
-            onClick={() =>
-              alert(
-                `Updated ${selectedTool.name} with ${rating}⭐ rating and review: ${review}`
-              )
-            }
-          >
-            Update →
-          </button>
-        </div>
-      )}
+        );
+      })}
     </div>
-  );
+
+    {/* 🔹 Review Editing Section */}
+    {selectedToolId && (
+      <div className={styles.reviewSection}>
+        {reviewsList
+          .filter((r: any) => r.toolId._id === selectedToolId)
+          .map((r: any) => (
+            <div key={r._id}>
+              <DynamicForm
+                fields={reviewFields() as unknown as FormField<ReviewInput>[]}
+                control={reviewForm.control}
+                handleSubmit={reviewForm.handleSubmit}
+                onSubmit={handleUpdate}
+                buttonText={isSubmitLoading ? "Updating..." : "Update"}
+              />
+            </div>
+          ))}
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default RatingPage;

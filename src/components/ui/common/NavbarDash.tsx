@@ -1,27 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import styles from "../../ui/style/Navbar.module.scss";
 import { useAuthToggle } from "@/context/AuthToggleContext";
 import { getToken } from "@/utils/authStorage";
 import Image from "next/image";
-import ButtonNew from "./ButtonNew";
 
-export default function Navbar() {
-  const router = useRouter();
-  const pathname = usePathname();
+export default function NavbarDash() {
   const { setIsLogin } = useAuthToggle();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Check token only once
   useEffect(() => {
     const storedToken = getToken();
     setToken(storedToken);
   }, []);
 
-  // Disable scroll when mobile menu is open
+  const handleLoginClick = () => {
+    setIsLogin(true);
+    window.location.href = "/auth/login";
+  };
+
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
     return () => {
@@ -29,17 +28,11 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
-  const handleLoginClick = () => {
-    setIsLogin(true);
-    router.push("/auth/login");
-  };
-
-  const handleNavigation = (path: string) => {
+  const handleLinkClick = (url: string) => {
     setMenuOpen(false);
-    if (pathname !== path) router.push(path);
+    window.open(url, "_blank");
   };
 
-  // Avoid flicker during token check
   if (token === undefined) {
     return (
       <header className={styles.header}>
@@ -51,31 +44,34 @@ export default function Navbar() {
   return (
     <header className={styles.header}>
       {/* Logo */}
-      <div className={styles.logo}>
-        <button onClick={() => handleNavigation("/")} className={styles.navButton}>
-          Allisted
-        </button>
+      <div
+        className={styles.logo}
+        onClick={() => window.open("/", "_blank")}
+        style={{ cursor: "pointer" }}
+      >
+        Allisted
       </div>
 
       {/* Desktop Menu */}
       <nav className={styles.desktopMenu}>
         <button
-          onClick={() => handleNavigation("/")}
-          className={`${pathname === "/" ? styles.active : ""} ${styles.navButton}`}
+          onClick={() => handleLinkClick("/")}
+          className={styles.navButton}
         >
           Home
         </button>
+
         <button
-          onClick={() => handleNavigation("/categories")}
-          className={`${pathname === "/categories" ? styles.active : ""} ${styles.navButton}`}
+          onClick={() => handleLinkClick("/categories")}
+          className={styles.navButton}
         >
           Category
         </button>
 
         {token ? (
           <button
-            onClick={() => handleNavigation("/profile")}
-            className={`${pathname === "/profile" ? styles.active : ""} ${styles.navButton}`}
+            onClick={() => handleLinkClick("/profile")}
+            className={styles.profileLink}
           >
             <img
               src="/default-avatar.png"
@@ -89,8 +85,12 @@ export default function Navbar() {
             <button onClick={handleLoginClick} className={styles.navButton}>
               Login
             </button>
-            <ButtonNew/>
-           
+            <button
+              className={styles.submitBtn}
+              onClick={() => handleLinkClick("/add-tool")}
+            >
+              Add Your Tool
+            </button>
           </>
         )}
       </nav>
@@ -107,24 +107,23 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`${styles.mobileMenu} ${menuOpen ? styles.menuOpen : ""}`}>
-        <button
-          onClick={() => handleNavigation("/")}
-          className={`${pathname === "/" ? styles.active : ""} ${styles.navButton}`}
-        >
+      <div
+        className={`${styles.mobileMenu} ${menuOpen ? styles.menuOpen : ""}`}
+      >
+        <button onClick={() => handleLinkClick("/")} className={styles.navButton}>
           Home
         </button>
         <button
-          onClick={() => handleNavigation("/categories")}
-          className={`${pathname === "/categories" ? styles.active : ""} ${styles.navButton}`}
+          onClick={() => handleLinkClick("/categories")}
+          className={styles.navButton}
         >
           Category
         </button>
 
         {token ? (
           <button
-            onClick={() => handleNavigation("/profile")}
-            className={`${pathname === "/profile" ? styles.active : ""} ${styles.navButton}`}
+            onClick={() => handleLinkClick("/profile")}
+            className={styles.profileLink}
           >
             <Image
               src="/default-avatar.png"
@@ -141,8 +140,8 @@ export default function Navbar() {
               Login
             </button>
             <button
-              onClick={() => handleNavigation("/add-tool")}
               className={styles.submitBtn}
+              onClick={() => handleLinkClick("/add-tool")}
             >
               Add Your Tool
             </button>

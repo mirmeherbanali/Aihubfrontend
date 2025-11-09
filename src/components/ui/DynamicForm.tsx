@@ -15,6 +15,7 @@ import TextAreaInput from "./TextAreaInput";
 import Button from "./Button";
 import styles from "./style/DynamicForm.module.scss";
 import FAQFieldComponent from "./FaqAccordion";
+import RatingInput from "./RatingInput";
 
 const DropzoneComponent = dynamic(() => import("./DropzoneComponent"), {
   ssr: false
@@ -243,6 +244,27 @@ function DynamicFormInner<T extends FieldValues>({
                       )}
                     />
                   );
+case "rating":
+  return (
+    <Controller
+      key={field.name || idx}
+      name={field.name!}
+      control={control}
+      defaultValue={0}
+      render={({ field: controllerField, fieldState }) => (
+        <div style={fieldWrapperStyle}>
+          <RatingInput
+            value={controllerField.value}
+            onChange={controllerField.onChange}
+            label={field.label}
+          />
+          {fieldState.error && (
+            <p className={styles.errorText}>{fieldState.error.message}</p>
+          )}
+        </div>
+      )}
+    />
+  );
 
 case "chips":
   return (

@@ -1,47 +1,80 @@
-$spinner-color: #3498db;
-$spinner-track-color: #f3f3f3;
-$overlay-bg: rgba(255, 255, 255, 0.8); // A light overlay
-$spinner-size: 60px;
-$border-size: 6px;
-
-// The main full-screen container
-.loaderOverlay {
-  // --- Dimensions ---
-  width: 100vw;
-  height: 100vh;
-
-  // --- Positioning ---
-  position: fixed; // Stays in place, covering the whole screen
-  top: 0;
-  left: 0;
-  z-index: 9999;
-
-  // --- Centering (Flexbox) ---
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  // --- Appearance ---
-//   background-color: $overlay-bg;
-//   backdrop-filter: blur(5px); 
+.loader {
+  --cloud-color: #4387f4;
+  --arrows-color: #80b1ff;
+  --time-animation: 1s;
+  transform: scale(1);
 }
 
-// The spinner element
-.spinner {
-  width: $spinner-size;
-  height: $spinner-size;
-  border: $border-size solid $spinner-track-color;
-  border-top: $border-size solid $spinner-color;
-  border-radius: 50%;
-  animation: spin 1s linear infinite; // Apply the animation
+#cloud {
+  width: 100px;
+  height: 100px;
+
+  rect {
+    fill: var(--cloud-color);
+  }
+
+  g:nth-child(3) {
+    transform-origin: 50% 72.8938%;
+    fill: var(--arrows-color);
+    filter: drop-shadow(0 0 8px black);
+    animation: rotation var(--time-animation) linear infinite;
+  }
+
+  #shapes g g circle {
+    animation: cloud calc(var(--time-animation) * 2) linear infinite;
+
+    &:nth-child(2) {
+      animation-delay: calc((var(--time-animation) * 2) / -3);
+    }
+
+    &:nth-child(3) {
+      animation-delay: calc((var(--time-animation) * 2) / -1.5);
+    }
+  }
+
+  #lines g line {
+    stroke-width: 5;
+    transform-origin: 50% 50%;
+    rotate: -65deg;
+    animation: lines calc(var(--time-animation) / 1.33) linear infinite;
+  }
 }
 
-// Define the spin animation
-@keyframes spin {
+@keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
+  50% {
+    transform: rotate(180deg);
+  }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes lines {
+  0% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes cloud {
+  0% {
+    cx: 20;
+    cy: 60;
+    r: 15;
+  }
+  50% {
+    cx: 50;
+    cy: 45;
+    r: 20;
+  }
+  100% {
+    cx: 80;
+    cy: 60;
+    r: 15;
   }
 }

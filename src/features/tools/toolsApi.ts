@@ -18,15 +18,25 @@ export const toolsApi = baseApi.injectEndpoints({
       invalidatesTags: ["Tool"],
     }),
 
-    getAllTools: builder.query<AuthResponse, void>({
-      query: () => ({
-        url: "api/tool/getAllTools",
-        method: "GET",
+    getAllTools: builder.query<AuthResponse, { userId: string }>({
+  query: ({ userId }) => {
+    return {
+      url: `api/tool/getAllTools?userId=${userId}`,
+      method: "GET", 
+    };
+  },
+  providesTags: ["Tool"],
+}),
+
+  getToolDetailsById: builder.mutation<AuthResponse, { id: string }>({
+      query: (body) => ({
+        url: "api/tool/getToolDetailsById",
+        method: "POST",
+        body,
       }),
-      providesTags: ["Tool"],
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useCreateToolMutation, useGetAllToolsQuery } = toolsApi;
+export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation } = toolsApi;
