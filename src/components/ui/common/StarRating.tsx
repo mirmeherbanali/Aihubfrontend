@@ -13,6 +13,7 @@ interface StarRatingProps {
 
   /** Show numeric value (like 3/5) */
   showValue?: boolean;
+  totalReviews?: number;
 
   /** Custom class for styling */
   className?: string;
@@ -27,6 +28,7 @@ const StarRating: React.FC<StarRatingProps> = ({
   rating = 0,
   size = "md",
   showValue = false,
+  totalReviews = 0,
   className = "",
   colorFilled = "#f5c518",
   colorEmpty = "#d1d5db",
@@ -41,6 +43,7 @@ const StarRating: React.FC<StarRatingProps> = ({
 
   // ✅ Rounded display value (for “3/5”, “4/5”)
   const roundedDisplay = Math.round(safeRating);
+
 
   return (
     <div
@@ -75,6 +78,12 @@ const StarRating: React.FC<StarRatingProps> = ({
           {roundedDisplay}/5
         </span>
       )}
+      {totalReviews > 0 && (
+  <span className={styles.value}>
+    ({totalReviews})
+  </span>
+)}
+
     </div>
   );
 };

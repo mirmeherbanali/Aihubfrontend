@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import styles from "../ui/style/CategoryToolCard.module.scss";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import StarRating from "../ui/common/StarRating";
 
 const CategoryToolCard = ({ tool }: { tool: any }) => {
   const router = useRouter();
@@ -35,7 +36,10 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
         <h2 className={styles.toolName}>{tool.toolName}</h2>
 
         {/* 3. Rating (Static for now) */}
-        <div className={styles.rating}>
+        <StarRating  rating={tool?.reviewSummary?.avgRating} showValue totalReviews={tool?.reviewSummary?.totalReviews}
+
+        />
+        {/* <div className={styles.rating}>
           <div className={styles.stars}>
             <FaStar />
             <FaStar />
@@ -44,7 +48,7 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
             <FaRegStar />
           </div>
           <span className={styles.ratingCount}>3.5/5 (721)</span>
-        </div>
+        </div> */}
 
         {/* 4. Price */}
         <div className={styles.priceBox}>

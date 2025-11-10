@@ -76,7 +76,7 @@ const ToolDetailsPage = () => {
   return (
     <div className={styles.toolPage}>
       <header className={styles.headerSection}>
-        <ToolCardHeader tool={tool} category={category} userType={userType??""} userId={userId??""} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading}/>
+        <ToolCardHeader tool={tool} category={category} userType={userType??""} userId={userId??""}/>
       </header>
       <div className={styles.pageLayout}>
         <main className={styles.mainSection}>

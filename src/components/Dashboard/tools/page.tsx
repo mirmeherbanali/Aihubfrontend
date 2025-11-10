@@ -24,13 +24,11 @@ export default function ToolsPage() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [showGridForm, setShowGridForm] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-  
-  console.log("userId",userId)
+
   // API hooks
   const { data: toolsData, refetch } = useGetAllToolsQuery({ userId });
 
   const [createTool] = useCreateToolMutation();
-  console.log("tools",toolsData)
 
   // Tools list from backend
   const tools = toolsData?.result?.list || [];

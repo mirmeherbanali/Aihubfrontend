@@ -17,7 +17,6 @@ import {
   useAddReviewMutation
 } from "@/features/review/reviewApi";
 import { FormField } from "@/types/form.types";
-import { useRatingData } from "@/utils/useRatingData";
 import StarRating from "@/components/ui/common/StarRating";
 
 interface ToolCardHeaderProps {
@@ -25,8 +24,6 @@ interface ToolCardHeaderProps {
   category: any;
   userType?: string;
   userId?: string;
-  reviewsData?:any;
-  isReviewsLoading?:boolean;
 
 }
 
@@ -34,9 +31,7 @@ const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({
   tool,
   category,
   userType,
-  userId,
-  reviewsData,
-  isReviewsLoading
+  userId
 }) => {
   const [showReview, setShowReview] = useState(false);
   const [addReview, { isLoading }] = useAddReviewMutation();
@@ -44,7 +39,6 @@ const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({
     resolver: zodResolver(reviewSchema),
     mode: "onBlur",
   });
-  const { rating, fullStars, halfStar, emptyStars, reviewCount } = useRatingData(reviewsData, tool);
 
   const handleReviewSubmit = async (data: ReviewInput) => {
     try {
@@ -83,17 +77,8 @@ const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({
 
         <div className={styles.toolRight}>
           <div className={styles.ratingSection}>
-            {isReviewsLoading ? (
-              <div className={styles.loadingText}>Loading...</div>
-            ) : (
-              <> 
-               <StarRating rating={rating} size="sm"  />
-
-
-                <div className={styles.ratingText}>{rating.toFixed(1)}/5</div>
-                <div className={styles.reviewCount}>({reviewCount})</div>
-              </>
-            )}
+               <StarRating rating={tool?.reviewSummary?.avgRating} showValue totalReviews={tool?.reviewSummary?.totalReviews} size="sm"  />
+            
           </div>
 
           {/* ✅ Only show Review button if userType === "Reviewer" */}

@@ -24,7 +24,7 @@ const AdminTools = () => {
   const router = useRouter();
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
-  console.log("editTool",editTool)
+
   const { data: toolsData, refetch } = useGetAllToolsQuery();
   const [isSubmitting, setIsSubmitting] = useState(false);
   

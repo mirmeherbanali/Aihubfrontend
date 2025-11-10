@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "@/components/ui/style/ReviewSection.module.scss";
-import { FaStar, FaRegStar, FaStarHalf } from "react-icons/fa";
 import { useRatingData } from "@/utils/useRatingData";
 import { formatReviewDate } from "@/utils/useFormatDate";
 import StarRating from "@/components/ui/common/StarRating";
+import RadioPagination from "@/components/ui/common/RadioPagination";
 
 interface ReviewSectionProps {
   tool: any;
@@ -18,43 +18,63 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
   reviewsData,
   isReviewsLoading,
 }) => {
-  const {
-    reviewsList,
-    averageRating,
-    rating,
-    fullStars,
-    halfStar,
-    emptyStars,
-    reviewCount,
-  } = useRatingData(reviewsData, tool);
+  const { reviewsList } = useRatingData(reviewsData, tool);
 
-  if (isReviewsLoading) {
-    return <div className={styles.loading}>Loading reviews...</div>;
-  }
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 3;
+  const totalPages = Math.ceil(reviewsList.length / reviewsPerPage);
+
+  // Paginate reviews
+  const startIndex = (currentPage - 1) * reviewsPerPage;
+  const currentReviews = reviewsList.slice(startIndex, startIndex + reviewsPerPage);
+
+  if (isReviewsLoading) return <div className={styles.loading}>Loading reviews...</div>;
 
   return (
     <div className={styles.reviewContainer}>
       <h2 className={styles.reviewHeader}>Reviews</h2>
 
-      {/* ⭐ Rating Summary Section (Dynamic) */}
+      {/* ⭐ Rating Summary Section */}
       <div className={styles.ratingSummary}>
         <div className={styles.leftSummary}>
-          <h1 className={styles.avgRating}>{rating.toFixed(1)}</h1>
+          <h1 className={styles.avgRating}>{tool?.reviewSummary?.avgRating}</h1>
+          <StarRating rating={tool?.reviewSummary?.avgRating} size="lg" />
+          <p className={styles.totalReviews}>
+            {tool?.reviewSummary?.totalReviews} total reviews
+          </p>
+        </div>
 
-          <StarRating  rating={rating} size="lg"  />
+        <div className={styles.rightBars}>
+          {Object.entries(tool?.reviewSummary?.ratingBreakdown || {})
+            .sort(([a], [b]) => Number(b) - Number(a))
+            .map(([rating, count]) => {
+              const totalReviews = tool?.reviewSummary?.totalReviews || 0;
+              const percentage =
+                totalReviews > 0 ? (Number(count) / totalReviews) * 100 : 0;
 
-          <p className={styles.totalReviews}>{reviewCount} total reviews</p>
+              return (
+                <div className={styles.barItem} key={rating}>
+                  <span className={styles.barLabel}>{rating} ★</span>
+                  <div className={styles.bar}>
+                    <div
+                      className={styles.barFill}
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className={styles.barCount}>{String(count ?? 0)}</span>
+                </div>
+              );
+            })}
         </div>
       </div>
 
-      {/* ✅ Dynamic Review List */}
+      {/* ✅ Paginated Review List */}
       <div className={styles.reviewList}>
-        {reviewsList.length === 0 ? (
+        {currentReviews.length === 0 ? (
           <p className={styles.noReviews}>No reviews yet. Be the first to review!</p>
         ) : (
-          reviewsList.map((review: any, index: number) => {
+          currentReviews.map((review: any, index: number) => {
             const { relative, formatted } = formatReviewDate(review?.createdAt);
-
             return (
               <div className={styles.reviewCard} key={index}>
                 <div className={styles.avatar}>
@@ -71,7 +91,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
                     </div>
                   </div>
 
-                  <StarRating rating={review.rating} size="sm" showValue  />
+                  <StarRating rating={review.rating} size="sm" showValue />
 
                   {review.reviewText && (
                     <p className={styles.reviewText}>{review.reviewText}</p>
@@ -81,7 +101,17 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
             );
           })
         )}
+        
+      {/* 🔘 Pagination */}
+      {totalPages > 1 && (
+        <RadioPagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onChange={setCurrentPage}
+        />
+      )}
       </div>
+
     </div>
   );
 };

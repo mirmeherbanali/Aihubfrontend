@@ -19,15 +19,13 @@ export const toolsApi = baseApi.injectEndpoints({
     }),
 
     getAllTools: builder.query<AuthResponse, { userId: string }>({
-  query: ({ userId }) => {
-    return {
-      url: `api/tool/getAllTools?userId=${userId}`,
-      method: "GET", 
-    };
-  },
-  providesTags: ["Tool"],
-}),
-
+      query: (body) => ({
+        url: "api/tool/getAllTools",
+        method: "POST", // ✅ POST because userId is sent in body
+        body,           // ✅ include userId inside body
+      }),
+      providesTags: ["Tool"],
+    }),
   getToolDetailsById: builder.mutation<AuthResponse, { id: string }>({
       query: (body) => ({
         url: "api/tool/getToolDetailsById",
