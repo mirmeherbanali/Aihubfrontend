@@ -1,12 +1,12 @@
 .dashboard-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh; // ✅ allow growth beyond 100vh
   background: #f9fafc;
   color: #333;
   overflow: hidden;
 
-  /* 🔹 Fixed Navbar at the top */
+  /* 🔹 Fixed Navbar */
   .navbar {
     position: fixed;
     top: 0;
@@ -23,12 +23,13 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
 
-  /* 🔹 Main body (Sidebar + Content) */
+  /* 🔹 Body: Sidebar + Content */
   .dashboard-body {
     display: flex;
     flex: 1;
-    // margin-top: 64px; // Leave space for navbar
-    height: calc(100vh - 64px);
+    margin-top: 64px; // ✅ leaves space for navbar
+    height: auto;
+    overflow: hidden; // prevent double scroll
   }
 
   /* 🔹 Sidebar */
@@ -39,7 +40,7 @@
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 64px; // Below navbar
+    top: 64px; // below navbar
     left: 0;
     height: calc(100vh - 64px);
     transition: all 0.3s ease;
@@ -66,12 +67,10 @@
       gap: 8px;
       background-color: #748FF4;
 
-
       .menu-item {
         display: flex;
         align-items: center;
         padding: 15px 20px;
-        // border-radius: 6px;
         cursor: pointer;
         transition: all 0.2s ease;
         color: white;
@@ -87,29 +86,27 @@
 
         &:hover {
           background: #3960EF;
-          // color: #007bff;
           color: white;
         }
 
         &.active {
           background: #3960EF;
-          // color: #007bff;
-          color:white;
+          color: white;
           font-weight: 500;
         }
       }
     }
   }
 
-  /* 🔹 Main content area */
+  /* 🔹 Main Content */
   .dashboard-content {
     flex: 1;
     margin-left: 240px;
-    // padding: 40px;
-    overflow-y: auto;
     height: calc(100vh - 64px);
-    transition: margin-left 0.3s ease;
+    overflow-y: auto; // ✅ scroll only inside content
     background-color: #f9fafc;
+    transition: margin-left 0.3s ease;
+    // padding-bottom: 60px; // space for footer
   }
 
   /* 🔹 Mobile menu button */
@@ -131,7 +128,7 @@
     }
   }
 
-  /* 🔹 Responsive behavior */
+  /* 🔹 Responsive Behavior */
   @media (max-width: 1024px) {
     .dashboard-content {
       margin-left: 0;
@@ -176,7 +173,6 @@
   @media (max-width: 480px) {
     .dashboard-content {
       padding: 0px;
-
     }
 
     .sidebar {
@@ -185,7 +181,7 @@
   }
 }
 
-
+/* 🔹 Content Wrapper */
 .dashboard-content-wrapper {
   padding: 20px;
   min-height: 90vh;
@@ -193,4 +189,13 @@
   @media (max-width: 768px) {
     padding: 5px;
   }
+}
+
+/* ✅ Prevent unwanted global overflow */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
