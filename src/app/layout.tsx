@@ -78,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
           </main>
           
           {/* Custom Token Modal */}
-          {showTokenModal && (
+          {/* {showTokenModal && (
            <div className="token-modal-overlay">
   <div className="token-modal-container">
     <div className="token-modal-header">
@@ -95,10 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
       <div className="token-card-content">
         <h3>To continue using <strong>Allisted</strong>, please log in with your
           appropriate account type:</h3>
-        {/* <p>
-          To continue using <strong>Allisted</strong>, please log in with your
-          appropriate account type:
-        </p> */}
+       
 
         <div className="token-role-card">
           <h4>👤 Reviewer Account</h4>
@@ -128,7 +125,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
   </div>
 </div>
 
-          )}
+          )} */}
 
           <ToastContainer position="top-right" autoClose={3000} />
           {!isDashboardPage && <Footer />}

@@ -71,6 +71,12 @@ export default function Navbar() {
         >
           Category
         </button>
+        <button
+          onClick={() => handleNavigation("/about")}
+          className={`${pathname === "/about" ? styles.active : ""} ${styles.navButton}`}
+        >
+          About
+        </button>
 
         {token ? (
           <button
