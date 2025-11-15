@@ -1,0 +1,224 @@
+/* --- Design Variables --- */
+$border-color: #e8e8e8;
+$text-color-primary: #111827;
+$text-color-secondary: #6b7280;
+$card-radius: 8px;
+$transition-speed: 0.3s;
+
+/* --- Main Section Container --- */
+/* === DESIGN 5: Animated Cards === */
+.glassSection {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: $text-color-secondary;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.faqDeck {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.faqItem.animatedDesign {
+  background: white;
+  border: 2px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  transition: all $transition-speed cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+    transform: scaleY(0);
+    transition: transform $transition-speed ease;
+  }
+
+  &:hover {
+    border-color: #e2e8f0;
+    transform: translateX(8px);
+    
+    &::before {
+      transform: scaleY(1);
+    }
+  }
+
+  &.open {
+    border-color: #667eea;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+    
+    &::before {
+      transform: scaleY(1);
+    }
+  }
+}
+
+.faqHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  cursor: pointer;
+  gap: 20px;
+}
+
+.questionMain {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.questionIndex {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all $transition-speed ease;
+}
+
+.question {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $text-color-primary;
+  margin: 0;
+  line-height: 1.4;
+  transition: all $transition-speed ease;
+}
+
+.iconWrapper {
+  width: 45px;
+  height: 45px;
+  background: #f8fafc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all $transition-speed ease;
+}
+
+.icon {
+  font-size: 16px;
+  color: #667eea;
+  transition: all $transition-speed ease;
+}
+
+.answerWrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height $transition-speed cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.answerContent {
+  padding: 0 30px;
+  position: relative;
+}
+
+.answerHighlight {
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+  position: absolute;
+  left: 30px;
+  top: 0;
+  border-radius: 2px;
+}
+
+.answer {
+  font-size: 1.05rem;
+  color: $text-color-secondary;
+  line-height: 1.7;
+  margin: 0;
+  padding: 0 0 25px 25px;
+  border-left: 2px solid #e2e8f0;
+  margin-left: 8px;
+}
+
+/* Open State */
+.faqItem.animatedDesign.open {
+  .questionIndex {
+    transform: scale(1.1);
+  }
+
+  .question {
+    color: #667eea;
+  }
+
+  .iconWrapper {
+    background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+    transform: rotate(180deg);
+  }
+
+  .icon {
+    color: white;
+    transform: rotate(180deg);
+  }
+
+  .answerWrapper {
+    max-height: 400px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faqGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .glassSection, .gradientSection, .minimalistSection, .neoSection, .animatedSection {
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .faqHeader {
+    padding: 20px;
+  }
+  
+  .question {
+    font-size: 1.1rem;
+  }
+}

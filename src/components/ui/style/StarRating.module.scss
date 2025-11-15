@@ -1,0 +1,32 @@
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.starIcon:hover {
+  transform: scale(1.1);
+}
+
+.value {
+  margin-left: 6px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Size variants */
+.sm .starIcon {
+  font-size: 14px;
+}
+
+.md .starIcon {
+  font-size: 18px;
+}
+
+.lg .starIcon {
+  font-size: 24px;
+}

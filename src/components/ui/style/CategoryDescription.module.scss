@@ -1,0 +1,36 @@
+/* --- Design Variables --- */
+$text-color-primary: #1F2937; // Dark grey for title
+$text-color-secondary: #4B5563; // Lighter grey for body
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+/* --- Main Container --- */
+.container {
+  font-family: $font-family;
+  max-width: 800px; // Constrain width for readability
+  margin: 20px auto; // Center on page for demo
+}
+
+/* --- Title Styling (h2) --- */
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+/* --- Description Styling (p) --- */
+.description {
+  font-size: 16px;
+  color: $text-color-secondary;
+  line-height: 1.6; // Improves readability
+  margin-top: 0;
+  margin-bottom: 20px; // Space between paragraphs
+
+  // Styles the last paragraph to have no bottom margin
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

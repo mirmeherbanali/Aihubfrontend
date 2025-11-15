@@ -1,0 +1,201 @@
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // ✅ allow growth beyond 100vh
+  background: #f9fafc;
+  color: #333;
+  overflow: hidden;
+
+  /* 🔹 Fixed Navbar */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1100;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  /* 🔹 Body: Sidebar + Content */
+  .dashboard-body {
+    display: flex;
+    flex: 1;
+    margin-top: 64px; // ✅ leaves space for navbar
+    height: auto;
+    overflow: hidden; // prevent double scroll
+  }
+
+  /* 🔹 Sidebar */
+  .sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 64px; // below navbar
+    left: 0;
+    height: calc(100vh - 64px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      height: 64px;
+      font-weight: 600;
+      font-size: 18px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #007bff;
+    }
+
+    .sidebar-menu {
+      padding: 16px 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background-color: #748FF4;
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: white;
+        font-size: 15px;
+
+        .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+          font-size: 18px;
+        }
+
+        &:hover {
+          background: #3960EF;
+          color: white;
+        }
+
+        &.active {
+          background: #3960EF;
+          color: white;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  /* 🔹 Main Content */
+  .dashboard-content {
+    flex: 1;
+    margin-left: 240px;
+    height: calc(100vh - 64px);
+    overflow-y: auto; // ✅ scroll only inside content
+    background-color: #f9fafc;
+    transition: margin-left 0.3s ease;
+    // padding-bottom: 60px; // space for footer
+  }
+
+  /* 🔹 Mobile menu button */
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1200;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background: #005dc1;
+    }
+  }
+
+  /* 🔹 Responsive Behavior */
+  @media (max-width: 1024px) {
+    .dashboard-content {
+      margin-left: 0;
+      padding: 24px;
+    }
+
+    .sidebar {
+      left: -240px;
+
+      &.open {
+        left: 0;
+      }
+    }
+
+    .mobile-menu-btn {
+      display: block;
+    }
+
+    .sidebar-menu .label {
+      display: none;
+    }
+
+    .sidebar-header .logo-text {
+      display: none;
+    }
+
+    .sidebar {
+      width: 200px;
+    }
+
+    .sidebar .menu-item {
+      justify-content: center;
+      padding: 12px 0;
+
+      .icon {
+        margin-right: 0;
+        font-size: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-content {
+      padding: 0px;
+    }
+
+    .sidebar {
+      width: 180px;
+    }
+  }
+}
+
+/* 🔹 Content Wrapper */
+.dashboard-content-wrapper {
+  padding: 20px;
+  min-height: 90vh;
+
+  @media (max-width: 768px) {
+    padding: 5px;
+  }
+}
+
+/* ✅ Prevent unwanted global overflow */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
