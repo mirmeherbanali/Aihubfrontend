@@ -1,48 +1,57 @@
 .toolPage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
   min-height: 100vh;
   background: #f9fafc;
   padding: 1rem;
 }
 
+/* Header */
 .headerSection {
   width: 100%;
+  margin-bottom: 1.5rem;
 }
 
-/* Layout wrapper for both main + sidebar */
+/* Layout wrapper */
 .pageLayout {
   display: flex;
-  justify-content: center;
   gap: 2rem;
   width: 90%;
-  margin-top: 2rem;
+  margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    width: 95%;
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;
-    width: 95%;
+    gap: 1.5rem;
   }
 }
 
-/* White box for main content */
+/* MAIN CONTENT BOX */
 .mainSection {
   flex: 0 0 70%;
-  background: #fff;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 14px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
   @media (max-width: 1024px) {
-    flex: 1 1 100%;
+    flex: 1 1 auto;
+    padding: 1.5rem;
   }
 }
 
-/* Sidebar area */
+/* SIDEBAR */
 .sidebarSection {
-  flex: 0 0 15%;
+  flex: 0 0 25%;
+  position: sticky;
+  top: 110px;
+  height: fit-content;
+
   @media (max-width: 1024px) {
-    flex: 1 1 100%;
+    position: relative;
+    top: 0;
+    flex: 1 1 auto;
   }
 }

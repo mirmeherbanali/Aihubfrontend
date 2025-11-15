@@ -12,11 +12,13 @@ $font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
 /* --- Title Styling (h2) --- */
 .title {
-  font-size: 32px;
-  font-weight: 700;
-  color: $text-color-primary;
-  margin-top: 0;
-  margin-bottom: 16px; // Space between title and text
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #0a3cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
 }
 
 /* --- Description Styling (p) --- */

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import "../ui/style/DynamicHeaderTabs.scss";
+import "../ui/style/SideBar.module.scss";
 
 interface TabAction {
   label: string;
@@ -11,8 +11,8 @@ interface TabAction {
 interface DynamicHeaderTabsProps {
   actions: TabAction[];
   defaultActive?: number;
-  activeIndex?: number; // new
-  onTabChange?: (index: number) => void; // optional callback
+  activeIndex?: number;
+  onTabChange?: (index: number) => void;
 }
 
 const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
@@ -21,34 +21,32 @@ const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
   activeIndex: externalActiveIndex,
   onTabChange
 }) => {
-  const [internalActiveIndex, setInternalActiveIndex] = useState<number>(defaultActive);
+  const [internalActiveIndex, setInternalActiveIndex] = useState(defaultActive);
 
   const isControlled = externalActiveIndex !== undefined;
   const activeIndex = isControlled ? externalActiveIndex : internalActiveIndex;
 
-  const handleTabClick = (index: number, action: TabAction) => {
+  const handleSelect = (index: number, action: TabAction) => {
     if (!isControlled) setInternalActiveIndex(index);
-    if (onTabChange) onTabChange(index); // notify parent
+    if (onTabChange) onTabChange(index);
     if (action.onClick) action.onClick();
   };
 
   return (
-    <div className="dynamic-tabs">
-      {actions.map((action, index) => {
-        const isActive = index === activeIndex;
-        return (
-          <button
-            key={index}
-            className={`tab-button ${isActive ? "active" : ""}`}
-            onClick={() => handleTabClick(index, action)}
-          >
-            {action.label}
-          </button>
-        );
-      })}
+    <div className="radio-inputs">
+      {actions.map((action, index) => (
+        <label className="radio" key={index}>
+          <input
+            type="radio"
+            name="dynamicTabs"
+            checked={activeIndex === index}
+            onChange={() => handleSelect(index, action)}
+          />
+          <span className="name">{action.label}</span>
+        </label>
+      ))}
     </div>
   );
 };
 
 export default DynamicHeaderTabs;
-

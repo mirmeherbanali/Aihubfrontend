@@ -3,10 +3,9 @@ import "../style/ScrollDown.scss";
 
 const ScrollDown = () => {
   return (
-    <div className="scrolldown">
-      <div className="chevrons">
-        <div className="chevrondown" />
-        <div className="chevrondown" />
+    <div className="scrolldown scrolldown--design2">
+      <div className="circle">
+        <div className="arrow-down" />
       </div>
     </div>
   );

@@ -57,10 +57,10 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
     return () => clearInterval(interval);
   }, [hasToken]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setLoading(false), 100);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   const isDashboardPage = pathname?.startsWith("/dashboard");
 
@@ -70,11 +70,14 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
         <ClientProviders>
           {!isDashboardPage && <Navbar />}
           <main style={{ minHeight: "100vh" }}>
-            {loading ? (
-              <Loader/>
-            ) : (
+            {
+            // loading ? (
+            //   <Loader/>
+            // ) : 
+            (
               children
-            )}
+            )
+            }
           </main>
           
           {/* Custom Token Modal */}

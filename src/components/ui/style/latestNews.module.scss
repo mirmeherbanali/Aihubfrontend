@@ -3,11 +3,23 @@
   padding: 60px 20px;
 
   h2 {
-    font-size: 36px;
-    font-weight: 800;
-    color: #2979ff;
-    margin-bottom: 40px;
-    text-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+    font-size: 44px;
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 60px;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+  }
   }
 }
 
@@ -22,60 +34,156 @@
 
 /* Card */
 .card {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+  width: 350px;
+  height: 254px;
+  position: relative;
+  border-radius: 40px;
+  transition: all 0.8s;
+  perspective: 600px;
+  perspective-origin: center bottom;
+}
 
-  &:hover {
-    transform: translateY(-5px);
-  }
+.upperPart {
+  width: 100%;
+  height: 65%;
+  border-radius: 40px 40px 0 0;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: all 0.9s;
+}
 
-  .image {
-    background: #e0e0e0;
-    height: 160px;
-    border-bottom: 1px solid #ddd;
-    border-radius: 10px 10px 0 0;
-  }
+.upperPartFace,
+.upperPartBack {
+  text-align: center;
+  background-color: #fff;
+  color: #2979ff;
+  border: 3px solid #2979ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  border-radius: 40px 40px 0 0;
+  font-weight: bold;
+  z-index: 2;
+  backface-visibility: hidden;
+  transition: all 0.6s;
+}
 
-  p {
-    padding: 16px;
-    font-size: 16px;
-    color: #111;
-  }
+.upperPartBack {
+  background-color: #2979ff;
+  color: lightgray;
+  transform: rotateX(180deg);
+}
+
+.lowerPart {
+  width: 100%;
+  height: 35%;
+  border-radius: 0 0 40px 40px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: center top;
+  transition: all 0.9s;
+}
+
+.lowerPartFace,
+.lowerPartBack {
+  background-color: #2979ff;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  font-weight: bold;
+  position: absolute;
+  border-radius: 0 0 40px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(0, -0.8px);
+  backface-visibility: hidden;
+  z-index: 2;
+}
+
+.lowerPartBack {
+  border-radius: 40px;
+  color: #2979ff;
+  background-color: #fff;
+  transform: rotateX(180deg);
+  z-index: 1;
+  transition: border-radius 0.6s;
+}
+
+/* Hover Animations */
+.card:hover > .upperPart {
+  transform: rotateX(-0.5turn);
+}
+
+.card:hover > .lowerPart {
+  transform: translateY(88.3px) rotateX(0.5turn);
+}
+
+.card:hover > .lowerPart > .lowerPartBack {
+  border: 3px solid #2979ff;
+  border-radius: 0 0 40px 40px;
 }
 
 /* View Button */
 .viewBtn {
   margin-top: 30px;
-  padding: 12px 28px;
-  border: none;
-  background: #2979ff;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 999px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  background: white;
+  color: #667eea;
+  font-weight: 700;
+  border: 2px solid #2979ff;
+  border-radius: 12px;
+  padding: 16px 36px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  font-size: 16px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
 
-  span {
-    font-size: 18px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea, #2979ff);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: -1;
   }
 
   &:hover {
-    transform: translateY(-2px);
+    color: white;
+    transform: translateY(-3px) translateZ(10px);
+    box-shadow: 
+      0 15px 30px rgba(102, 126, 234, 0.3),
+      0 0 0 1px rgba(102, 126, 234, 0.1);
+    
+    &::before {
+      transform: scaleX(1);
+    }
+    
+    span {
+      transform: translateX(6px) translateZ(5px);
+    }
+  }
+
+  span {
+    font-size: 20px;
+    transition: transform 0.3s ease;
   }
 }
 
-/* ========== Responsive ========== */
-
-/* Tablet */
+/* Responsive */
 @media (max-width: 1024px) {
   .newsGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -86,7 +194,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .newsGrid {
     grid-template-columns: 1fr;

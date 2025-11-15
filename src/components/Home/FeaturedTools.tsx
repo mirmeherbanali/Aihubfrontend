@@ -29,7 +29,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, 
       <h2>Featured Tools</h2>
 
       <div className={styles.grid}>
-        {toolData.map((tool) => {
+        {toolData?.slice(0, 4)?.map((tool) => {
           // Find category using _id match
           const categoryId = tool?.category?.[0]?._id;
           const category = allCategories.find((c) => c._id === categoryId);

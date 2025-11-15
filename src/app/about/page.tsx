@@ -239,8 +239,7 @@ export default function AboutPage() {
                   </div>
                 </div>
               </div>
-            </div>
-
+            </div> 
             <div className={styles.ourStoryImpact}>
               <h3>Our Impact Today</h3>
               <div className={styles.impactGrid}>
