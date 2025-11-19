@@ -3,7 +3,8 @@
 import Head from 'next/head';
 import styles from '../../components/ui/style/About.module.scss';
 import Image from "next/image";
-import { useState } from 'react';
+import { useState,CSSProperties  } from 'react';
+
 
 const pillars = [
   {
@@ -50,9 +51,9 @@ export default function AboutPage() {
         {/* Animated Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroBackground}>
-            <div className={styles.floatingShape} style={{"--delay": "0s"}}></div>
-            <div className={styles.floatingShape} style={{"--delay": "2s"}}></div>
-            <div className={styles.floatingShape} style={{"--delay": "4s"}}></div>
+            <div className={styles.floatingShape} style={{ ["--delay" as any]: "0s" } as CSSProperties}></div>
+            <div className={styles.floatingShape} style={{ ["--delay" as any]: "2s" } as CSSProperties}></div>
+            <div className={styles.floatingShape} style={{ ["--delay" as any]: "4s" } as CSSProperties}></div>
           </div>
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>
@@ -66,13 +67,13 @@ export default function AboutPage() {
           <div className={styles.heroVisual}>
             <div className={styles.orbitalSystem}>
               <div className={styles.centerOrb}></div>
-              <div className={styles.orbit} style={{"--index": "0"}}>
+              <div className={styles.orbit} style={{ ["--index" as any]: "0" } as CSSProperties}>
                 <div className={styles.orb}>Reviews</div>
               </div>
-              <div className={styles.orbit} style={{"--index": "1"}}>
+              <div className={styles.orbit} style={{ ["--index" as any]: "1" } as CSSProperties}>
                 <div className={styles.orb}>Recruitment</div>
               </div>
-              <div className={styles.orbit} style={{"--index": "2"}}>
+              <div className={styles.orbit} style={{ ["--index" as any]: "2" } as CSSProperties}>
                 <div className={styles.orb}>Recommendations</div>
               </div>
             </div>
@@ -277,7 +278,7 @@ export default function AboutPage() {
                   key={index}
                   className={`${styles.pillarTab} ${activePillar === index ? styles.active : ''}`}
                   onClick={() => setActivePillar(index)}
-                  style={{ '--pillar-color': pillar.color }}
+                  style={{ ['--pillar-color' as any]: pillar.color } as CSSProperties}
                 >
                   <span className={styles.pillarIcon}>{pillar.icon}</span>
                   {pillar.title}
@@ -285,7 +286,7 @@ export default function AboutPage() {
               ))}
             </div>
             <div className={styles.pillarsContent}>
-              <div className={styles.pillarDisplay} style={{ '--active-color': pillars[activePillar].color }}>
+              <div className={styles.pillarDisplay} style={{ ['--active-color' as any]: pillars[activePillar].color } as CSSProperties}>
                 <div className={styles.pillarInfo}>
                   <h3>{pillars[activePillar].title}</h3>
                   <p className={styles.pillarSubtitle}>{pillars[activePillar].subtitle}</p>
