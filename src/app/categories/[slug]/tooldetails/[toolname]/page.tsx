@@ -50,6 +50,7 @@ const ToolDetailsPage = () => {
 
   // Find tool + alternatives
   const { tool, alternativeTools } = useMemo(() => {
+    
     const tools = categoryDetail?.result?.list?.tools || [];
 
     const foundTool = tools.find(
@@ -61,7 +62,7 @@ const ToolDetailsPage = () => {
       : [];
 
     return { tool: foundTool, alternativeTools: alt };
-  }, [categoryDetail, decoded.toolName]);
+  }, [categoryDetail, decoded.toolName, categoryId]);
 
   // Fetch reviews with correct hook usage
   const { data: reviewsData, isLoading: isReviewsLoading } = useGetToolReviewsQuery(

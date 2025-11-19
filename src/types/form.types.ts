@@ -109,15 +109,13 @@ export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
 export interface FAQFieldComponentProps {
   name: string;
   register: UseFormRegister<any>;
-}export interface AuthResponse {
+}
+export interface AuthResponse {
   success: boolean;
   result: {
     message: string;
-    list?: {
-      _id: string | undefined;
-      categoryName: ReactNode;
-      list?: any[];
-    }[];
+    list?: any;
   };
 }
+
 
