@@ -49,15 +49,18 @@ export default function Reviews() {
     <div className="tab-content-wrapper">
       <DynamicHeaderTabs actions={tabActions} defaultActive={0} />
       {tab === 1 ? (
-        <DynamicTable
-          columns={columns}
-          data={dataConstant}
-          actions={actions}
-          bulkActions={bulkActions}
-          searchKey="reviewerName"
-          filterKeys={["reviewerRole"]}
-          itemsPerPage={10}
-        />
+
+        <div>Add Reviewers</div>
+
+        // <DynamicTable
+        //   columns={columns}
+        //   data={dataConstant}
+        //   actions={actions}
+        //   bulkActions={bulkActions}
+        //   searchKey="reviewerName"
+        //   filterKeys={["reviewerRole"]}
+        //   itemsPerPage={10}
+        // />
       ) : (
         // <AddCategory />
         <div>Add Reviewers</div>
