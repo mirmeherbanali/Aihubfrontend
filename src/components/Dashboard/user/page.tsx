@@ -78,15 +78,17 @@ export default function UserPage() {
         isLoading ? (
           <p>Loading users...</p>
         ) : (
-          <DynamicTable
-            columns={columns}
-            data={allUsers} // ✅ default Reviewer only
-            actions={actions}
-            bulkActions={bulkActions}
-            searchKey="firstName"
-            filterKeys={["userType", "status"]}
-            itemsPerPage={10}
-          />
+          <p>Loading users...</p>
+
+          // <DynamicTable
+          //   columns={columns}
+          //   data={allUsers} // ✅ default Reviewer only
+          //   actions={actions}
+          //   bulkActions={bulkActions}
+          //   searchKey="firstName"
+          //   filterKeys={["userType", "status"]}
+          //   itemsPerPage={10}
+          // />
         )
       ) : (
         <AddUser />
