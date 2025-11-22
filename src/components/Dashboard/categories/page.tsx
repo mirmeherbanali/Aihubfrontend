@@ -10,7 +10,8 @@ import { Category } from "@/types/category.types";
 
 export default function CategoryPage() {
   const [tab, setTab] = useState(1); // 1 = Manage, 2 = Add/Edit
-  const [editCategory, setEditCategory] = useState<Category | null>(null);
+  const [editCategory, setEditCategory] = useState<Category | undefined>(undefined);
+
 
   const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
 
@@ -72,14 +73,14 @@ export default function CategoryPage() {
     {
       label: "Manage Categories",
       onClick: () => {
-        setEditCategory(null);
+        setEditCategory(undefined);
         setTab(1);
       },
     },
     {
       label: editCategory ? "Edit Category" : "Add Category",
       onClick: () => {
-        setEditCategory(null);
+        setEditCategory(undefined);
         setTab(2);
       },
       disabled: !!editCategory,

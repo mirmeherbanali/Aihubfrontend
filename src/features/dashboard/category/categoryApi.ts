@@ -11,15 +11,13 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      ...withToast<AuthResponse>("createCategory", (res) => res.result?.message),
-      invalidatesTags: ["Category"],
+      ...withToast<AuthResponse>("createCategory", (res) => res.result?.message)
     }),
     getAllCategories: builder.query<AuthResponse, void>({
       query: () => ({
         url: "api/category/getAllCategories",
         method: "POST",
       }),
-      providesTags: ["Category"],
       keepUnusedDataFor: 300,
       
     }),
@@ -29,7 +27,6 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: { categoryId },
       }),
-      providesTags: ["Category"],
       
     }),
     updateCategory: builder.mutation<AuthResponse, AddCategoryInput & { id: string }>({
@@ -39,7 +36,6 @@ export const categoryApi = baseApi.injectEndpoints({
         body: { id, ...body },
       }),
       ...withToast<AuthResponse>("updateCategory", (res) => res.result?.message),
-      invalidatesTags: ["Category"],
     }),
     deleteCategory: builder.mutation<AuthResponse, { id: string; adminId: string }>({
       query: (body) => ({
@@ -48,7 +44,6 @@ export const categoryApi = baseApi.injectEndpoints({
         body,
       }),
       ...withToast<AuthResponse>("deleteCategory", (res) => res.result?.message),
-      invalidatesTags: ["Category"],
     }),
   }),
   overrideExisting: false,

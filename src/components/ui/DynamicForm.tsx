@@ -30,7 +30,7 @@ function DynamicFormInner<T extends FieldValues>({
   isLoading = false,
   buttonText = "Submit"
 }: Omit<DynamicFormProps<T>, "register" | "formState"> & {
-  control: Control<T>;
+  control: Control<T & { _id?: string }>;
 }) {
   const [imagePreviews, setImagePreviews] = useState<Record<string, string>>(
     {}
@@ -147,7 +147,6 @@ function DynamicFormInner<T extends FieldValues>({
                       key={field.name || idx}
                       name={field.name!}
                       control={control}
-                      defaultValue={field.multiple ? [] : ""}
                       render={({ field: controllerField, fieldState }) => (
                         <AsyncDropdown
                           field={
@@ -233,7 +232,6 @@ function DynamicFormInner<T extends FieldValues>({
                       key={field.name || idx}
                       name={field.name!}
                       control={control}
-                      defaultValue={[]}
                       render={({ field: controllerField, fieldState }) => (
                         <DropzoneComponent
                           files={controllerField.value || []}
@@ -250,7 +248,6 @@ case "rating":
       key={field.name || idx}
       name={field.name!}
       control={control}
-      defaultValue={0}
       render={({ field: controllerField, fieldState }) => (
         <div style={fieldWrapperStyle}>
           <RatingInput
@@ -271,63 +268,72 @@ case "chips":
     <Controller
       key={field.name || idx}
       name={field.name!}
-      control={control} // make sure control is passed from useForm
-      defaultValue={[]}
-      render={({ field: controllerField }) => (
-        <div style={fieldWrapperStyle}>
-          {field.label && <label>{field.label}</label>}
-          <input
-            placeholder={field.placeholder || "Type and press enter"}
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
-                e.preventDefault();
-                controllerField.onChange([...controllerField.value, e.currentTarget.value.trim()]);
-                e.currentTarget.value = "";
-              }
-            }}
-            style={{
-              padding: "8px",
-              width: "100%",
-              marginBottom: "8px",
-              borderRadius: "4px",
-              border: "1px solid #ccc",
-            }}
-          />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {(controllerField.value || []).map((chip: string, index: number) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "4px 8px",
-                  background: "#f0f0f0",
-                  borderRadius: "16px",
-                  fontSize: "14px",
-                }}
-              >
-                {chip}
-                <span
-                  onClick={() => {
-                    const newChips = [...controllerField.value];
-                    newChips.splice(index, 1);
-                    controllerField.onChange(newChips);
-                  }}
+      control={control}
+      render={({ field: controllerField }) => {
+        const value = (controllerField.value ?? []) as string[];
+
+        return (
+          <div style={fieldWrapperStyle}>
+            {field.label && <label>{field.label}</label>}
+
+            <input
+              placeholder={field.placeholder || "Type and press enter"}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                  e.preventDefault();
+                  controllerField.onChange([
+                    ...value,
+                    e.currentTarget.value.trim()
+                  ]);
+                  e.currentTarget.value = "";
+                }
+              }}
+              style={{
+                padding: "8px",
+                width: "100%",
+                marginBottom: "8px",
+                borderRadius: "4px",
+                border: "1px solid #ccc"
+              }}
+            />
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+              {value.map((chip, index) => (
+                <div
+                  key={index}
                   style={{
-                    marginLeft: "6px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "4px 8px",
+                    background: "#f0f0f0",
+                    borderRadius: "16px",
+                    fontSize: "14px"
                   }}
                 >
-                  ×
-                </span>
-              </div>
-            ))}
+                  {chip}
+                  <span
+                    onClick={() => {
+                      const arr = [...value];
+                      arr.splice(index, 1);
+                      controllerField.onChange(arr);
+                    }}
+                    style={{
+                      marginLeft: "6px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    ×
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      }}
     />
   );
+
 
 
                case "faq":

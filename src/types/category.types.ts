@@ -4,5 +4,5 @@ export interface Category {
   slug: string;
   categoryDescription: string;
   faqs?: { question: string; answer: string }[];
-  status?: string;
+  status?: "Active" | "Inactive" | "Deleted";
 }

@@ -4,15 +4,16 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { TableColumn, TableAction } from "@/types/table.types";
 import styles from "../style/DynamicTable.module.scss";
 
-type DynamicTableProps<T extends { _id: string }> = {
+type DynamicTableProps<T extends { _id: string | number }> = {
   columns: TableColumn<T>[];
   data: T[];
   actions?: TableAction<T>[];
   bulkActions?: { label: string; onClick: (rows: T[]) => void }[];
   searchKey?: keyof T;
   itemsPerPage?: number;
-  filterKeys?: (keyof T)[]; // 👈 only these columns get filters
+  filterKeys?: (keyof T)[];
 };
+
 
 export default function DynamicTable<T extends { _id: string }>({
   columns,
@@ -23,7 +24,7 @@ export default function DynamicTable<T extends { _id: string }>({
   itemsPerPage = 10,
   filterKeys = [], // 👈 default: no filters
 }: DynamicTableProps<T>) {
-  const [selectedRows, setSelectedRows] = useState<Set<T["_id"]>>(new Set());
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string }>({});
@@ -89,11 +90,12 @@ export default function DynamicTable<T extends { _id: string }>({
   );
 
   // ✅ Toggle select row
-  const toggleRow = (_id: T["_id"]) => {
-    const newSet = new Set(selectedRows);
-    newSet.has(_id) ? newSet.delete(_id) : newSet.add(_id);
-    setSelectedRows(newSet);
-  };
+  const toggleRow = (id: string) => {
+  const newSet = new Set(selectedRows);
+  newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+  setSelectedRows(newSet);
+};
+
 
   return (
     <div className={styles.tableContainer}>
@@ -201,7 +203,10 @@ export default function DynamicTable<T extends { _id: string }>({
           <td className={styles.actions}>
             <div
               className={styles.dropdownWrapper}
-              ref={(el) => (dropdownRefs.current[rowId] = el)}
+              ref={(el: HTMLDivElement | null) => {
+  dropdownRefs.current[rowId] = el;
+}}
+
             >
               <button
                 className={styles.threeDots}

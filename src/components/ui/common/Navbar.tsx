@@ -33,7 +33,7 @@ export default function Navbar() {
     router.push("/auth/login");
   };
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path: string) => {
     setMenuOpen(false);
     if (pathname !== path) router.push(path);
   };

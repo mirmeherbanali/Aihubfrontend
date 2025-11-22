@@ -1,7 +1,8 @@
 import { baseApi } from "../api/baseApi";
 import { LoginInput,RegisterInput } from "@/lib/validators/userValidator";
-import { AuthResponse,User } from "../../types/form.types";
+import { AuthResponse } from "../../types/form.types";
 import { withToast } from "@/store/middleware/toastMiddleware";
+import {User} from "../../types/user.types"
 
 // Inject auth endpoints into baseApi
 export const authApi = baseApi.injectEndpoints({
@@ -34,7 +35,6 @@ export const authApi = baseApi.injectEndpoints({
           id: userId,
         },
       }),
-      providesTags: ["Profile"],
       keepUnusedDataFor: 300,
     }),
     // 🔹 ✅ Get All Users
@@ -44,7 +44,6 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: {}, // You can remove this if the API doesn't need it
       }),
-      providesTags: ["Users"],
     }),
     updateProfile: builder.mutation<AuthResponse, Partial<User>>({
   query: (body) => ({
@@ -53,7 +52,6 @@ export const authApi = baseApi.injectEndpoints({
     body,
   }),
   ...withToast<AuthResponse>("updateProfile", (res) => res.result?.message),
-  invalidatesTags: ["Profile", "Users"],
 }),
 
 deleteProfile: builder.mutation<AuthResponse, { id: string }>({
@@ -63,7 +61,6 @@ deleteProfile: builder.mutation<AuthResponse, { id: string }>({
     body,
   }),
   ...withToast<AuthResponse>("deleteProfile", (res) => res.result?.message),
-  invalidatesTags: ["Profile", "Users"],
 }),
   }),
   overrideExisting: false,

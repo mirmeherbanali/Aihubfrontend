@@ -15,7 +15,7 @@ import { createCategoryHandler, updateCategoryHandler } from "@/lib/dashboard/ca
 
 interface AddCategoryProps {
   refetch: () => void;
-  editCategory?: AddCategoryInput & { _id: string };
+  editCategory?: (AddCategoryInput & { _id: string }) | undefined;
 }
 
 export default function AddCategory({ refetch, editCategory }: AddCategoryProps) {
@@ -28,7 +28,7 @@ export default function AddCategory({ refetch, editCategory }: AddCategoryProps)
     reset,
     setValue,
     formState: { isSubmitting },
-  } = useForm<AddCategoryInput>({
+  } = useForm<AddCategoryInput & { _id?: string }>({
     resolver: zodResolver(addCategorySchema),
     mode: "onBlur",
   });
