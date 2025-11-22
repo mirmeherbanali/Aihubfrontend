@@ -16,6 +16,7 @@ import {
 } from "@/features/tools/toolsApi";
 import { getUserId } from "@/utils/authStorage";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
+import { Tool } from "@/types/tool.types";
 
 export default function ToolsPage() {
   const userId = getUserId()??""
@@ -72,11 +73,6 @@ const handleAddSubmit = async (data: ToolsInput) => {
   }
 };
 
-  // const summaryItems = [
-  //   { title: "Total Tools Submitted", value: tools.length },
-  //   { title: "Pending Approvals", value: tools?.filter((t) => t?.status === "Pending").length },
-  //   { title: "Approved Tools", value: tools?.filter((t) => t?.status === "Approved").length },
-  // ];
   
   const summaryItems = [
     { title: "Total Tools Submitted", value: 18},
@@ -84,7 +80,7 @@ const handleAddSubmit = async (data: ToolsInput) => {
     { title: "Approved Tools", value: 23},
   ];
 
-  const gridData = tools?.map((tool, index) => ({
+  const gridData = tools?.map((tool: Tool, index: number) => ({
     id: tool._id || index,
     title: tool.toolName,
     image: tool.logo,

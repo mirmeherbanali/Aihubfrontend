@@ -4,6 +4,7 @@ import {
   FormState,
   SubmitHandler,
   Path,
+  Control
 } from "react-hook-form";
 
 export type FieldType =
@@ -36,6 +37,8 @@ interface BaseField {
   wrapperStyle?: React.CSSProperties;
   icon?: React.ReactNode;
   row?: string | number;
+  disabled?:boolean;
+  maxFiles?:number;
   col?: number;
   breakpoints?: {
     sm?: number;
@@ -81,19 +84,18 @@ export type FormField<T extends FieldValues = FieldValues> =
 
 // Dropzone props interface
 export interface DropzoneProps {
-  onDrop: (files: FileList | null) => void;
+  onDrop: (files: (File | string)[]) => void;
   error?: string;
 }
 
 // Props for DynamicForm
 export interface DynamicFormProps<T extends FieldValues> {
-  fields: FormField<T>[];
-  register: UseFormRegister<T>;
-  handleSubmit: (
-    cb: SubmitHandler<T>
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  formState: FormState<T>;
-  onSubmit: SubmitHandler<T>;
+  fields: FormField<T & { _id?: string }>[];             // fields names may include _id
+  register?: UseFormRegister<T & { _id?: string }>;     // optional if using control
+  control?: Control<T & { _id?: string }>;
+  handleSubmit: (cb: SubmitHandler<T & { _id?: string }>) => (e?: React.BaseSyntheticEvent) => Promise<void>;
+  formState?: FormState<T & { _id?: string }>;
+  onSubmit: SubmitHandler<T & { _id?: string }>;
   buttonText?: string;
   isLoading?: boolean;
 }
@@ -103,21 +105,20 @@ export interface AsyncDropdownProps<T extends FieldValues = FieldValues> {
   field: DropdownField<T>;   // only dropdowns allowed
   value?: string | string[] | { label: string; value: string }[];
   onChange?: (val: string | string[]) => void;
+  wrapperStyle?: React.CSSProperties;
   error?: string;
 }
 
 export interface FAQFieldComponentProps {
   name: string;
   register: UseFormRegister<any>;
-}export interface AuthResponse {
+}
+export interface AuthResponse {
   success: boolean;
   result: {
     message: string;
-    list?: {
-      _id: string | undefined;
-      categoryName: ReactNode;
-      list?: any[];
-    }[];
+    list?: any;
   };
 }
+
 

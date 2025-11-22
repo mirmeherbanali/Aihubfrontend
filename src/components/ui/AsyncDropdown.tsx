@@ -4,6 +4,11 @@ import React, { FC, useEffect, useState } from "react";
 import Select from "react-select";
 import { AsyncDropdownProps } from "@/types/form.types";
 
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
 const AsyncDropdown: FC<AsyncDropdownProps> = ({
   field,
   value,
@@ -11,8 +16,22 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({
   error,
   wrapperStyle,
 }) => {
-  const [items, setItems] = useState<{ label: string; value: string }[]>([]);
+  const [items, setItems] = useState<SelectOption[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const formatOptions = (data: unknown): SelectOption[] => {
+    if (!Array.isArray(data)) return [];
+    
+    return data.map(item => {
+      if (typeof item === 'string') {
+        return { label: item, value: item };
+      }
+      if (typeof item === 'object' && item !== null && 'label' in item && 'value' in item) {
+        return item as SelectOption;
+      }
+      return { label: String(item), value: String(item) };
+    }).filter(Boolean);
+  };
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -20,14 +39,15 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({
       try {
         if (field.fetchOptions) {
           const res = await field.fetchOptions();
-          setItems(res);
+          setItems(formatOptions(res));
         } else if (field.options) {
-          setItems(
-            field.options.map((opt) =>
-              typeof opt === "string" ? { label: opt, value: opt } : opt
-            )
-          );
+          setItems(formatOptions(field.options));
+        } else {
+          setItems([]);
         }
+      } catch (error) {
+        console.error("Error loading dropdown options:", error);
+        setItems([]);
       } finally {
         setLoading(false);
       }
@@ -36,25 +56,26 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({
     loadOptions();
   }, [field]);
 
-  // ✅ Convert value properly for React Select
-  const getValue = () => {
+  const getValue = (): SelectOption | SelectOption[] | null => {
     if (!value) return field.multiple ? [] : null;
 
     if (field.multiple && Array.isArray(value)) {
       return value
-        .map((v) => items.find((i) => i.value === v))
-        .filter(Boolean);
+        .map(v => items.find(item => item.value === v))
+        .filter((item): item is SelectOption => item !== undefined);
     }
 
-    return items.find((i) => i.value === value) || null;
+    return items.find(item => item.value === value) || null;
   };
 
-  // ✅ Handle change (for both single & multiple)
   const handleChange = (selected: any) => {
     if (field.multiple) {
-      onChange?.(selected ? selected.map((s: any) => s.value) : []);
+      const selectedValues = Array.isArray(selected) 
+        ? selected.map((s: SelectOption) => s.value)
+        : [];
+      onChange?.(selectedValues);
     } else {
-      onChange?.(selected ? selected.value : "");
+      onChange?.(selected?.value || "");
     }
   };
 
@@ -78,6 +99,7 @@ const AsyncDropdown: FC<AsyncDropdownProps> = ({
             ...base,
             borderRadius: "6px",
             minHeight: "38px",
+            borderColor: error ? "#ef4444" : base.borderColor,
           }),
         }}
       />

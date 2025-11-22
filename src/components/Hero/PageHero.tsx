@@ -65,7 +65,7 @@ const PageHero: React.FC<PageHeroProps> = ({
           <div className={styles.cyberSearchContainer}>
             <div className={`${styles.cyberSearch} ${isFocused ? styles.cyberFocused : ''}`}>
               <div className={styles.searchPrefix}>
-                <span>AI></span>
+                <span>AI`{'>'}` </span>
               </div>
               <input
                 type="text"

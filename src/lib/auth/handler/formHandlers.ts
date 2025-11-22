@@ -12,7 +12,8 @@ export const createLoginHandler = (
   return async (data) => {
     try {
 
-      const res = await loginUser(data).unwrap(); // ✅ unwrap RTK query
+      const res = await loginUser(data)
+      // .unwrap(); // ✅ unwrap RTK query
       if (res.success) {
       saveAuthData(
           res?.result?.list?.token,
@@ -53,7 +54,8 @@ export const createRegisterHandler = (
         apiData.adminId = userId;
       }
 
-      const res = await registerUser(apiData).unwrap();
+      const res = await registerUser(apiData)
+      // .unwrap();
        if (res.success) {
         reset();
         if (userType !== "Admin" && setIsLogin) {

@@ -12,8 +12,7 @@ export const reviewApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      ...withToast<AuthResponse>("addReview", (res) => res.result?.message),
-      invalidatesTags: ["Review"],
+      ...withToast<AuthResponse>("addReview", (res) => res.result?.message)
     }),
 
     // ✅ Update Review
@@ -23,16 +22,14 @@ export const reviewApi = baseApi.injectEndpoints({
     method: "PUT",
     body,
   }),
-  ...withToast<AuthResponse>("updateReview", (res) => res.result?.message),
-  invalidatesTags: ["Review"],
+  ...withToast<AuthResponse>("updateReview", (res) => res.result?.message)
 }),
     // ✅ Get Tool Reviews
     getToolReviews: builder.query<AuthResponse, { toolId: string }>({
       query: ({ toolId }) => ({
         url: `api/review/tool/${toolId}`,
         method: "GET",
-      }),
-      providesTags: ["Review"],
+      })
     }),
 
     // ✅ Get User Reviews
@@ -40,8 +37,7 @@ export const reviewApi = baseApi.injectEndpoints({
       query: ({ userId }) => ({
         url: `api/review/user/${userId}`,
         method: "GET",
-      }),
-      providesTags: ["Review"],
+      })
     }),
   }),
   overrideExisting: false,

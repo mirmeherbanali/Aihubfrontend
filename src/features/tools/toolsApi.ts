@@ -1,11 +1,11 @@
 import { baseApi } from "../api/baseApi";
 import { withToast } from "@/store/middleware/toastMiddleware";
 import { AuthResponse } from "@/types/form.types";
-import { ToolsInput } from "@/lib/validators/toolsValidator";
+
 
 export const toolsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    createTool: builder.mutation<AuthResponse, ToolsInput>({
+    createTool: builder.mutation<AuthResponse, FormData>({
       query: (body) => ({
         url: "api/tool/create",
         method: "POST",
@@ -14,17 +14,15 @@ export const toolsApi = baseApi.injectEndpoints({
       ...withToast<AuthResponse>(
         "createTool",
         (res) => res.result?.message || "Tool created successfully"
-      ),
-      invalidatesTags: ["Tool"],
+      )
     }),
 
-    getAllTools: builder.query<AuthResponse, { userId: string }>({
+    getAllTools: builder.query<AuthResponse, { userId: string } | void>({
       query: (body) => ({
         url: "api/tool/getAllTools",
         method: "POST", // ✅ POST because userId is sent in body
-        body,           // ✅ include userId inside body
-      }),
-      providesTags: ["Tool"],
+        body:body ?? {},           // ✅ include userId inside body
+      })
     }),
   getToolDetailsById: builder.mutation<AuthResponse, { id: string }>({
       query: (body) => ({
