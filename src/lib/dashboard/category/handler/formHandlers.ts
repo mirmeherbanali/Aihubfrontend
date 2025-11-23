@@ -3,74 +3,80 @@
 import { SubmitHandler } from "react-hook-form";
 import { AddCategoryInput } from "@/lib/validators/addCatygoryValidator";
 import { getUserId } from "@/utils/authStorage";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation
+} from "@/features/dashboard/category/categoryApi";
 
-// 🔹 Create Category Handler
+// Infer mutation trigger types
+export type CreateCategoryTrigger = ReturnType<typeof useCreateCategoryMutation>[0];
+export type UpdateCategoryTrigger = ReturnType<typeof useUpdateCategoryMutation>[0];
+export type DeleteCategoryTrigger = ReturnType<typeof useDeleteCategoryMutation>[0];
+
+// ----------------------------------------
+// CREATE HANDLER
+// ----------------------------------------
 export const createCategoryHandler = (
-  createCategory: (data: AddCategoryInput & { adminId: string }) => Promise<any>,
+  createCategory: CreateCategoryTrigger,
   reset: () => void
-): SubmitHandler<AddCategoryInput> => {
+): SubmitHandler<AddCategoryInput & { _id?: string }> => {
   return async (data) => {
     try {
-      const adminId = getUserId();
+      const adminId = getUserId() ?? ""; // FIXED
       const apiData = { ...data, adminId };
 
-      console.log("📤 Create Category Data:", apiData);
-      const res = await createCategory(apiData).unwrap();
+      const res = await createCategory(apiData).unwrap(); // FIXED unwrap
 
-      if (res.success) {
-        console.log("🎉 Category created successfully:", res);
-        reset();
-      } else {
-        console.warn("⚠️ Category creation failed:", res?.result?.message);
-      }
+      if (res.success) reset();
     } catch (err: any) {
-      console.error(
-        "❌ Create Category Error:",
-        err?.data?.message || err.message || "Unknown error"
-      );
+      console.error("Create Category Error:", err);
     }
   };
 };
 
-// 🔹 Update Category Handler
+// ----------------------------------------
+// UPDATE HANDLER
+// ----------------------------------------
 export const updateCategoryHandler = (
-  updateCategory: (data: AddCategoryInput & { id: string; adminId: string }) => Promise<any>,
+  updateCategory: UpdateCategoryTrigger,
   reset: () => void
-): SubmitHandler<AddCategoryInput & { id: string }> => {
+): SubmitHandler<AddCategoryInput & { _id?: string }> => {
   return async (data) => {
     try {
-      const adminId = getUserId();
-      const apiData = { ...data, adminId };
-
-      console.log("📤 Update Category Data:", apiData);
-      const res = await updateCategory(apiData).unwrap();
-
-      if (res.success) {
-        console.log("✅ Category updated successfully:", res);
-        reset();
-      } else {
-        console.warn("⚠️ Category update failed:", res?.result?.message);
+      if (!data._id) {
+        console.error("❌ Missing _id for update");
+        return;
       }
+
+      const adminId = getUserId() ?? ""; // FIXED
+
+      // Convert _id → id (API requires id)
+      const final = { id: data._id, adminId, ...data };
+
+      const res = await updateCategory(final).unwrap(); // FIXED unwrap
+      if (res.success) reset();
     } catch (err: any) {
-      console.error(
-        "❌ Update Category Error:",
-        err?.data?.message || err.message || "Unknown error"
-      );
+      console.error("Update Category Error:", err);
     }
   };
 };
 
-// 🔹 Delete Category Handler
+// ----------------------------------------
+// DELETE HANDLER
+// ----------------------------------------
 export const deleteCategoryHandler = (
-  deleteCategory: (data: { id: string; adminId: string }) => Promise<any>
+  deleteCategory: DeleteCategoryTrigger
 ) => {
   return async (id: string) => {
     try {
-      const adminId = getUserId();
+      const adminId = getUserId() ?? ""; // FIXED
+
       const body = { id, adminId };
 
       console.log("🗑️ Delete Category Data:", body);
-      const res = await deleteCategory(body).unwrap();
+
+      const res = await deleteCategory(body).unwrap(); // FIXED unwrap support
 
       if (res.success) {
         console.log("🧹 Category deleted successfully:", res);

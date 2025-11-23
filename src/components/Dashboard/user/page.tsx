@@ -13,7 +13,8 @@ export default function UserPage() {
   const [tab, setTab] = useState(1);
 
   // ✅ All users
-  const allUsers = data?.result?.list || [];
+  const allUsers = data || [];
+
 
   // ✅ Default filter: only show Reviewer type users
   // const filteredUsers = allUsers.filter(
@@ -33,11 +34,14 @@ export default function UserPage() {
       key: "createdAt",
       label: "Created",
       render: (row) =>
-        new Date(row.createdAt).toLocaleDateString("en-IN", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
+  row.createdAt
+    ? new Date(row.createdAt).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+    : "—",
+
     },
   ];
 
@@ -74,15 +78,17 @@ export default function UserPage() {
         isLoading ? (
           <p>Loading users...</p>
         ) : (
-          <DynamicTable
-            columns={columns}
-            data={allUsers} // ✅ default Reviewer only
-            actions={actions}
-            bulkActions={bulkActions}
-            searchKey="firstName"
-            filterKeys={["userType", "status"]}
-            itemsPerPage={10}
-          />
+          <p>Loading users...</p>
+
+          // <DynamicTable
+          //   columns={columns}
+          //   data={allUsers} // ✅ default Reviewer only
+          //   actions={actions}
+          //   bulkActions={bulkActions}
+          //   searchKey="firstName"
+          //   filterKeys={["userType", "status"]}
+          //   itemsPerPage={10}
+          // />
         )
       ) : (
         <AddUser />

@@ -7,9 +7,6 @@ export const reviewFields = (): FormField[] => [
     label: "Rating *",
     type: "rating",
     placeholder: "Enter rating",
-    min: 1,
-    max: 5,
-    required: true,
   },
   {
     name: "reviewText",

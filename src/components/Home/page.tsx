@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import PageHero from "../Hero/PageHero";
-import Categories from "./Categories";
+import Categories from "./categories";
 import FeaturedTools from "./FeaturedTools";
 import LatestNews from "./LatestNews";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";

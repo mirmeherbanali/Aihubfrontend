@@ -8,7 +8,7 @@ import StarRating from "../ui/common/StarRating";
 
 const CategoryToolCard = ({ tool }: { tool: any }) => {
   const router = useRouter();
-  const { slug } = useParams();
+  const { slug } = useParams() as { slug: string };
   const [isHovered, setIsHovered] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

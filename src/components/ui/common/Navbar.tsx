@@ -9,7 +9,7 @@ import ButtonNew from "./ButtonNew";
 
 export default function Navbar() {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname()!;
   const { setIsLogin } = useAuthToggle();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -33,7 +33,7 @@ export default function Navbar() {
     router.push("/auth/login");
   };
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path: string) => {
     setMenuOpen(false);
     if (pathname !== path) router.push(path);
   };

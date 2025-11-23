@@ -16,7 +16,7 @@ import { skipToken } from "@reduxjs/toolkit/query/react";
 import { getUserId, getUserType } from "@/utils/authStorage";
 
 const ToolDetailsPage = () => {
-  const { slug, toolname } = useParams();
+  const { slug, toolname } = useParams() as { slug: string; toolname: string };
 
   const userId = getUserId();
   const userType = getUserType();

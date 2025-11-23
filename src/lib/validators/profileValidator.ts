@@ -7,6 +7,7 @@ export const generateZodSchema = (fields: FormField<any>[]) => {
   const shape: Record<string, any> = {};
 
   fields.forEach(field => {
+    if (!field.name) return;
     switch (field.type) {
       case "input":
         shape[field.name] = z.string().min(1, `${field.label} is required`);

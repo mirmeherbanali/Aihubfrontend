@@ -32,9 +32,11 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
     useGetCategoryByIdQuery(categoryId ? { categoryId } : skipToken);
 
   // Now all logic is safe to run
-  const categoryInfo = categoryDetail?.result?.list?.category;
-  const tools = categoryDetail?.result?.list?.tools || [];
-  const faqs = categoryInfo?.faqs || [];
+  const listPayload = categoryDetail?.result?.list;
+  const normalized = Array.isArray(listPayload) ? listPayload[0] ?? {} : (listPayload ?? {});
+  const categoryInfo = (normalized as any).category ?? normalized;
+  const tools = (normalized as any).tools ?? [];
+  const faqs = categoryInfo?.faqs ?? [];
 
   const totalPages = Math.ceil(tools.length / toolsPerPage);
 
@@ -54,7 +56,10 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
 
   return (
     <div className={styles.categoryPage}>
-      <CategoryDescription title={category.categoryName} description={category.categoryDescription} />
+      <CategoryDescription
+        title={category.categoryName}
+        description={categoryInfo?.categoryDescription || ""}
+      />
 
       {paginatedTools.length > 0 ? (
         <div className={styles.toolsGrid}>
