@@ -19,7 +19,7 @@ import { getUserType } from "@/utils/authStorage";
 
 const Sidebar: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const [open, setOpen] = useState(false);
   const userType = getUserType();
 
