@@ -6,7 +6,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const crypto = require("crypto");
 
-// Generate a random nonce
 function generateNonce() {
   return crypto.randomBytes(16).toString("base64");
 }
@@ -29,16 +28,19 @@ const securityHeaders = () => {
         `.replace(/\s{2,}/g, " ").trim()
         : `
           default-src 'self';
+
           script-src 
             'self'
             'nonce-${nonce}'
             https://main.d1qc354st251zn.amplifyapp.com
             blob:;
+
           script-src-elem 
             'self'
-            'nonce-${nonce}'
+            'unsafe-inline'
             https://main.d1qc354st251zn.amplifyapp.com
             blob:;
+
           style-src 'self' 'unsafe-inline';
           img-src 'self' data: https:;
           connect-src 'self' http://ec2-98-89-29-192.compute-1.amazonaws.com:8080;
