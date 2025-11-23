@@ -15,9 +15,11 @@ import CategoryPage from "@/components/Dashboard/categories/page";
 import Reviews from "@/components/Dashboard/reviews/page";
 
 const Dashboard = () => {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;   // ← FIXED
   const router = useRouter();
+
   const [userType, setUserType] = useState<string | null>(null);
+
   const tab = searchParams.get("tab") || "1";
 
   // ✅ Check user immediately (no loading state)

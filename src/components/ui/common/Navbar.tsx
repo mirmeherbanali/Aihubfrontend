@@ -9,7 +9,7 @@ import ButtonNew from "./ButtonNew";
 
 export default function Navbar() {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname()!;
   const { setIsLogin } = useAuthToggle();
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [menuOpen, setMenuOpen] = useState(false);

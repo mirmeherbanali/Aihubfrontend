@@ -16,7 +16,7 @@ import { skipToken } from "@reduxjs/toolkit/query/react";
 import { getUserId, getUserType } from "@/utils/authStorage";
 
 const ToolDetailsPage = () => {
-  const { slug, toolname } = useParams();
+  const { slug, toolname } = useParams() as { slug: string; toolname: string };
 
   const userId = getUserId();
   const userType = getUserType();
@@ -50,7 +50,6 @@ const ToolDetailsPage = () => {
 
   // Find tool + alternatives
   const { tool, alternativeTools } = useMemo(() => {
-    
     const tools = categoryDetail?.result?.list?.tools || [];
 
     const foundTool = tools.find(
@@ -62,7 +61,7 @@ const ToolDetailsPage = () => {
       : [];
 
     return { tool: foundTool, alternativeTools: alt };
-  }, [categoryDetail, decoded.toolName, categoryId]);
+  }, [categoryDetail, decoded.toolName]);
 
   // Fetch reviews with correct hook usage
   const { data: reviewsData, isLoading: isReviewsLoading } = useGetToolReviewsQuery(
