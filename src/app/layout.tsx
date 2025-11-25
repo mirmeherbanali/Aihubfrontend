@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
           toast.error("Logged out due to inactivity.");
           router.push("/auth/login");
         }
-      }, 2 * 60 * 1000); // ⏳ 30 minutes
+      }, 30 * 60 * 1000); // ⏳ 30 minutes
     };
 
     // Events that reset inactivity timer
