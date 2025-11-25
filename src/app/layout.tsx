@@ -6,16 +6,17 @@ import Navbar from "@/components/ui/common/Navbar";
 import { ClientProviders } from "./provider/ClientProviders";
 import Footer from "@/components/ui/common/Footer";
 import { Inter } from "next/font/google";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { usePathname } from "next/navigation";
-import { getToken } from "@/utils/authStorage";
+import { usePathname,useRouter  } from "next/navigation";
+import { getToken,clearAuthData } from "@/utils/authStorage";
 import Loader from "@/components/Loader/Loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode; }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showTokenModal, setShowTokenModal] = useState(false);
   const [hasToken, setHasToken] = useState(false);
@@ -33,6 +34,39 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
     };
 
     checkToken();
+  }, []);
+
+  // 🔥 AUTO-LOGOUT AFTER 30 MINUTES OF NO MOUSE OR KEYBOARD ACTIVITY
+  useEffect(() => {
+    let inactivityTimer: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        const token = getToken();
+        if (token) {
+          clearAuthData(); // Clear token
+          toast.error("Logged out due to inactivity.");
+          router.push("/auth/login");
+        }
+      }, 2 * 60 * 1000); // ⏳ 30 minutes
+    };
+
+    // Events that reset inactivity timer
+    const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+
+    events.forEach((event) =>
+      window.addEventListener(event, resetTimer)
+    );
+
+    resetTimer(); // Initialize timer on page load
+
+    return () => {
+      events.forEach((event) =>
+        window.removeEventListener(event, resetTimer)
+      );
+      clearTimeout(inactivityTimer);
+    };
   }, []);
 
   // Set up interval to check for token every 5 minutes
