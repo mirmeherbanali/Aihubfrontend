@@ -25,7 +25,7 @@ export default function AuthForm() {
   const [loginUser, { isLoading: loginLoading }] = useLoginMutation();
   const { control: loginControl, handleSubmit: loginSubmit } =
     useForm<LoginInput>({
-      // resolver: zodResolver(loginSchema),
+      resolver: zodResolver(loginSchema),
       mode: "onBlur"
     });
   const onLoginSubmit = createLoginHandler(loginUser, router);
