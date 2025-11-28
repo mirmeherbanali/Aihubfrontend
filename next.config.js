@@ -21,7 +21,7 @@ const securityHeaders = () => {
       value: isDev
         ? `
           default-src 'self' 'unsafe-inline' 'unsafe-eval';
-          connect-src 'self' http://ec2-98-89-29-192.compute-1.amazonaws.com:8080;
+          connect-src 'self' https://www.recuip.com;
           img-src 'self' blob: data: https:;
           script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
           style-src 'self' 'unsafe-inline';
@@ -32,18 +32,18 @@ const securityHeaders = () => {
           script-src 
             'self'
             'nonce-${nonce}'
-            https://main.d1qc354st251zn.amplifyapp.com
+            https://www.app.recuip.com
             blob:;
 
           script-src-elem 
             'self'
             'unsafe-inline'
-            https://main.d1qc354st251zn.amplifyapp.com
+            https://www.app.recuip.com
             blob:;
 
           style-src 'self' 'unsafe-inline';
           img-src 'self' data: https:;
-          connect-src 'self' http://ec2-98-89-29-192.compute-1.amazonaws.com:8080;
+          connect-src 'self' https://www.recuip.com;
           object-src 'none';
           base-uri 'self';
         `.replace(/\s{2,}/g, " ").trim(),
