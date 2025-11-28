@@ -21,7 +21,7 @@ const securityHeaders = () => {
       value: isDev
         ? `
           default-src 'self' 'unsafe-inline' 'unsafe-eval';
-          connect-src 'self' https://www.recuip.com;
+          connect-src 'self' https://recuip.com;
           img-src 'self' blob: data: https:;
           script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
           style-src 'self' 'unsafe-inline';
@@ -32,18 +32,18 @@ const securityHeaders = () => {
           script-src 
             'self'
             'nonce-${nonce}'
-            https://www.app.recuip.com
+            https://app.recuip.com
             blob:;
 
           script-src-elem 
             'self'
             'unsafe-inline'
-            https://www.app.recuip.com
+            https://app.recuip.com
             blob:;
 
           style-src 'self' 'unsafe-inline';
           img-src 'self' data: https:;
-          connect-src 'self' https://www.recuip.com;
+          connect-src 'self' https://recuip.com;
           object-src 'none';
           base-uri 'self';
         `.replace(/\s{2,}/g, " ").trim(),
