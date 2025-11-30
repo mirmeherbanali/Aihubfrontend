@@ -86,7 +86,7 @@ const handleAddSubmit = async (data: ToolsInput) => {
     image: tool.logo,
     placeholder: "🛠️",
   }));
-
+console.log("categories",categories)
   return (
       <div className={styles.pageContainer}>
         <SummaryGrid items={summaryItems} />

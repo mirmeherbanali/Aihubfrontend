@@ -13,7 +13,7 @@ export default function UserPage() {
   const [tab, setTab] = useState(1);
 
   // ✅ All users
-  const allUsers = data || [];
+  const allUsers = data?.result?.list || [];
 
 
   // ✅ Default filter: only show Reviewer type users
@@ -78,17 +78,17 @@ export default function UserPage() {
         isLoading ? (
           <p>Loading users...</p>
         ) : (
-          <p>Loading users...</p>
 
-          // <DynamicTable
-          //   columns={columns}
-          //   data={allUsers} // ✅ default Reviewer only
-          //   actions={actions}
-          //   bulkActions={bulkActions}
-          //   searchKey="firstName"
-          //   filterKeys={["userType", "status"]}
-          //   itemsPerPage={10}
-          // />
+
+          <DynamicTable
+            columns={columns}
+            data={allUsers} // ✅ default Reviewer only
+            actions={actions}
+            bulkActions={bulkActions}
+            searchKey="firstName"
+            filterKeys={["userType", "status"]}
+            itemsPerPage={10}
+          />
         )
       ) : (
         <AddUser />

@@ -18,201 +18,201 @@ import { useCreateToolMutation, useGetAllToolsQuery } from "@/features/tools/too
 import { getUserId } from "@/utils/authStorage";
 
 const AdminTools = () => {
-//   const userId = getUserId();
-//   const [tab, setTab] = useState(1);
-//   const [editTool, setEditTool] = useState<Tool | null>(null);
-//   const router = useRouter();
-//   const { data: categoriesData } = useGetAllCategoriesQuery();
-//   const categories = categoriesData?.result?.list || [];
+  const userId = getUserId();
+  const [tab, setTab] = useState(1);
+  const [editTool, setEditTool] = useState<Tool | null>(null);
+  const router = useRouter();
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const categories = categoriesData?.result?.list || [];
 
-//   const { data: toolsData, refetch } = useGetAllToolsQuery();
-//   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: toolsData, refetch } = useGetAllToolsQuery();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-//  const raw: any = toolsData?.result?.list;
+ const raw: any = toolsData?.result?.list;
 
-// // handle both cases gracefully
-// const baseTools: Tool[] = Array.isArray(raw)
-//   ? raw
-//   : Array.isArray(toolsData?.result)
-//   ? toolsData?.result
-//   : raw?.list || [];
+// handle both cases gracefully
+const baseTools: Tool[] = Array.isArray(raw)
+  ? raw
+  : Array.isArray(toolsData?.result)
+  ? toolsData?.result
+  : raw?.list || [];
 
-// // ✅ Expand tools by category (each category -> separate row)
-// const toolData: Tool[] = baseTools.flatMap((tool) =>
-//   (tool.category || []).map((cat: any) => ({
-//     ...tool,
-//     category: [cat], // single category per row
-//     rowId: `${tool._id}-${cat._id}`, // ✅ unique per row
-//   }))
-// );
+// ✅ Expand tools by category (each category -> separate row)
+const toolData: Tool[] = baseTools.flatMap((tool) =>
+  (tool.category || []).map((cat: any) => ({
+    ...tool,
+    category: [cat], // single category per row
+    rowId: `${tool._id}-${cat._id}`, // ✅ unique per row
+  }))
+);
 
-//   const [createTool] = useCreateToolMutation();
+  const [createTool] = useCreateToolMutation();
 
-//   // Fix: Add function to clear form and reset state
-//   const resetFormAndState = () => {
-//     setEditTool(null);
-//     addForm.reset();
-//   };
-//   const tabActions = [
-//     {
-//       label: "Manage Tools",
-//       onClick: () => {
-//         resetFormAndState(); // Clear form when going back to manage
-//         setTab(1);
-//       },
-//     },
-//     {
-//       label: editTool ? "Edit Tool" : "Add Tool",
-//       onClick: () => {
-//         // Fix: Clear form when clicking "Add Tool" specifically
-//         if (!editTool) {
-//           setEditTool(null)
-//           addForm.reset();
-//         }
-//         setTab(2);
-//       },
-//       disabled: !!editTool,
-//     },
-//   ];
+  // Fix: Add function to clear form and reset state
+  const resetFormAndState = () => {
+    setEditTool(null);
+    addForm.reset();
+  };
+  const tabActions = [
+    {
+      label: "Manage Tools",
+      onClick: () => {
+        resetFormAndState(); // Clear form when going back to manage
+        setTab(1);
+      },
+    },
+    {
+      label: editTool ? "Edit Tool" : "Add Tool",
+      onClick: () => {
+        // Fix: Clear form when clicking "Add Tool" specifically
+        if (!editTool) {
+          setEditTool(null)
+          addForm.reset();
+        }
+        setTab(2);
+      },
+      disabled: !!editTool,
+    },
+  ];
 
-//   const addForm = useForm<ToolsInput>({
-//     resolver: zodResolver(toolsSchema),
-//     mode: "onBlur"
-//   });
+  const addForm = useForm<ToolsInput>({
+    resolver: zodResolver(toolsSchema),
+    mode: "onBlur"
+  });
 
-//   const handleAddSubmit = async (data: ToolsInput) => {
-//   try {
-//     setIsSubmitting(true);
-//     const formData = new FormData();
-//     const submissionData = {
-//       ...data,
-//       userId:userId,
-//       created_by: userId,
-//       status: "Approved",
-//     };
+  const handleAddSubmit = async (data: ToolsInput) => {
+  try {
+    setIsSubmitting(true);
+    const formData = new FormData();
+    const submissionData = {
+      ...data,
+      userId:userId,
+      created_by: userId,
+      status: "Approved",
+    };
 
-//     // ✅ Handle screenshots separately
-//     if (Array.isArray(data.screenshots)) {
-//       // Separate new File uploads and existing URLs
-//       const uploadedFiles = data.screenshots.filter((file) => file instanceof File);
-//       const existingUrls = data.screenshots.filter((file) => typeof file === "string");
+    // ✅ Handle screenshots separately
+    if (Array.isArray(data.screenshots)) {
+      // Separate new File uploads and existing URLs
+      const uploadedFiles = data.screenshots.filter((file) => file instanceof File);
+      const existingUrls = data.screenshots.filter((file) => typeof file === "string");
 
-//       uploadedFiles.forEach((file) => {
-//         formData.append("screenshots", file);
-//       });
+      uploadedFiles.forEach((file) => {
+        formData.append("screenshots", file);
+      });
 
-//       // Add existing URLs as JSON if any
-//       if (existingUrls.length > 0) {
-//         formData.append("existingScreenshots", JSON.stringify(existingUrls));
-//       }
-//     }
+      // Add existing URLs as JSON if any
+      if (existingUrls.length > 0) {
+        formData.append("existingScreenshots", JSON.stringify(existingUrls));
+      }
+    }
 
-//     // ✅ Handle all other fields normally
-//     Object.entries(submissionData).forEach(([key, value]) => {
-//       if (key === "screenshots") return; // already handled above
+    // ✅ Handle all other fields normally
+    Object.entries(submissionData).forEach(([key, value]) => {
+      if (key === "screenshots") return; // already handled above
 
-//       if (Array.isArray(value)) {
-//         formData.append(key, JSON.stringify(value));
-//       } else if (value instanceof File) {
-//         formData.append(key, value);
-//       } else if (value !== undefined && value !== null) {
-//         formData.append(key, String(value));
-//       }
-//     });
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else if (value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
 
-//     await createTool(formData).unwrap();
-//     resetFormAndState();
-//     refetch();
-//     setTab(1);
-//   } catch (error) {
-//     console.error("Error adding tool:", error);
-//   } finally {
-//     setIsSubmitting(false); // ✅ Stop loading
-//   }
-// };
+    await createTool(formData).unwrap();
+    resetFormAndState();
+    refetch();
+    setTab(1);
+  } catch (error) {
+    console.error("Error adding tool:", error);
+  } finally {
+    setIsSubmitting(false); // ✅ Stop loading
+  }
+};
 
 
-//   const columns: TableColumn<Tool>[] = [
-//     { key: "_id", label: "ID" },
-//     { key: "toolName", label: "Tool Name" },
-//     {
-//     key: "category",
-//     label: "Category",
-//     render: (tool) => {
-//       const category = categories.find((c) => c._id === tool?.category[0]?._id);
-//       return category ? category.categoryName : "—";
-//     },
-//   },
-//     { key: "status", label: "Status" },
-//     {
-//       key: "createdAt",
-//       label: "Submitted Date",
-//       render: (tool) =>
-//         tool.createdAt
-//           ? moment(tool.createdAt).format("dddd, DD MMMM YYYY, hh:mm A")
-//           : "—",
-//     },
-//   ];
+  const columns: TableColumn<Tool>[] = [
+    { key: "_id", label: "ID" },
+    { key: "toolName", label: "Tool Name" },
+    {
+    key: "category",
+    label: "Category",
+    render: (tool) => {
+      const category = categories.find((c) => c._id === tool?.category[0]?._id);
+      return category ? category.categoryName : "—";
+    },
+  },
+    { key: "status", label: "Status" },
+    {
+      key: "createdAt",
+      label: "Submitted Date",
+      render: (tool) =>
+        tool.createdAt
+          ? moment(tool.createdAt).format("dddd, DD MMMM YYYY, hh:mm A")
+          : "—",
+    },
+  ];
 
-//   const actions: TableAction<Tool>[] = [
-//     {
-//       label: "View",
-//       onClick: (row) => {
-//       if (!row.category || row.category.length === 0) return;
+  const actions: TableAction<Tool>[] = [
+    {
+      label: "View",
+      onClick: (row) => {
+      if (!row.category || row.category.length === 0) return;
 
-//       // Find the full category object from categories array
-//       const category = categories.find(
-//         (c) => c._id === row.category[0]?._id
-//       );
+      // Find the full category object from categories array
+      const category = categories.find(
+        (c) => c._id === row.category[0]?._id
+      );
 
-//       // If category not found, do nothing
-//       if (!category) return;
+      // If category not found, do nothing
+      if (!category) return;
 
-//       const categoryName = category.categoryName;
-//       const toolName = row.toolName;
+      const categoryName = category.categoryName;
+      const toolName = row.toolName;
 
-//       // Navigate to dynamic tool details page
-//       window.open(
-//         `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`,"_blank"
-//       );
-//     },
-//   },
-//    {
-//   label: "Edit",
-//   onClick: (row) => {
-//     // Find the full tool (not flattened) by ID
-//     const fullTool = baseTools.find((t) => t._id === row._id);
+      // Navigate to dynamic tool details page
+      window.open(
+        `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`,"_blank"
+      );
+    },
+  },
+   {
+  label: "Edit",
+  onClick: (row) => {
+    // Find the full tool (not flattened) by ID
+    const fullTool = baseTools.find((t) => t._id === row._id);
 
-//     // Extract all category IDs for that tool
-//     const allCategoryIds = fullTool?.category?.map((c: any) => c._id) || [];
+    // Extract all category IDs for that tool
+    const allCategoryIds = fullTool?.category?.map((c: any) => c._id) || [];
 
-//     setEditTool(fullTool || row);
+    setEditTool(fullTool || row);
 
-//     addForm.reset({
-//       ...fullTool,
-//       category: allCategoryIds, // ✅ Show all categories on edit
-//     });
+    addForm.reset({
+      ...fullTool,
+      category: allCategoryIds, // ✅ Show all categories on edit
+    });
 
-//     setTab(2);
-//   },
-// },
+    setTab(2);
+  },
+},
 
-//     {
-//       label: "Delete",
-//       onClick: (row) => alert(`🗑️ Deleting: ${row.toolName}`),
-//     },
-//   ];
+    {
+      label: "Delete",
+      onClick: (row) => alert(`🗑️ Deleting: ${row.toolName}`),
+    },
+  ];
 
-//   const bulkActions = [
-//     {
-//       label: "Delete Selected",
-//       onClick: (rows: Tool[]) => alert(`Deleting ${rows.length} Tools`),
-//     },
-//   ];
+  const bulkActions = [
+    {
+      label: "Delete Selected",
+      onClick: (rows: Tool[]) => alert(`Deleting ${rows.length} Tools`),
+    },
+  ];
 
   return (
     <div className="tab-content-wrapper">
-      {/* <DynamicHeaderTabs 
+      <DynamicHeaderTabs 
         actions={tabActions} 
         activeIndex={tab - 1}
         onTabChange={(index) => {
@@ -251,7 +251,7 @@ const AdminTools = () => {
             buttonText={isSubmitting ? "Submitting..." : editTool ? "Update Tool" : "Add Tool"}
           />
         </div>
-      )} */}
+      )}
     </div>
   );
 };
