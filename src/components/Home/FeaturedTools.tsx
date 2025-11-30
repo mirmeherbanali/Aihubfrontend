@@ -14,7 +14,7 @@ interface Tool {
   toolName: string;
   desc?: string;
   category: Category[];
-  imageUrl?: string;
+  logo?: string;
 }
 
 interface FeaturedToolsProps {
@@ -34,7 +34,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, 
           const categoryId = tool?.category?.[0]?._id;
           const category = allCategories.find((c) => c._id === categoryId);
           // Debug logs
-          console.log("🧠 Tool:", tool, "| Category:", category);
+          console.log("🧠 Tool:", tool?.logo);
 
           return (
             <div
@@ -43,11 +43,10 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, 
               onClick={() => category && onToolClick(tool, category)}
             >
               <img
-                src={tool.imageUrl || "/placeholder.png"}
+                src={tool.logo || "/placeholder.png"}
                 alt={tool.toolName}
               />
               <h3>{tool.toolName}</h3>
-              <p>{tool.desc || "No description available."}</p>
             </div>
           );
         })}

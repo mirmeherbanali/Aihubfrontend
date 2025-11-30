@@ -42,7 +42,7 @@ export default function HomePage() {
         queryPlaceholder="Search for Tools & Categories"
         onSearch={(query) => console.log("Searching:", query)}
         btnText="Add Your Tool"
-        onBtnClick={() => router.push("/dashboard?tab=1")}
+        onBtnClick={() => router.push("/auth/login")}
       />
 
       <Categories

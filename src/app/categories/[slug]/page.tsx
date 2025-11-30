@@ -3,12 +3,12 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useGetAllCategoriesQuery, useGetCategoryByIdQuery } from "@/features/dashboard/category/categoryApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import { notFound } from "next/navigation";
-import Loader from "@/components/Loader/Loader";
 import CategoryDescription from "@/components/Category/CategoryDescription";
 import CategoryToolCard from "@/components/Category/CategoryToolCard";
 import FaqSection from "@/components/Category/FaqSection";
 import RadioPagination from "@/components/ui/common/RadioPagination";
 import styles from "../.././../components/ui/style/CategorySlug.module.scss";
+import Loading from "@/app/loading";
 
 export default function CategorySlugPage({ params }: { params: { slug: string } }) {
   const decodedSlug = decodeURIComponent(params.slug);
@@ -51,7 +51,7 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
   }, [currentPage]);
 
   // ⛔ Now place returns AFTER all hooks
-  if (catLoading || detailLoading) return <Loader />;
+  if (catLoading || detailLoading) return <Loading />;
   if (catError || detailError || !category) return notFound();
 
   return (

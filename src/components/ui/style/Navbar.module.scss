@@ -1,4 +1,6 @@
-// Navbar2.module.scss
+/* ============================
+   NAVBAR MAIN WRAPPER
+   ============================ */
 .header {
   display: flex;
   justify-content: space-between;
@@ -16,7 +18,7 @@
   transition: all 0.3s ease;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -26,6 +28,9 @@
   }
 }
 
+/* ============================
+   LOGO
+   ============================ */
 .logo {
   display: flex;
   align-items: center;
@@ -42,10 +47,17 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
+/* ============================
+   DESKTOP MENU
+   ============================ */
 .navContainer {
   display: flex;
   align-items: center;
@@ -56,10 +68,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(26, 26, 46, 0.6);
   border-radius: 50px;
   padding: 8px;
-  border: 1px solid #2a2a4a;
 
   .navItem {
     color: #e2e8f0;
@@ -76,13 +86,18 @@
     cursor: pointer;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 212, 255, 0.1),
+        transparent
+      );
       transition: left 0.6s ease;
     }
 
@@ -103,46 +118,13 @@
   }
 }
 
+/* ============================
+   CTA SECTION (Right side)
+   ============================ */
 .ctaSection {
   display: flex;
   align-items: center;
   gap: 16px;
-
-  .loginBtn {
-    color: #00d4ff;
-    background: transparent;
-    border: 1px solid #00d4ff;
-    padding: 10px 24px;
-    border-radius: 25px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-
-    &:hover {
-      background: rgba(0, 212, 255, 0.1);
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-      transform: translateY(-2px);
-    }
-  }
-
-  .signupBtn {
-    background: linear-gradient(135deg, #00d4ff, #0099cc);
-    color: #0a0a0f;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 25px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
-    }
-  }
 
   .profileImage {
     width: 40px;
@@ -160,86 +142,136 @@
   }
 }
 
+/* ============================
+   MOBILE MENU BUTTON
+   ============================ */
 .mobileMenuIcon {
   display: none;
-  font-size: 24px;
-  color: #00d4ff;
+  font-size: 28px;
+  color: #ffffff;
   cursor: pointer;
   padding: 8px;
-  border: 1px solid #2a2a4a;
-  border-radius: 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(0, 212, 255, 0.15);
   }
 }
 
+/* ============================
+   MOBILE ACCORDION MENU
+   ============================ */
 .mobileMenu {
   position: fixed;
-  top: 75px;
+  top: 65px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 75px);
-  background: #0a0a0f;
-  border-top: 1px solid #1a1a2e;
-  display: flex;
-  flex-direction: column;
-  padding: 30px;
-  gap: 16px;
-  transform: translateX(-100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #2f56f8;
+  padding: 20px;
+  border-radius: 0 0 12px 12px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.35s ease;
   z-index: 1999;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-  }
-
+  /* Accordion Open */
   &.open {
-    transform: translateX(0);
+    max-height: 350px;
+    opacity: 1;
   }
 
-  .navItem {
-    color: #e2e8f0;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-    padding: 16px 24px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    text-align: left;
-    background: transparent;
-    border: 1px solid #2a2a4a;
-    cursor: pointer;
+  /* Each Item */
+  .accordionItem {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 14px 0;
 
-    &:hover {
-      color: #00d4ff;
-      border-color: #00d4ff;
-      background: rgba(0, 212, 255, 0.05);
+    .accordionHeader {
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: #00d4ff;
+      }
     }
 
-    &.active {
-      background: linear-gradient(135deg, #00d4ff, #0099cc);
-      color: #0a0a0f;
-      border-color: transparent;
+    /* Dropdown body */
+    .accordionBody {
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      padding-left: 10px;
+
+      &.open {
+        max-height: 100px;
+        margin-top: 10px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 8px;
+        text-align: left;
+        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+
+        &:hover {
+          background: rgba(0, 212, 255, 0.2);
+          color: #00d4ff;
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #00d4ff, #0099cc);
+          color: #0a0a0f;
+        }
+      }
     }
   }
 
+  button {
+        background: transparent;
+        // border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+
+        &:hover {
+          background: rgba(0, 212, 255, 0.2);
+          color: #00d4ff;
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #00d4ff, #0099cc);
+          color: #0a0a0f;
+        }
+      }
+  /* Login + Signup buttons */
   .buttonGroup {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 20px;
 
     button {
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -257,8 +289,7 @@
 
     .signupBtn {
       background: linear-gradient(135deg, #00d4ff, #0099cc);
-      border: none;
-      color: #0a0a0f;
+      color: #000;
 
       &:hover {
         transform: translateY(-2px);
@@ -267,6 +298,9 @@
   }
 }
 
+/* ============================
+   RESPONSIVE
+   ============================ */
 @media (max-width: 1024px) {
   .header {
     padding: 0 20px;
@@ -274,7 +308,7 @@
 
   .desktopMenu {
     gap: 4px;
-    
+
     .navItem {
       padding: 8px 16px;
       font-size: 13px;
@@ -283,11 +317,6 @@
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 0 16px;
-    height: 65px;
-  }
-
   .navContainer {
     display: none;
   }
@@ -296,9 +325,14 @@
     display: block;
   }
 
+  .header {
+    height: 65px;
+    padding: 0 16px;
+  }
+
   .logo {
     font-size: 20px;
-    
+
     .logoIcon {
       font-size: 24px;
     }

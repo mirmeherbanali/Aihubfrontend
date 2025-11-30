@@ -74,14 +74,13 @@
   }
 
   img {
-    width: 70px;
-    height: 70px;
+    width: 250px;
+    height: 130px;
     margin-bottom: 20px;
     border-radius: 16px;
     transition: all 0.5s ease;
     transform: translateZ(0);
     object-fit: cover;
-    background: linear-gradient(135deg, #667eea, #764ba2);
     padding: 8px;
   }
 
@@ -168,7 +167,7 @@
   .grid {
     grid-template-columns: 1fr;
     gap: 20px;
-    max-width: 400px;
+    max-width: 190px;
   }
 
   .featuredTools {
@@ -194,8 +193,8 @@
     }
     
     img {
-      width: 55px;
-      height: 55px;
+      width: 170px;
+      height: 85px;
       margin-bottom: 15px;
     }
     

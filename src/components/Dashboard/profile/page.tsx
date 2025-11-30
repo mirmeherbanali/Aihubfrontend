@@ -65,8 +65,8 @@ export default function ProfilePage() {
 
   // ✅ Populate form with profile data
   useEffect(() => {
-    if (profile) {
-      reset(flattenObject(profile));
+    if (profile?.result?.list?.user) {
+      reset(flattenObject(profile?.result?.list?.user));
     }
   }, [profile, reset]);
 
@@ -79,7 +79,7 @@ export default function ProfilePage() {
       );
 
       const body = { ...filteredData, id: userId };
-      // await updateProfile(body).unwrap();
+      await updateProfile(body).unwrap();
       await refetch();
       setIsEditing(false);
     } catch (error) {
@@ -114,7 +114,7 @@ export default function ProfilePage() {
       <div className={styles.profileContent}>
         <div className={styles.avatarSection}>
           <div className={styles.avatar}>
-            <span>{profile?.firstName?.[0] ?? "U"}</span>
+            <span>{profile?.result?.list?.user?.firstName?.[0] ?? "U"}</span>
             <button
               className={styles.editBtn}
               type="button"

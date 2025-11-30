@@ -4,133 +4,126 @@
 
   h2 {
     font-size: 44px;
-  font-weight: 800;
-  color: #1a202c;
-  margin-bottom: 60px;
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    border-radius: 2px;
-  }
+    font-weight: 800;
+    color: #1a202c;
+    margin-bottom: 60px;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
   }
 }
 
-/* Grid */
+/* GRID */
 .newsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
+  gap: 30px;
+  max-width: 1200px;
+  margin: auto;
+  justify-items: center;
 }
 
-/* Card */
+/* CARD */
 .card {
-  width: 350px;
-  height: 254px;
+  width: 100%;
+  max-width: 330px;
+  height: 260px;
   position: relative;
-  border-radius: 40px;
+  border-radius: 35px;
   transition: all 0.8s;
-  perspective: 600px;
-  perspective-origin: center bottom;
+  perspective: 700px;
+  perspective-origin: center top;
 }
 
+/* UPPER PART */
 .upperPart {
-  width: 100%;
   height: 65%;
-  border-radius: 40px 40px 0 0;
+  width: 100%;
   position: relative;
+  border-radius: 35px 35px 0 0;
   transform-style: preserve-3d;
   transition: all 0.9s;
 }
 
 .upperPartFace,
 .upperPartBack {
-  text-align: center;
-  background-color: #fff;
-  color: #2979ff;
-  border: 3px solid #2979ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: absolute;
   width: 100%;
   height: 100%;
   padding: 15px;
-  border-radius: 40px 40px 0 0;
+  border-radius: 35px 35px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
-  z-index: 2;
   backface-visibility: hidden;
-  transition: all 0.6s;
+  border: 3px solid #2979ff;
+}
+
+.upperPartFace {
+  background: #fff;
+  color: #2979ff;
 }
 
 .upperPartBack {
-  background-color: #2979ff;
-  color: lightgray;
   transform: rotateX(180deg);
+  background: #2979ff;
+  color: #fff;
 }
 
+/* LOWER PART */
 .lowerPart {
-  width: 100%;
   height: 35%;
-  border-radius: 0 0 40px 40px;
-  position: relative;
+  width: 100%;
   transform-style: preserve-3d;
-  transform-origin: center top;
   transition: all 0.9s;
 }
 
 .lowerPartFace,
 .lowerPartBack {
-  background-color: #2979ff;
   width: 100%;
   height: 100%;
-  color: #fff;
-  font-weight: bold;
-  position: absolute;
-  border-radius: 0 0 40px 40px;
+  border-radius: 0 0 35px 35px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translate(0, -0.8px);
   backface-visibility: hidden;
-  z-index: 2;
+}
+
+.lowerPartFace {
+  background: #2979ff;
+  color: #fff;
+  font-weight: bold;
 }
 
 .lowerPartBack {
-  border-radius: 40px;
+  background: #fff;
   color: #2979ff;
-  background-color: #fff;
   transform: rotateX(180deg);
-  z-index: 1;
-  transition: border-radius 0.6s;
 }
 
-/* Hover Animations */
-.card:hover > .upperPart {
-  transform: rotateX(-0.5turn);
+/* HOVER */
+.card:hover .upperPart {
+  transform: rotateX(-180deg);
 }
 
-.card:hover > .lowerPart {
-  transform: translateY(88.3px) rotateX(0.5turn);
+.card:hover .lowerPart {
+  transform: translateY(90px) rotateX(180deg);
 }
 
-.card:hover > .lowerPart > .lowerPartBack {
-  border: 3px solid #2979ff;
-  border-radius: 0 0 40px 40px;
-}
-
-/* View Button */
+/* VIEW BUTTON */
 .viewBtn {
-  margin-top: 30px;
+  margin-top: 40px;
   background: white;
   color: #667eea;
   font-weight: 700;
@@ -140,20 +133,15 @@
   cursor: pointer;
   font-size: 16px;
   display: inline-flex;
-  align-items: center;
   gap: 10px;
-  transition: all 0.4s ease;
+  transition: 0.4s ease;
   position: relative;
   overflow: hidden;
-  transform-style: preserve-3d;
 
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background: linear-gradient(135deg, #667eea, #2979ff);
     transform: scaleX(0);
     transform-origin: left;
@@ -163,47 +151,72 @@
 
   &:hover {
     color: white;
-    transform: translateY(-3px) translateZ(10px);
-    box-shadow: 
-      0 15px 30px rgba(102, 126, 234, 0.3),
-      0 0 0 1px rgba(102, 126, 234, 0.1);
-    
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.3);
+
     &::before {
       transform: scaleX(1);
-    }
-    
-    span {
-      transform: translateX(6px) translateZ(5px);
     }
   }
 
   span {
     font-size: 20px;
-    transition: transform 0.3s ease;
+    transition: 0.3s ease;
+  }
+
+  &:hover span {
+    transform: translateX(6px);
   }
 }
 
-/* Responsive */
+/* ✨ TABLET RESPONSIVE */
 @media (max-width: 1024px) {
   .newsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .newsSection h2 {
-    font-size: 28px;
+    font-size: 32px;
   }
 }
 
+/* 📱 FULL MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .newsGrid {
     grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .newsSection {
+    padding: 40px 16px;
   }
 
   .newsSection h2 {
-    font-size: 24px;
+    font-size: 26px;
+    margin-bottom: 40px;
   }
 
-  .card p {
+  .card {
+    width: 100%;
+    max-width: 300px;
+    height: 210px;   // 🔥 perfect mobile height
+  }
+
+  .upperPartFace,
+  .upperPartBack {
+    font-size: 15px;
+  }
+
+  .lowerPartFace,
+  .lowerPartBack {
     font-size: 14px;
+  }
+}
+
+/* SMALL MOBILE (iPhone SE, 360px width) */
+@media (max-width: 420px) {
+  .card {
+    max-width: 270px;
+    height: 200px;
   }
 }

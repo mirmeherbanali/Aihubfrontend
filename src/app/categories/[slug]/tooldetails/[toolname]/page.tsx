@@ -2,7 +2,6 @@
 
 import React, { useMemo } from "react";
 import { useParams, notFound } from "next/navigation";
-import Loader from "@/components/Loader/Loader";
 import styles from "@/components/ui/style/ToolPageDetails.module.scss";
 
 import ToolCardHeader from "@/components/Category/details/ToolCardHeader";
@@ -14,6 +13,7 @@ import { useGetToolReviewsQuery } from "@/features/review/reviewApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 
 import { getUserId, getUserType } from "@/utils/authStorage";
+import Loading from "@/app/loading";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams() as { slug: string; toolname: string };
@@ -69,7 +69,7 @@ const ToolDetailsPage = () => {
   );
 
   // Loading & Errors
-  if (catLoading || detailLoading) return <Loader />;
+  if (catLoading || detailLoading) return <Loading />;
 
   if (catError || !category || detailError || !tool) return notFound();
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import styles from "../../components/ui/style/categoryCard.module.scss";
-
+import { FaImage, FaVideo, FaMusic, FaPenNib } from "react-icons/fa";
 interface Category {
   _id: string;
   categoryName: string;
@@ -15,6 +15,14 @@ interface CategoriesProps {
   onViewAllClick: () => void;
 }
 
+const iconList = [
+  <FaImage />,   // Card 1 → Image icon
+  <FaVideo />,   // Card 2 → Video icon
+  <FaMusic />,   // Card 3 → Audio icon
+  <FaPenNib />   // Card 4 → Writing icon
+];
+
+
 const Categories: React.FC<CategoriesProps> = ({
   categoryData,
   onCategoryClick,
@@ -26,7 +34,7 @@ const Categories: React.FC<CategoriesProps> = ({
     <section className={styles.categoriesSection}>
       <h1 className={styles.heading}>Top Categories</h1>
       <div className={styles.grid}>
-      {categoryData.slice(0, 4).map((cat) => (
+      {categoryData.slice(0, 4).map((cat,index) => (
   <div
     key={cat._id}
     className={styles.cardContainer}
@@ -43,18 +51,12 @@ const Categories: React.FC<CategoriesProps> = ({
           
           <div className={styles.cardBadge}>TRENDING</div>
 
-          <div
-            className={styles.cardImage}
-            style={
-              { "--bg-color": "#2979ff" } as React.CSSProperties
-            }
-          />
+           <div className={styles.cardImage}>
+            {iconList[index]}
+          </div>
 
           <div className={styles.cardText}>
             <p className={styles.cardTitle}>{cat.categoryName}</p>
-            <p className={styles.cardDescription}>
-              Experience interactive hover effects
-            </p>
           </div>
 
           {/* <div className={styles.cardFooter}>
