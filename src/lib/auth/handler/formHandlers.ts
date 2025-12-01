@@ -3,7 +3,9 @@
 import { SubmitHandler } from "react-hook-form";
 import { LoginInput, RegisterInput } from "@/lib/validators/userValidator";
 import { saveAuthData } from "@/utils/authStorage";
+import moment from "moment";
 
+const loginTime = moment().format("YYYY-MM-DD HH:mm:ss");
 // Login handler
 export const createLoginHandler = (
   loginUser: (data: LoginInput) => Promise<any>,
@@ -11,19 +13,18 @@ export const createLoginHandler = (
 ): SubmitHandler<LoginInput> => {
   return async (data) => {
     try {
-
       const res = await loginUser(data);
       const response = res?.data ?? res;
       if (response?.success) {
       saveAuthData(
           response?.result?.list?.token,
           response?.result?.list?.user?._id,
-          response?.result?.list?.user?.userType
+          response?.result?.list?.user?.userType,
+          loginTime
         );
       router.prefetch("/dashboard");  
       router.push("/dashboard");
       }
-
 
     } catch (err: any) {
       console.error(

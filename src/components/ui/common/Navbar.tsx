@@ -46,9 +46,7 @@ export default function Navbar() {
     if (pathname !== path) router.push(path);
   };
 
-  const toggleAccordion = (section: string) => {
-    setAccordion((prev) => (prev === section ? null : section));
-  };
+
 
   if (token === undefined) {
     return (
