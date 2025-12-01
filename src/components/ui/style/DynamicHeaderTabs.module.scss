@@ -1,5 +1,4 @@
-/* From Uiverse.io by 00Kubi */
-
+/* From Uiverse.io by 00Kubi */ 
 .radio-inputs {
   position: relative;
   display: flex;
@@ -11,11 +10,9 @@
     5px 5px 15px rgba(0, 0, 0, 0.15),
     -5px -5px 15px rgba(255, 255, 255, 0.8);
   padding: 0.5rem;
-  width: 100%;
-  max-width: 400px;
+  width: 300px;
   font-size: 14px;
   gap: 0.5rem;
-  margin: auto;
 }
 
 .radio-inputs .radio {
@@ -262,6 +259,9 @@
     rgba(37, 99, 235, 0.5)
   );
   -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;

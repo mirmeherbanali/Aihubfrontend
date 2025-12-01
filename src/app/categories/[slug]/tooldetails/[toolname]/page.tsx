@@ -87,7 +87,7 @@ const ToolDetailsPage = () => {
         <main className={styles.mainSection}>
           <ToolMainContent tool={tool} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
         </main>
-
+{alternativeTools.length > 0 && (
         <aside className={styles.sidebarSection}>
           <ToolRightSidebar
             tool={tool}
@@ -95,6 +95,8 @@ const ToolDetailsPage = () => {
             onViewAll={handleViewAll}
           />
         </aside>
+)
+}
       </div>
     </div>
   );

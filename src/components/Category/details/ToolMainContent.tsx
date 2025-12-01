@@ -1,18 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "@/components/ui/style/ToolMainContent.module.scss";
 import { FaPlay } from "react-icons/fa6";
 import ReviewSection from "./ReviewSection";
 
 interface ToolMainContentProps {
-  tool: any; // Replace 'any' with your Tool type if available
-  reviewsData?:any;
-  isReviewsLoading?:boolean;
+  tool: any;
+  reviewsData?: any;
+  isReviewsLoading?: boolean;
 }
 
-const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool,reviewsData,isReviewsLoading }) => {
-  if (!tool) return null; // Safety check for progressive loading
+const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData, isReviewsLoading }) => {
+  if (!tool) return null;
+
+  // TRACK ACTIVE SCREENSHOT
+  const [activeScreenshot, setActiveScreenshot] = useState(tool.screenshots?.[0] || "");
 
   return (
     <>
@@ -39,25 +42,32 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool,reviewsData,isRe
         {tool.screenshots?.length > 0 && (
           <div className={styles.screenshotsBox}>
             <h3>Screenshots</h3>
+
             <div className={styles.screenshotGrid}>
+              {/* MAIN SCREENSHOT */}
               <div className={styles.mainScreenshot}>
                 <img
-                  src={tool.screenshots[0]}
+                  src={activeScreenshot}
                   alt="Main Screenshot"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </div>
+
+              {/* SIDE THUMBNAILS */}
               <div className={styles.sideScreenshots}>
                 {tool.screenshots.map((shot: string, idx: number) => (
-                  <button
+                  <a
                     key={idx}
-                    className={idx === 0 ? styles.active : ""}
-                    onClick={() => {
-                      // Optional: Implement screenshot switching logic here
-                    }}
+                    onClick={() => setActiveScreenshot(shot)}
+                    className={`${styles.thumbnailLink} ${activeScreenshot === shot ? styles.active : ""}`}
+                    style={{ cursor: "pointer" }}
                   >
-                    Screenshot {idx + 1}
-                  </button>
+                    <img
+                      src={shot}
+                      alt={`Screenshot ${idx + 1}`}
+                      className={styles.thumbnailImage}
+                    />
+                  </a>
                 ))}
               </div>
             </div>
@@ -86,15 +96,13 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool,reviewsData,isRe
           <div className={styles.tagsBox}>
             <h3>Tags</h3>
             <div className={styles.tagsGrid}>
-  <span className={styles.tag}>{tool.tags.join(", ")}</span>
-</div>
-
-
+              <span className={styles.tag}>{tool.tags.join(", ")}</span>
+            </div>
           </div>
         )}
       </div>
 
-      <ReviewSection tool={tool}  reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
+      <ReviewSection tool={tool} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
     </>
   );
 };

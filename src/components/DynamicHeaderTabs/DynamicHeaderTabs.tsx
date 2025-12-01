@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import "../ui/style/SideBar.module.scss";
+import style from "../ui/style/DynamicHeaderTabs.module.scss";
 
 interface TabAction {
   label: string;
@@ -28,21 +28,21 @@ const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
 
   const handleSelect = (index: number, action: TabAction) => {
     if (!isControlled) setInternalActiveIndex(index);
-    if (onTabChange) onTabChange(index);
-    if (action.onClick) action.onClick();
+    onTabChange?.(index);
+    action.onClick?.();
   };
 
   return (
-    <div className="radio-inputs">
+    <div className={style.radioInputs}>
       {actions.map((action, index) => (
-        <label className="radio" key={index}>
+        <label key={index} className={style.radio}>
           <input
             type="radio"
-            name="dynamicTabs"
+            name="dynamic-tabs"
             checked={activeIndex === index}
             onChange={() => handleSelect(index, action)}
           />
-          <span className="name">{action.label}</span>
+          <span className={style.name}>{action.label}</span>
         </label>
       ))}
     </div>

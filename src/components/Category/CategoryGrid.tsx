@@ -46,26 +46,26 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   };
 
   // Get icon for category (you can customize this)
-  const getCategoryIcon = (categoryName: string) => {
-    const icons: { [key: string]: string } = {
-      'design': '🎨',
-      'development': '💻', 
-      'marketing': '📈',
-      'business': '💼',
-      'writing': '✏️',
-      'video': '🎥',
-      'music': '🎵',
-      'photo': '📷',
-      'ai': '🤖',
-      'data': '📊'
-    };
+  // const getCategoryIcon = (categoryName: string) => {
+  //   const icons: { [key: string]: string } = {
+  //     'design': '🎨',
+  //     'development': '💻', 
+  //     'marketing': '📈',
+  //     'business': '💼',
+  //     'writing': '✏️',
+  //     'video': '🎥',
+  //     'music': '🎵',
+  //     'photo': '📷',
+  //     'ai': '🤖',
+  //     'data': '📊'
+  //   };
     
-    const defaultIcon = '🔮';
-    const matchedKey = Object.keys(icons).find(key => 
-      categoryName.toLowerCase().includes(key)
-    );
-    return matchedKey ? icons[matchedKey] : defaultIcon;
-  };
+  //   const defaultIcon = '🔮';
+  //   const matchedKey = Object.keys(icons).find(key => 
+  //     categoryName.toLowerCase().includes(key)
+  //   );
+  //   return matchedKey ? icons[matchedKey] : defaultIcon;
+  // };
 
   return (
     <section className={styles.categorySection}>
@@ -109,10 +109,8 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
                   <div className={styles.cardBadge}>NEW</div>
 
                   <div className={styles.cardImage}>
-                    {isLoading ? (
+                    {isLoading && (
                       <div className={styles.loadingIcon}>⏳</div>
-                    ) : (
-                      getCategoryIcon(item.categoryName)
                     )}
                   </div>
 
@@ -123,9 +121,11 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
                         __html: highlightMatch(item.categoryName) 
                       }}
                     />
+                    {isLoading && (
                     <p className={styles.cardDescription}>
-                      {isLoading ? 'Loading category...' : `Discover amazing ${item.categoryName} tools`}
+                      Loading category...
                     </p>
+                    )}
                   </div>
 
                   <div className={styles.cardFooter}>

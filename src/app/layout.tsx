@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import "../globals.css";
 import Navbar from "@/components/ui/common/Navbar";
 import Footer from "@/components/ui/common/Footer";
@@ -27,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   const [showWarning, setShowWarning] = useState(false);
   const [showTokenModal, setShowTokenModal] = useState(false);
+  const logoutTriggered = useRef(false);
 
   // 🔥 CONFIG (2 minutes test)
   const MAX_TIME = 2 * 60 * 1000;
@@ -100,6 +101,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     const handler = (e: StorageEvent) => {
       if (e.key === "logoutEvent") {
+        if (logoutTriggered.current) return; // ⛔ STOP REPEATED LOGOUT
+
+        logoutTriggered.current = true;
         clearAuthData();
         toast.error("Logged out from another tab.");
         router.push("/auth/login");
