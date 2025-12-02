@@ -52,16 +52,34 @@ const handleAddSubmit = async (data: ToolsInput) => {
     // Create FormData for file uploads
     const formData = new FormData();
     const submissionData = { ...data, userId: userId };
+    if (Array.isArray(data.screenshots)) {
+        const uploadedFiles = data.screenshots.filter(
+          (file) => file instanceof File
+        );
+        const existingUrls = data.screenshots.filter(
+          (file) => typeof file === "string"
+        );
+
+        uploadedFiles.forEach((file) => {
+          formData.append("screenshots", file);
+        });
+
+        if (existingUrls.length > 0) {
+          formData.append("existingScreenshots", JSON.stringify(existingUrls));
+        }
+      }
 
     Object.entries(submissionData).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else if (value instanceof File) {
-        formData.append(key, value);
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
-      }
-    });
+        if (key === "screenshots") return;
+
+        if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else if (value instanceof File) {
+          formData.append(key, value);
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
 
     const res= await createTool(formData).unwrap();
     console.log("res",res)
