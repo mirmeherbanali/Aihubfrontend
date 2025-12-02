@@ -111,22 +111,31 @@ const handleAddSubmit = async (data: ToolsInput) => {
         <section className={styles.submittedSection}>
           <h2>Submitted Tools</h2>
           <GridCards
-            data={gridData}
-            activeIndex={editingIndex}
-            onSelect={(item, index) => {
-              setEditingIndex(index);
-              gridForm.reset(tools[index]);
-              setShowGridForm(true);
-              setShowAddForm(false);
-            }}
-            onAdd={() => {
-              addForm.reset();
-              setEditingIndex(null);
-              setShowAddForm(true);
-              setShowGridForm(false);
-            }}
-            addLabel="Submit a Tool"
-          />
+  data={gridData}
+  activeIndex={editingIndex}
+  onSelect={(item, index) => {
+    setEditingIndex(index);
+
+    const tool = tools[index];
+    const categoryIds = tool?.category?.map((c) => c._id) || [];
+
+    gridForm.reset({
+      ...tool,
+      category: categoryIds, // FIXED
+    });
+
+    setShowGridForm(true);
+    setShowAddForm(false);
+  }}
+  onAdd={() => {
+    addForm.reset();
+    setEditingIndex(null);
+    setShowAddForm(true);
+    setShowGridForm(false);
+  }}
+  addLabel="Submit a Tool"
+/>
+
         </section>
 
         {showGridForm && editingIndex !== null && (
@@ -134,7 +143,7 @@ const handleAddSubmit = async (data: ToolsInput) => {
             <DynamicForm
               fields={toolsFields(categories)}
               control={gridForm.control}
-              handleSubmit={gridForm.handleSubmit}
+              handleSubmit={gridForm.handleSubmit} 
               onSubmit={handleAddSubmit}
               buttonText="Update Tool"
             />
