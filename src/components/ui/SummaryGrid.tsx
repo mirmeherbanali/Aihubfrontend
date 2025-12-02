@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import styles from "./style/ToolsPage.module.scss";
+import styles from "./style/ToolsPageForDash.module.scss";
+import { FaTools, FaClock, FaCheckCircle } from "react-icons/fa";
 
 interface SummaryItem {
   title: string;
   value: string | number;
   className?: string;
   style?: React.CSSProperties;
+  icon?: React.ReactNode;
 }
 
 interface SummaryGridProps {
@@ -15,6 +17,12 @@ interface SummaryGridProps {
   className?: string;
   style?: React.CSSProperties;
 }
+
+const iconMap = {
+  0: <FaTools />,
+  1: <FaClock />,
+  2: <FaCheckCircle />,
+};
 
 const SummaryGrid: React.FC<SummaryGridProps> = ({
   items,
@@ -29,8 +37,16 @@ const SummaryGrid: React.FC<SummaryGridProps> = ({
           className={`${styles.summaryCard} ${item.className || ""}`}
           style={item.style}
         >
-          <h3>{item.title}</h3>
-          <p>{item.value}</p>
+          {/* Left Text Section */}
+          <div>
+            <p className={styles.summaryTitle}>{item.title}</p>
+            <p className={styles.summaryValue}>{item.value}</p>
+          </div>
+
+          {/* Right Icon */}
+          <div className={styles.summaryIcon}>
+            {item.icon || iconMap[index]}
+          </div>
         </div>
       ))}
     </div>

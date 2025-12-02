@@ -1,0 +1,86 @@
+/* ============================================================
+   PREMIUM SUMMARY CARDS (ERES STYLE)
+============================================================ */
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, #4b6bfb, #6d8bff);
+  border-radius: 18px;
+  padding: 22px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  box-shadow: 0px 8px 20px rgba(75, 107, 251, 0.25);
+}
+
+.summaryCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 12px 30px rgba(75, 107, 251, 0.35);
+}
+
+/* Left Text */
+.summaryTitle {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.summaryValue {
+  font-size: 34px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Right Rounded Icon */
+.summaryIcon {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+
+/* Different Card Colors */
+.blueCard {
+  background: linear-gradient(135deg, #4b6bfb, #6d8bff);
+}
+
+.greenCard {
+  background: linear-gradient(135deg, #3ecf8e, #23b26b);
+}
+
+.purpleCard {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+}
+
+.redCard {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .summaryValue {
+    font-size: 26px;
+  }
+  .summaryIcon {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+}

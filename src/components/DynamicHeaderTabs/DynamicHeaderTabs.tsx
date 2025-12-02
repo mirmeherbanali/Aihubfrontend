@@ -1,50 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import style from "../ui/style/DynamicHeaderTabs.module.scss";
 
 interface TabAction {
   label: string;
+  icon?: React.ReactNode;
   onClick?: () => void;
 }
 
 interface DynamicHeaderTabsProps {
   actions: TabAction[];
-  defaultActive?: number;
-  activeIndex?: number;
+  activeIndex: number;
   onTabChange?: (index: number) => void;
 }
 
 const DynamicHeaderTabs: React.FC<DynamicHeaderTabsProps> = ({
   actions,
-  defaultActive = 0,
-  activeIndex: externalActiveIndex,
-  onTabChange
+  activeIndex,
+  onTabChange,
 }) => {
-  const [internalActiveIndex, setInternalActiveIndex] = useState(defaultActive);
-
-  const isControlled = externalActiveIndex !== undefined;
-  const activeIndex = isControlled ? externalActiveIndex : internalActiveIndex;
-
-  const handleSelect = (index: number, action: TabAction) => {
-    if (!isControlled) setInternalActiveIndex(index);
-    onTabChange?.(index);
-    action.onClick?.();
-  };
-
   return (
-    <div className={style.radioInputs}>
-      {actions.map((action, index) => (
-        <label key={index} className={style.radio}>
-          <input
-            type="radio"
-            name="dynamic-tabs"
-            checked={activeIndex === index}
-            onChange={() => handleSelect(index, action)}
-          />
-          <span className={style.name}>{action.label}</span>
-        </label>
-      ))}
+    <div className={style.tabsWrapper}>
+      {actions.map((action, index) => {
+        const isActive = activeIndex === index;
+
+        return (
+          <button
+            key={index}
+            type="button"
+            className={`${style.tabButton} ${isActive ? style.active : ""}`}
+            onClick={() => {
+              onTabChange?.(index);
+              action.onClick?.();
+            }}
+          >
+            {action.icon && <span className={style.icon}>{action.icon}</span>}
+            {action.label}
+          </button>
+        );
+      })}
     </div>
   );
 };
