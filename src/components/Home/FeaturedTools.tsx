@@ -12,7 +12,7 @@ interface Category {
 interface Tool {
   _id: string;
   toolName: string;
-  desc?: string;
+  description?: string;
   category: Category[];
   logo?: string;
 }
@@ -23,18 +23,19 @@ interface FeaturedToolsProps {
   onToolClick: (tool: Tool, category: Category) => void;
 }
 
-const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, onToolClick }) => {
+const FeaturedTools: React.FC<FeaturedToolsProps> = ({
+  toolData,
+  allCategories,
+  onToolClick,
+}) => {
   return (
     <section className={styles.featuredTools}>
       <h2>Featured Tools</h2>
 
       <div className={styles.grid}>
-        {toolData?.slice(0, 4)?.map((tool) => {
-          // Find category using _id match
+        {toolData?.slice(0, 8)?.map((tool) => {
           const categoryId = tool?.category?.[0]?._id;
           const category = allCategories.find((c) => c._id === categoryId);
-          // Debug logs
-          console.log("🧠 Tool:", tool?.logo);
 
           return (
             <div
@@ -42,11 +43,22 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({ toolData, allCategories, 
               className={styles.card}
               onClick={() => category && onToolClick(tool, category)}
             >
-              <img
-                src={tool.logo || "/placeholder.png"}
-                alt={tool.toolName}
-              />
-              <h3>{tool.toolName}</h3>
+              <div className={styles.row}>
+                <img
+                  src={tool.logo || "/placeholder.png"}
+                  alt={tool.toolName}
+                  className={styles.logo}
+                />
+
+                <div className={styles.textBox}>
+                  <h3 className={styles.toolName}>{tool.toolName}</h3>
+                  <p className={styles.desc}>
+                    {tool.description?.length > 60
+                      ? tool.description.slice(0, 60) + "..."
+                      : tool.description || "No description available"}
+                  </p>
+                </div>
+              </div>
             </div>
           );
         })}

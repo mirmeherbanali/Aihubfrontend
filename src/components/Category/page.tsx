@@ -10,11 +10,10 @@ export default function CategoryPage() {
   const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  
 
   const categories = data?.result?.list || [];
 
-  // 🔍 Filter categories dynamically as user types
+  // Filter categories
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return categories;
     return categories.filter((item: any) =>
@@ -22,28 +21,23 @@ export default function CategoryPage() {
     );
   }, [categories, searchQuery]);
 
-  const handleSelectCategory = (item: any) => {
-    setSelectedCategory(item);
-    console.log("Selected Category:", item);
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
   return (
     <>
       <PageHero
         content="Explore <span style='color:#ffd700'>AI Tools</span> by Category"
         subcontent="Find the perfect AI tool for your industry, use case, or role."
         queryPlaceholder="Search for Tools & Categories"
-        onSearch={handleSearch}
-        liveSearch // 👈 enables real-time search
+        onSearch={(q) => setSearchQuery(q)}
+        liveSearch
       />
 
       <section className={styles.categorySection}>
         {isLoading ? (
-          <div className={styles.loader}>Loading categories...</div>
+          <div className={styles.grid}>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className={styles.skeletonCard} />
+            ))}
+          </div>
         ) : isError ? (
           <div className={styles.error}>
             Failed to load categories.
@@ -52,15 +46,14 @@ export default function CategoryPage() {
         ) : filteredCategories.length === 0 ? (
           <div className={styles.empty}>No matching categories found.</div>
         ) : (
-        
-            <CategoryGrid
-              title="All Categories"
-              items={filteredCategories}
-              onSelect={handleSelectCategory}
-              searchQuery={searchQuery} // 👈 pass search query for highlighting
-            />
+          <>
+            <h2 className={styles.heading}>All Categories</h2>
 
-            
+            <CategoryGrid
+              items={filteredCategories}
+              onSelect={(item) => setSelectedCategory(item)}
+            />
+          </>
         )}
       </section>
     </>
