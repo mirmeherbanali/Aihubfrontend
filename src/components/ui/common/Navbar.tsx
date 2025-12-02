@@ -37,7 +37,11 @@ export default function Navbar() {
     setIsLogin(true);
     router.push("/auth/login");
   }; 
-
+const handleToolClick = () => {
+    setMenuOpen(false);
+    setIsLogin(true);
+    router.push("/tool");
+  };
 
 
   const handleNavigation = (path: string) => {
@@ -110,7 +114,7 @@ export default function Navbar() {
                 className={styles.profileImage}
               />
             ) : (
-              !isAuthPage && <ButtonNew handleLoginClick={handleLoginClick} />
+              !isAuthPage && <ButtonNew handleLoginClick={handleToolClick} />
             )}
           </div>
         </div>

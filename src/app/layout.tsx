@@ -29,9 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [showTokenModal, setShowTokenModal] = useState(false);
   const logoutTriggered = useRef(false);
 
-  // 🔥 CONFIG (2 minutes test)
-  const MAX_TIME = 2 * 60 * 1000;
-  const WARNING_TIME = MAX_TIME - 60 * 1000;
+  const MAX_TIME = 30 * 60 * 1000;
+  const WARNING_TIME = MAX_TIME - 25 * 60 * 1000;
   const CHECK_INTERVAL = 15 * 1000; // 15 sec
 
   // -----------------------------------------------------
