@@ -12,47 +12,38 @@ import SummaryGrid from "@/components/ui/SummaryGrid";
 import GridCards from "@/components/ui/GridCards";
 import {
   useCreateToolMutation,
-  useGetAllToolsQuery
+  useGetAllToolsQuery,
 } from "@/features/tools/toolsApi";
 import { getUserId } from "@/utils/authStorage";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
 import { Tool } from "@/types/tool.types";
 
 export default function ToolsPage() {
-  const userId = getUserId()??""
+  const userId = getUserId() ?? "";
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [showGridForm, setShowGridForm] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-
-  // API hooks
   const { data: toolsData, refetch } = useGetAllToolsQuery({ userId });
-
   const [createTool] = useCreateToolMutation();
-
-  // Tools list from backend
   const tools = toolsData?.result?.list || [];
 
-  // Form for editing
   const gridForm = useForm<ToolsInput>({
     resolver: zodResolver(toolsSchema),
     mode: "onBlur",
   });
 
-  // Form for adding new tool
   const addForm = useForm<ToolsInput>({
     resolver: zodResolver(toolsSchema),
     mode: "onBlur",
   });
 
-  
-const handleAddSubmit = async (data: ToolsInput) => {
-  try {
-    // Create FormData for file uploads
-    const formData = new FormData();
-    const submissionData = { ...data, userId: userId };
-    if (Array.isArray(data.screenshots)) {
+  const handleAddSubmit = async (data: ToolsInput) => {
+    try {
+      const formData = new FormData();
+      const submissionData = { ...data, userId: userId };
+      if (Array.isArray(data.screenshots)) {
         const uploadedFiles = data.screenshots.filter(
           (file) => file instanceof File
         );
@@ -69,7 +60,7 @@ const handleAddSubmit = async (data: ToolsInput) => {
         }
       }
 
-    Object.entries(submissionData).forEach(([key, value]) => {
+      Object.entries(submissionData).forEach(([key, value]) => {
         if (key === "screenshots") return;
 
         if (Array.isArray(value)) {
@@ -81,21 +72,20 @@ const handleAddSubmit = async (data: ToolsInput) => {
         }
       });
 
-    const res= await createTool(formData).unwrap();
-    console.log("res",res)
-    addForm.reset();
-    setShowAddForm(false);
-    refetch();
-  } catch (error) {
-    console.error("Error adding tool:", error);
-  }
-};
+      const res = await createTool(formData).unwrap();
 
-  
+      addForm.reset();
+      setShowAddForm(false);
+      refetch();
+    } catch (error) {
+      console.error("Error adding tool:", error);
+    }
+  };
+
   const summaryItems = [
-    { title: "Total Tools Submitted", value: 18},
-    { title: "Pending Approvals", value: 20},
-    { title: "Approved Tools", value: 23},
+    { title: "Total Tools Submitted", value: 18 },
+    { title: "Pending Approvals", value: 20 },
+    { title: "Approved Tools", value: 23 },
   ];
 
   const gridData = tools?.map((tool: Tool, index: number) => ({
@@ -104,55 +94,113 @@ const handleAddSubmit = async (data: ToolsInput) => {
     image: tool.logo,
     placeholder: "🛠️",
   }));
-// console.log("categories",categories)
+
   return (
-      <div className={styles.pageContainer}>
-        <SummaryGrid items={summaryItems} />
-        <section className={styles.submittedSection}>
-          <h2>Submitted Tools</h2>
-          <GridCards
-            data={gridData}
-            activeIndex={editingIndex}
-            onSelect={(item, index) => {
-              setEditingIndex(index);
-              gridForm.reset(tools[index]);
-              setShowGridForm(true);
-              setShowAddForm(false);
-            }}
-            onAdd={() => {
+    <div className={styles.pageContainer}>
+      <div className="header-wrapper">
+        <h2 className="page-title">Welcome to Recuip!</h2>
+        <p className="page-subtitle">Developer Dashboard Overview</p>
+      </div>
+
+      <SummaryGrid items={summaryItems} />
+      <section className={styles.submittedSection}>
+        <h2>Submitted Tools</h2>
+        {/* <GridCards
+          data={gridData}
+          activeIndex={editingIndex}
+          onSelect={(item, index) => {
+            setEditingIndex(index);
+            gridForm.reset(tools[index]);
+            setShowGridForm(true);
+            setShowAddForm(false);
+          }}
+          onAdd={() => {
+            addForm.reset();
+            setEditingIndex(null);
+            setShowAddForm(true);
+            setShowGridForm(false);
+          }}
+          addLabel="Submit a Tool"
+        /> */}
+        <div className={styles.toolsRow}>
+          {/* LEFT: SLIDER */}
+          <div className={styles.toolsSliderWrapper}>
+            <button
+              className={styles.slideBtnLeft}
+              onClick={() => {
+                document.getElementById("toolsSlider").scrollLeft -= 300;
+              }}
+            >
+              ◀
+            </button>
+
+            <div className={styles.toolsSlider} id="toolsSlider">
+              {tools.map((tool: Tool, index) => (
+                <div
+                  key={tool._id}
+                  className={styles.toolCard}
+                  onClick={() => {
+                    setEditingIndex(index);
+                    gridForm.reset(tool);
+                    setShowGridForm(true);
+                    setShowAddForm(false);
+                  }}
+                >
+                  <img src={tool.logo} className={styles.toolImage} />
+                  <p className={styles.toolName}>{tool.toolName}</p>
+                </div>
+              ))}
+            </div>
+
+            <button
+              className={styles.slideBtnRight}
+              onClick={() => {
+                document.getElementById("toolsSlider").scrollLeft += 300;
+              }}
+            >
+              ▶
+            </button>
+          </div>
+
+          {/* RIGHT SIDE FIXED BUTTON */}
+          <div
+            className={styles.addCard}
+            onClick={() => {
               addForm.reset();
               setEditingIndex(null);
               setShowAddForm(true);
               setShowGridForm(false);
             }}
-            addLabel="Submit a Tool"
+          >
+            <span>+</span>
+            <p>Submit a Tool</p>
+          </div>
+        </div>
+      </section>
+
+      {showGridForm && editingIndex !== null && (
+        <Card className={styles.formCard}>
+          <DynamicForm
+            fields={toolsFields(categories)}
+            control={gridForm.control}
+            handleSubmit={gridForm.handleSubmit}
+            onSubmit={handleAddSubmit}
+            buttonText="Update Tool"
           />
-        </section>
+        </Card>
+      )}
 
-        {showGridForm && editingIndex !== null && (
-          <Card className={styles.formCard}>
-            <DynamicForm
-              fields={toolsFields(categories)}
-              control={gridForm.control}
-              handleSubmit={gridForm.handleSubmit}
-              onSubmit={handleAddSubmit}
-              buttonText="Update Tool"
-            />
-          </Card>
-        )}
-
-        {showAddForm && (
-          <Card className={styles.formCard}>
-            <DynamicForm
-              fields={toolsFields(categories)}
-              control={addForm.control}
-              handleSubmit={addForm.handleSubmit}
-              onSubmit={handleAddSubmit}
-              buttonText="Add Tool"
-            />
-          </Card>
-        )}
-      </div>
+      {showAddForm && (
+        <Card className={styles.formCard}>
+          <DynamicForm
+            fields={toolsFields(categories)}
+            control={addForm.control}
+            handleSubmit={addForm.handleSubmit}
+            onSubmit={handleAddSubmit}
+            buttonText="Add Tool"
+          />
+        </Card>
+      )}
+    </div>
   );
 }
- 

@@ -7,20 +7,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import DynamicForm from "@/components/ui/DynamicForm";
 import {
   AddCategoryInput,
-  addCategorySchema
+  addCategorySchema,
 } from "@/lib/validators/addCatygoryValidator";
 import { addCategoryFields } from "@/lib/dashboard/category/fields/formFields";
-import { useCreateCategoryMutation, useUpdateCategoryMutation } from "@/features/dashboard/category/categoryApi";
-import { createCategoryHandler, updateCategoryHandler } from "@/lib/dashboard/category/handler/formHandlers";
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+} from "@/features/dashboard/category/categoryApi";
+import { getUserId } from "@/utils/authStorage";
 
 interface AddCategoryProps {
   refetch: () => void;
+  onSuccess: () => void;
   editCategory?: (AddCategoryInput & { _id: string }) | undefined;
 }
 
-export default function AddCategory({ refetch, editCategory }: AddCategoryProps) {
+export default function AddCategory({
+  refetch,
+  editCategory,
+  onSuccess,
+}: AddCategoryProps) {
   const [createCategory] = useCreateCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
+  const adminId = getUserId();
 
   const {
     control,
@@ -33,20 +42,42 @@ export default function AddCategory({ refetch, editCategory }: AddCategoryProps)
     mode: "onBlur",
   });
 
-  // 🔹 Pre-fill form when editing
   useEffect(() => {
     if (editCategory) {
       Object.keys(editCategory).forEach((key) => {
-        setValue(key as keyof AddCategoryInput, editCategory[key as keyof AddCategoryInput]);
+        setValue(
+          key as keyof AddCategoryInput,
+          editCategory[key as keyof AddCategoryInput]
+        );
       });
     } else {
       reset();
     }
   }, [editCategory, setValue, reset]);
 
-  const onSubmit = editCategory
-    ? updateCategoryHandler(updateCategory, reset) // for edit
-    : createCategoryHandler(createCategory, reset); // for create
+  const onSubmit = async (formData: any) => {
+    try {
+      const payload = {
+        ...formData,
+        adminId,
+        created_by: adminId,
+        updated_by: adminId,
+      };
+
+      if (editCategory) {
+        await updateCategory({ ...payload, _id: editCategory._id }).unwrap();
+      } else {
+        await createCategory(payload).unwrap();
+      }
+
+      reset();     
+      refetch();   
+      onSuccess(); 
+
+    } catch (err) {
+      console.error("CATEGORY SAVE ERROR:", err);
+    }
+  };
 
   return (
     <div className={styles.profileContainer}>
@@ -57,7 +88,13 @@ export default function AddCategory({ refetch, editCategory }: AddCategoryProps)
             control={control}
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}
-            buttonText={isSubmitting ? "loading..." : editCategory ? "Update Category" : "Submit"}
+            buttonText={
+              isSubmitting
+                ? "loading..."
+                : editCategory
+                ? "Update Category"
+                : "Submit"
+            }
           />
         </div>
       </div>

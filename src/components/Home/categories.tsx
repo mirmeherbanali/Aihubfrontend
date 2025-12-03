@@ -25,8 +25,8 @@ const Categories: React.FC<CategoriesProps> = ({
 }) => {
   return (
     <section className={styles.categoriesSection}>
-      <h1 className={styles.heading}>Top Categories</h1>
-
+      <h2 className={styles.heading}>Top Categories</h2>
+      <div className={styles.categoryUnderline}></div>
       <div className={styles.grid}>
         {categoryData.slice(0, 4).map((cat, index) => (
           <div
@@ -43,7 +43,7 @@ const Categories: React.FC<CategoriesProps> = ({
       </div>
 
       <div className={styles.viewAllWrapper}>
-        <button onClick={onViewAllClick} className={styles.viewAllBtn}>
+        <button onClick={onViewAllClick} className={styles.viewBtn}>
           View All <span>›</span>
         </button>
       </div>

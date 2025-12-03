@@ -1,9 +1,42 @@
 .featuredTools {
   margin: 80px auto;
-  padding: 0 20px;
+  padding: 20px 20px;
   max-width: 1200px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: #f5f7fa;
 }
+
+/* GLOW BACKGROUND */
+.featuredTools::before,
+.featuredTools::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Right glow */
+.featuredTools::before {
+  width: 520px;
+  height: 520px;
+  top: -120px;
+  right: -140px;
+  background: rgba(140, 200, 255, 0.55);
+}
+
+/* Left glow */
+.featuredTools::after {
+  width: 420px;
+  height: 420px;
+  bottom: -80px;
+  left: -120px;
+  background: rgba(120, 180, 255, 0.45);
+}
+
 
 .featuredTools h2 {
   font-size: 44px;

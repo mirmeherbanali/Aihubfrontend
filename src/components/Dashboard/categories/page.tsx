@@ -9,9 +9,10 @@ import { useGetAllCategoriesQuery } from "@/features/dashboard/category/category
 import { Category } from "@/types/category.types";
 
 export default function CategoryPage() {
-  const [tab, setTab] = useState(1); // 1 = Manage, 2 = Add/Edit
-  const [editCategory, setEditCategory] = useState<Category | undefined>(undefined);
-
+  const [tab, setTab] = useState(1);
+  const [editCategory, setEditCategory] = useState<Category | undefined>(
+    undefined
+  );
 
   const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
 
@@ -25,7 +26,6 @@ export default function CategoryPage() {
       status: item.status,
     })) || [];
 
-  // ---------------- TABLE COLUMNS ----------------
   const columns: TableColumn<Category>[] = [
     { key: "categoryName", label: "Category Name" },
     { key: "slug", label: "Slug" },
@@ -33,16 +33,14 @@ export default function CategoryPage() {
     { key: "status", label: "Status" },
   ];
 
-  // ---------------- TABLE ACTIONS ----------------
   const actions: TableAction<Category>[] = [
     {
       label: "View",
       onClick: (row) => {
-        const slug = row.categoryName.toLowerCase()
+        const slug = row.categoryName.toLowerCase();
         window.open(`/categories/${slug}`, "_blank");
       },
     },
-
     {
       label: "Edit",
       onClick: (row) => {
@@ -50,7 +48,6 @@ export default function CategoryPage() {
         setTab(2);
       },
     },
-
     {
       label: "Delete",
       onClick: (row) => {
@@ -59,7 +56,6 @@ export default function CategoryPage() {
     },
   ];
 
-  // ---------------- BULK ACTIONS ----------------
   const bulkActions = [
     {
       label: "Delete Selected",
@@ -68,7 +64,6 @@ export default function CategoryPage() {
     },
   ];
 
-  // ---------------- HEADER TAB ACTIONS ----------------
   const tabActions = [
     {
       label: "Manage Categories",
@@ -87,7 +82,6 @@ export default function CategoryPage() {
     },
   ];
 
-  // ---------------- LOADING / ERROR ----------------
   if (isLoading)
     return <p className="text-center text-gray-500 py-4">Loading...</p>;
 
@@ -98,7 +92,6 @@ export default function CategoryPage() {
       </p>
     );
 
-  // ---------------- RENDER ----------------
   return (
     <div className="tab-content-wrapper">
       <DynamicHeaderTabs
@@ -108,19 +101,24 @@ export default function CategoryPage() {
       />
 
       {tab === 1 ? (
-        <div>
-          <DynamicTable
-            columns={columns}
-            data={categoryData}
-            actions={actions}
-            bulkActions={bulkActions}
-            filterKeys={["status"]}
-            searchKey="categoryName"
-            itemsPerPage={10}
-          />
-        </div>
+        <DynamicTable
+          columns={columns}
+          data={categoryData}
+          actions={actions}
+          bulkActions={bulkActions}
+          filterKeys={["status"]}
+          searchKey="categoryName"
+          itemsPerPage={10}
+        />
       ) : (
-        <AddCategory refetch={refetch} editCategory={editCategory} />
+        <AddCategory
+          refetch={refetch}
+          editCategory={editCategory}
+          onSuccess={() => {
+            setEditCategory(undefined);
+            setTab(1);
+          }}
+        />
       )}
     </div>
   );

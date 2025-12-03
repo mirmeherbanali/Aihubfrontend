@@ -1,0 +1,295 @@
+/* ------------------------------------------------------
+   PAGE CONTAINER
+------------------------------------------------------ */
+.admin-home-container {
+  padding: 24px;
+}
+
+/* ------------------------------------------------------
+   PAGE HEADINGS
+------------------------------------------------------ */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.page-subtitle {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* ------------------------------------------------------
+   SUMMARY COUNTERS
+------------------------------------------------------ */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.summary-card {
+  padding: 18px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.summary-icon {
+  font-size: 36px;
+}
+
+.card-blue {
+  background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+}
+.card-green {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+.card-purple {
+  background: linear-gradient(90deg, #a855f7, #d946ef);
+}
+
+/* ------------------------------------------------------
+   MAIN ROW (TOOLS + USERS)
+------------------------------------------------------ */
+.main-row {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------
+   TOP TOOLS SLIDER (FIXED & RESPONSIVE)
+------------------------------------------------------ */
+.top-tools-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden; /* 🔥 FIX: removes page scrollbar */
+}
+
+/* Header row */
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  a {
+    color: #22c55e;
+    cursor: pointer;
+    font-weight: 600;
+  }
+}
+
+/* Horizontal scroll container */
+.tools-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 5px 10px 5px;
+  width: 100%;
+}
+
+.tools-slider::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tools-slider::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+/* TOOL CARD */
+.tool-card {
+  min-width: 220px;
+  max-width: 220px;
+  background: #fff;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.tool-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 12px;
+
+  @media (max-width: 600px) {
+    height: 160px;
+  }
+}
+
+.tool-info h4 {
+  margin: 10px 0 2px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.tool-info p {
+  font-size: 13px;
+  color: #16a34a;
+}
+
+/* SLIDER ARROWS (INSIDE BOX) */
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 10;
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.slide-btn:hover {
+  background: #f0fdf4;
+}
+
+.slide-btn.left {
+  left: 10px;
+}
+
+.slide-btn.right {
+  right: 10px;
+}
+
+/* RESPONSIVE TOOL CARD WIDTH */
+@media (max-width: 768px) {
+  .tool-card {
+    min-width: 180px;
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tool-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ------------------------------------------------------
+   RECENT USERS (VERTICAL SCROLL)
+------------------------------------------------------ */
+.recent-users-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-height: 340px;
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    max-height: none;
+  }
+}
+
+.recent-users-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.recent-users-box::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.user-list {
+  margin-top: 16px;
+}
+
+/* USER ITEM */
+.user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 10px;
+
+  @media (max-width: 600px) {
+    padding: 8px 0;
+  }
+}
+
+.user-avatar {
+  width: 46px;
+  height: 46px;
+  background: #d1fae5;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #065f46;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+
+  @media (max-width: 600px) {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+  }
+}
+
+.user-info h4 {
+  font-size: 15px;
+  font-weight: 600;
+
+  @media (max-width: 600px) {
+    font-size: 16px;
+  }
+}
+
+.user-info p {
+  font-size: 12px;
+  color: #666;
+
+  @media (max-width: 600px) {
+    font-size: 13px;
+  }
+}
+
+.status {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 13px;
+
+  @media (max-width: 600px) {
+    font-size: 14px;
+  }
+}
+
+/* STATUS COLORS */
+.Pending {
+  color: #eab308;
+}
+.OnRecovery {
+  color: #3b82f6;
+}
+.Rejected {
+  color: #ef4444;
+}
+.Recovered {
+  color: #16a34a;
+}

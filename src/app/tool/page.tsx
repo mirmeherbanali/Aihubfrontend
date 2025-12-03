@@ -61,6 +61,8 @@ const Tool = () => {
               <h2>Ready to Join?</h2>
               <p className={styles.ctaText}>
                 Create a Developer Account to add your tool and start reaching thousands of users.
+                 Create a Developer Account to add your tool and start reaching thousands of users
+                 
               </p>
 
               <div className={styles.ctaButtons}>
@@ -69,14 +71,6 @@ const Tool = () => {
                 </Link>
               </div>
 
-              <div className={styles.testimonial}>
-                <div className={styles.testimonialContent}>
-                  "Listing on Allisted increased our user base by 200% in just 3 months!"
-                </div>
-                <div className={styles.testimonialAuthor}>
-                  — Sarah Chen, Founder of AI Studio
-                </div>
-              </div>
             </div>
           </div>
 
@@ -89,9 +83,6 @@ const Tool = () => {
                 { title: "Maximum Visibility", description: "Gain visibility among your target audience" },
                 { title: "Quality Leads", description: "Connect with decision makers and influencers" },
                 { title: "Analytics Dashboard", description: "Track performance with real-time insights" },
-                { title: "Community Support", description: "Join our active developer community" },
-                { title: "Marketing Boost", description: "Get featured in our newsletter and social media" },
-                { title: "Partnership Network", description: "Access exclusive partnership opportunities" }
               ].map((feature, index) => (
                 <div key={index} className={styles.featureCard}>
                   <div className={styles.featureIcon}>
