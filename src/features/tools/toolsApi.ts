@@ -31,8 +31,22 @@ export const toolsApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    updateTool: builder.mutation<AuthResponse, FormData>({
+      query: (body) => ({
+        url: "api/tool/updateTool",
+        method: "PUT",
+        body,
+      }),
+      ...withToast<AuthResponse>(
+        "updateTool",
+        (res) => res.result?.message || "Tool updated successfully"
+      )
+    }),
+    //   use PUT 
   }),
   overrideExisting: false,
 });
 
-export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation } = toolsApi;
+export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation ,
+ useUpdateToolMutation              // ✅ Missing in your code
+} = toolsApi;
