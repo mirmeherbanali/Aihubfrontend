@@ -3,66 +3,50 @@
 import React from "react";
 import { FaTools, FaUser } from "react-icons/fa";
 import "./AdminHome.scss";
+import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
+import { useGetAllToolsQuery } from "@/features/tools/toolsApi";
+import { useGetAllUsersQuery } from "@/features/auth/authApi";
+import Link from "next/link";
 
-const sampleTools = [
-  {
-    name: "AI Image Generator",
-    category: "Graphics",
-    logo: "https://picsum.photos/200?random=1",
-  },
-  {
-    name: "Code Assistant",
-    category: "Development",
-    logo: "https://picsum.photos/200?random=2",
-  },
-  {
-    name: "SEO Analyzer",
-    category: "Marketing",
-    logo: "https://picsum.photos/200?random=3",
-  },
-  {
-    name: "Chatbot Builder",
-    category: "Automation",
-    logo: "https://picsum.photos/200?random=4",
-  },
-  {
-    name: "Writer AI",
-    category: "Content",
-    logo: "https://picsum.photos/200?random=5",
-  },
-];
-
-const recentUsers = [
-  { name: "Aziz Bakree", status: "Developer" },
-  { name: "Griezerman", status: "Admin" },
-  { name: "Oconner", status: "Rejected" },
-  { name: "Uli Trumb", status: "Recovered" },
-  { name: "Aziz Bakree", status: "Pending" },
-  { name: "Griezerman", status: "On Recovery" },
-  { name: "Oconner", status: "Rejected" },
-  { name: "Uli Trumb", status: "Recovered" },
-];
-
-const scrollTools = (offset) => {
+const scrollTools = (offset: number) => {
   const slider = document.getElementById("toolsSlider");
-  slider.scrollLeft += offset;
+  if (slider) slider.scrollLeft += offset;
 };
 
 const AdminHome = () => {
+  // 🔥 Fetch API data
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: toolsData } = useGetAllToolsQuery();
+  const { data: usersData } = useGetAllUsersQuery();
+
+  // Extract results safely
+  const categories = categoriesData?.result?.list || []
+  const tools = toolsData?.result?.list || []
+  const users = usersData?.result?.list || []
+
+  // Dynamic counts
+  const totalUsers = users.length;
+  const totalTools = tools.length;
+  const totalCategories = categories.length;
+
+  // Recent users → latest 8
+  const recentUsers = users.slice(-8).reverse();
+
+  // Top tools → take first 10
+  const topTools = tools.slice(0, 10);
+
   return (
     <div className="admin-home-container">
-
       {/* HEADER */}
       <h2 className="page-title">Welcome to Recuip!</h2>
       <p className="page-subtitle">Admin Dashboard Overview</p>
 
-      {/* COUNTERS */}
+      {/* SUMMARY CARDS */}
       <div className="summary-grid">
-
         <div className="summary-card card-blue">
           <div>
             <h3>Total Users</h3>
-            <h2>1,245</h2>
+            <h2>{totalUsers}</h2>
           </div>
           <FaUser className="summary-icon" />
         </div>
@@ -70,7 +54,7 @@ const AdminHome = () => {
         <div className="summary-card card-purple">
           <div>
             <h3>Total Tools</h3>
-            <h2>89</h2>
+            <h2>{totalTools}</h2>
           </div>
           <FaTools className="summary-icon" />
         </div>
@@ -78,69 +62,75 @@ const AdminHome = () => {
         <div className="summary-card card-green">
           <div>
             <h3>Categories</h3>
-            <h2>34</h2>
+            <h2>{totalCategories}</h2>
           </div>
           <FaTools className="summary-icon" />
         </div>
-
       </div>
 
       <div className="main-row">
-
+        {/* TOP TOOLS */}
         <div className="top-tools-box">
-
           <div className="header-row">
-            <h3>Top Rated Tools</h3>
-            <a>View more ››</a>
-          </div>
+  <h3>Top Rated Tools</h3>
+  <Link href="/dashboard?tab=3" className="view-more-link">
+    View more ››
+  </Link>
+</div>
+
 
           <button className="slide-btn left" onClick={() => scrollTools(-300)}>
             ◀
           </button>
+
           <div className="tools-slider" id="toolsSlider">
-            {sampleTools.map((tool, index) => (
+            {topTools.map((tool: any, index: number) => (
               <div key={index} className="tool-card">
-                <img src={tool.logo} className="tool-img" alt="tool" />
+                <img
+                  src={tool.logo || "https://via.placeholder.com/200"}
+                  className="tool-img"
+                  alt="tool"
+                />
                 <div className="tool-info">
-                  <h4>{tool.name}</h4>
-                  <p>{tool.category}</p>
+                  <h4>{tool.toolName}</h4>
                 </div>
               </div>
             ))}
           </div>
+
           <button className="slide-btn right" onClick={() => scrollTools(300)}>
             ▶
           </button>
-
         </div>
-        <div className="recent-users-box">
 
+        {/* RECENT USERS */}
+        <div className="recent-users-box">
           <div className="header-row">
             <h3>Recent Users</h3>
-            <a>View more ››</a>
+           <Link href="/dashboard?tab=5"className="view-more-link">
+    View more ››
+  </Link>
           </div>
 
           <div className="user-list">
-            {recentUsers.map((user, i) => (
+            {recentUsers.map((user: any, i: number) => (
               <div key={i} className="user-item">
                 <div className="user-avatar">
-                  {user.name.charAt(0).toUpperCase()}
+                  {user.fullName?.charAt(0)?.toUpperCase() ||
+                    user.email?.charAt(0)?.toUpperCase() ||
+                    "U"}
                 </div>
 
                 <div className="user-info">
-                  <h4>{user.name}</h4>
+                  <h4>{user.fullName || user.email}</h4>
                   <p>New User</p>
                 </div>
 
-                <span className={`status ${user.status.replace(" ", "")}`}>
-                  {user.status}
-                </span>
+                <span className="status Active">Active</span>
               </div>
             ))}
           </div>
-
         </div>
-
       </div>
     </div>
   );

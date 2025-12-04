@@ -17,6 +17,7 @@ import { useGetAllCategoriesQuery } from "@/features/dashboard/category/category
 import {
   useCreateToolMutation,
   useGetAllToolsQuery,
+  useUpdateToolMutation
 } from "@/features/tools/toolsApi";
 import { getUserId } from "@/utils/authStorage";
 
@@ -36,16 +37,21 @@ const AdminTools = () => {
     : Array.isArray(toolsData?.result)
       ? toolsData?.result
       : raw?.list || [];
+const sortedBaseTools = [...baseTools].sort(
+  (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+);
 
-  const toolData: Tool[] = baseTools.flatMap((tool) =>
-    (tool.category || []).map((cat: any) => ({
-      ...tool,
-      category: [cat],
-      rowId: `${tool._id}-${cat._id}`,
-    }))
-  );
-
+// 2️⃣ Build table rows from already-sorted tools
+const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
+  (tool.category || []).map((cat: any) => ({
+    ...tool,
+    category: [cat],
+    rowId: `${tool._id}-${cat._id}`,
+  }))
+)
   const [createTool] = useCreateToolMutation();
+  const [updateTool] = useUpdateToolMutation();
+  
   const resetFormAndState = () => {
     setEditTool(null);
     addForm.reset();
@@ -77,45 +83,49 @@ const AdminTools = () => {
     mode: "onBlur",
   });
 
+   const buildFormData = (data: ToolsInput, extra: Record<string, any> = {}) => {
+    const formData = new FormData();
+  
+    // handle screenshots (new + existing)
+    if (Array.isArray(data.screenshots)) {
+      const uploaded = data.screenshots.filter((f) => f instanceof File);
+      const existing = data.screenshots.filter((f) => typeof f === "string");
+  
+      uploaded.forEach((file) => formData.append("screenshots", file));
+  
+      if (existing.length > 0) {
+        formData.append("existingScreenshots", JSON.stringify(existing));
+      }
+    }
+  
+    const merged = { ...data, ...extra };
+  
+    Object.entries(merged).forEach(([key, value]) => {
+      if (key === "screenshots") return;
+  
+      if (Array.isArray(value)) {
+        formData.append(key, JSON.stringify(value));
+      } else if (value instanceof File) {
+        formData.append(key, value);
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+  
+    return formData;
+  };
+
   const handleAddSubmit = async (data: ToolsInput) => {
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
-      const submissionData = {
-        ...data,
-        userId: userId,
-        created_by: userId,
-        status: "Approved",
-      };
-
-      if (Array.isArray(data.screenshots)) {
-        const uploadedFiles = data.screenshots.filter(
-          (file) => file instanceof File
-        );
-        const existingUrls = data.screenshots.filter(
-          (file) => typeof file === "string"
-        );
-
-        uploadedFiles.forEach((file) => {
-          formData.append("screenshots", file);
-        });
-
-        if (existingUrls.length > 0) {
-          formData.append("existingScreenshots", JSON.stringify(existingUrls));
-        }
-      }
-
-      Object.entries(submissionData).forEach(([key, value]) => {
-        if (key === "screenshots") return;
-
-        if (Array.isArray(value)) {
-          formData.append(key, JSON.stringify(value));
-        } else if (value instanceof File) {
-          formData.append(key, value);
-        } else if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
-        }
-      });
+      const formData = buildFormData(data, { userId,created_by: userId,
+        status: "Approved",}) 
+      // const submissionData = {
+      //   ...data,
+      //   userId: userId,
+      //   created_by: userId,
+      //   status: "Approved",
+      // };
 
       await createTool(formData).unwrap();
       resetFormAndState();
@@ -128,17 +138,43 @@ const AdminTools = () => {
     }
   };
 
+  const handleUpdateSubmit = async (data: ToolsInput) => {
+    
+    try {
+      setIsSubmitting(true);
+
+    if (!editTool?._id) return;
+  
+      const formData = buildFormData(data, {
+        id: editTool._id,
+       updated_by: userId,
+      });
+  
+      await updateTool(formData).unwrap();
+  resetFormAndState();
+    refetch();
+    setTab(1);
+  } catch (error) {
+    console.error("Error updating tool:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const columns: TableColumn<Tool>[] = [
     { key: "toolName", label: "Tool Name" },
     {
       key: "category",
       label: "Category",
       render: (tool) => {
-        const category = categories.find(
-          (c) => c._id === tool?.category[0]?._id
-        );
-        return category ? category.categoryName : "—";
-      },
+          // support both array or single-object shapes for tool.category
+          const catId =
+            Array.isArray(tool?.category) && tool.category.length > 0
+              ? tool.category[0]._id
+              : (tool as any)?.category?._id;
+
+          const category = categories.find((c: any) => c._id === catId);
+          return category ? category.categoryName : "—";
+        },
     },
     { key: "status", label: "Status" },
     {
@@ -155,8 +191,14 @@ const AdminTools = () => {
     {
       label: "View",
       onClick: (row) => {
-        if (!row.category || row.category.length === 0) return;
-        const category = categories.find((c) => c._id === row.category[0]?._id);
+        const catId =
+          Array.isArray(row?.category) && row.category.length > 0
+            ? row.category[0]._id
+            : (row as any)?.category?._id;
+
+        if (!catId) return;
+
+        const category = categories.find((c: any) => c._id === catId);
         if (!category) return;
 
         const categoryName = category.categoryName;
@@ -171,7 +213,12 @@ const AdminTools = () => {
       label: "Edit",
       onClick: (row) => {
         const fullTool = baseTools?.find((t) => t._id === row._id);
-        const allCategoryIds = fullTool?.category?.map((c: any) => c._id) || [];
+        const allCategoryIds = (() => {
+          const cat = fullTool?.category;
+          if (!cat) return [];
+          if (Array.isArray(cat)) return cat.map((c: any) => c._id);
+          return [(cat as any)._id];
+        })();
         setEditTool(fullTool || row);
         addForm.reset({
           ...fullTool,
@@ -232,7 +279,7 @@ const AdminTools = () => {
             fields={toolsFields(categories)}
             control={addForm.control}
             handleSubmit={addForm.handleSubmit}
-            onSubmit={handleAddSubmit}
+onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
             buttonText={
               isSubmitting
                 ? "Submitting..."
