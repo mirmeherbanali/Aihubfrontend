@@ -74,12 +74,12 @@ console.log("selectedToolId",selectedToolId)
           <div
             key={review._id}
             className={`${styles.toolCard} ${
-              selectedToolId === review.toolId._id ? styles.active : ""
+              selectedToolId === review?.toolId?._id ? styles.active : ""
             }`}
             onClick={() => {
-              setSelectedToolId(review.toolId._id);
-              setRating(review.rating);
-              setEditingReviewId(review._id);
+              setSelectedToolId(review?.toolId?._id);
+              setRating(review?.rating);
+              setEditingReviewId(review?._id);
               reviewForm.setValue("rating", review.rating);
               reviewForm.setValue("reviewText", review.reviewText || "");
             }}
@@ -87,13 +87,13 @@ console.log("selectedToolId",selectedToolId)
             {/* 🧩 Left: Logo + Tool Name */}
             <div className={styles.toolLeft}>
               <div className={styles.imagePlaceholder}>
-                {review.toolId.logo ? (
-                  <img src={review.toolId.logo} alt={review.toolId.toolName} />
+                {review.toolId?.logo ? (
+                  <img src={review.toolId.logo} alt={review?.toolId?.toolName} />
                 ) : (
                   <span>No Image</span>
                 )}
               </div>
-              <p className={styles.toolName}>{review.toolId.toolName}</p>
+              <p className={styles.toolName}>{review?.toolId?.toolName}</p>
             </div>
 
             {/* ⭐ Right: Rating + Date */}

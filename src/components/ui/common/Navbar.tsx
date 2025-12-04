@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import styles from "../../ui/style/Navbar.module.scss";
 import { useAuthToggle } from "@/context/AuthToggleContext";
 import { getToken } from "@/utils/authStorage";
@@ -14,9 +15,6 @@ export default function Navbar() {
 
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // ⭐ accordion open section
-  const [accordion, setAccordion] = useState<string | null>(null);
 
   const isAuthPage = pathname.startsWith("/auth");
 
@@ -36,37 +34,54 @@ export default function Navbar() {
     setMenuOpen(false);
     setIsLogin(true);
     router.push("/auth/login");
-  }; 
-const handleToolClick = () => {
+  };
+
+  const handleToolClick = () => {
     setMenuOpen(false);
     setIsLogin(true);
     router.push("/tool");
   };
 
-
   const handleNavigation = (path: string) => {
     setMenuOpen(false);
-    setAccordion(null);
     if (pathname !== path) router.push(path);
   };
 
-
-
+  // LOADING STATE
   if (token === undefined) {
     return (
       <header className={styles.header}>
         <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span> Allisted
+          <Image
+            src="/logo-allisted.svg"
+            width={34}
+            height={34}
+            alt="Allisted Logo"
+            className={styles.logoImage}
+          />
+          <span>Allisted</span>
         </div>
       </header>
     );
   }
 
+  // MAIN NAVBAR
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.logo}>
-          <span className={styles.logoIcon}>⚡</span> Allisted
+        {/* LOGO */}
+        <div
+          className={styles.logo}
+          onClick={() => handleNavigation("/")}
+        >
+          <Image
+            src="/logo-allisted.svg"
+            width={34}
+            height={34}
+            alt="Allisted Logo"
+            className={styles.logoImage}
+          />
+          <span>Allisted</span>
         </div>
 
         {/* DESKTOP MENU */}
@@ -119,7 +134,7 @@ const handleToolClick = () => {
           </div>
         </div>
 
-        {/* MOBILE MENU ICON */}
+        {/* MOBILE MENU BUTTON */}
         <div
           className={styles.mobileMenuIcon}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -128,45 +143,32 @@ const handleToolClick = () => {
         </div>
       </header>
 
-      {/* MOBILE ACCORDION MENU */}
+      {/* MOBILE DROPDOWN MENU */}
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.open : ""}`}>
-        
-        {/* ACCORDION ITEM 1 */}
         <div className={styles.accordionItem}>
-         
-
-              <button
-                onClick={() => handleNavigation("/")}
-                className={styles.button}
-              >
-              Home
-              </button>
-        
+          <button onClick={() => handleNavigation("/")} className={styles.button}>
+            Home
+          </button>
         </div>
 
-        {/* ACCORDION ITEM 2 */}
         <div className={styles.accordionItem}>
-
-              <button
-                onClick={() => handleNavigation("/categories")}
-                className={styles.button}
-              >
-               Categories
-              </button>
+          <button
+            onClick={() => handleNavigation("/categories")}
+            className={styles.button}
+          >
+            Categories
+          </button>
         </div>
 
-        {/* ACCORDION ITEM 3 */}
         <div className={styles.accordionItem}>
-  
-              <button
-                onClick={() => handleNavigation("/about")}
-                className={styles.button}
-              >
-                About Us
-              </button>
+          <button
+            onClick={() => handleNavigation("/about")}
+            className={styles.button}
+          >
+            About Us
+          </button>
         </div>
 
-        {/* LOGIN + ADD TOOL */}
         {!token && !isAuthPage && (
           <div className={styles.buttonGroup}>
             <button className={styles.loginBtn} onClick={handleLoginClick}>

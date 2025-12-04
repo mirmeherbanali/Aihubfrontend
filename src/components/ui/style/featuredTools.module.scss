@@ -113,44 +113,92 @@
 /* ------------------------------------------------------
    Your Original Card + Hover Effects (unchanged)
 -------------------------------------------------------*/
+/* CARD */
 .card {
-    background: #fff;
-  border-radius: 14px;
-  padding: 18px 16px;     /* Smaller padding like screenshot */
+  background: #fff;
+  border-radius: 16px;          /* slightly bigger radius */
+  padding: 20px 18px;           /* little more padding */
   cursor: pointer;
   transition: 0.3s ease;
-  border: 1px solid #e5e7eb; /* Soft border EXACTLY like screenshot */
-  height: 120px;          /* FIXED CARD HEIGHT (very important) */
+  border: 1px solid #e5e7eb;
+  height: 130px;                /* increased height */
   display: flex;
   align-items: center;
 
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.08),
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08),
     0 1px 0 rgba(255, 255, 255, 0.8) inset,
     0 -1px 0 rgba(0, 0, 0, 0.05) inset;
 
   &:hover {
-    transform: translateY(-12px) rotateX(5deg) rotateY(5deg);
+    transform: translateY(-10px) rotateX(4deg) rotateY(4deg);
     box-shadow:
-      0 25px 50px rgba(102, 126, 234, 0.15),
-      0 15px 30px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(102, 126, 234, 0.1) inset;
+      0 28px 55px rgba(102, 126, 234, 0.18),
+      0 18px 35px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(102, 126, 234, 0.12) inset;
 
     .logo {
-      transform: translateZ(22px) scale(1.15);
-      filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.2));
+      transform: translateZ(20px) scale(1.18);
+      filter: drop-shadow(0 10px 22px rgba(102, 126, 234, 0.25));
     }
 
     .toolName {
-      transform: translateZ(15px);
-      color: #667eea;
+      transform: translateZ(12px);
+      color: #677dff;
     }
 
     .desc {
-      transform: translateZ(10px);
+      transform: translateZ(8px);
     }
   }
 }
+
+/* INSIDE CARD LAYOUT */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;                    
+  width: 100%;
+}
+
+/* LOGO */
+.logo {
+  width: 48px;                   
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f9fafb;
+  padding: 6px;
+}
+
+/* TEXTS */
+.textBox {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* TOOL NAME */
+.toolName {
+  font-size: 17px;               
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+
+/* DESCRIPTION */
+.desc {
+  font-size: 13px;                
+  color: #6b7280;
+  line-height: 1.35;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 
 /* Hover gradient on image */
 .card:hover .logo {

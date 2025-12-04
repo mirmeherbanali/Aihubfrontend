@@ -1,0 +1,77 @@
+.notFoundWrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f7faff 0%, #e9f1ff 100%);
+}
+
+/* Floating Glow Orb */
+.glowOrb {
+  position: absolute;
+  top: 20%;
+  right: 15%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #34c3ff, #0074ff);
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+}
+
+.errorCode {
+  font-size: 120px;
+  font-weight: 800;
+  color: #0d1a3c;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.errorTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #12306b;
+  margin-bottom: 10px;
+}
+
+.errorMessage {
+  font-size: 16px;
+  color: #47618f;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.homeBtn {
+  display: inline-block;
+  padding: 12px 26px;
+  background: linear-gradient(135deg, #2f56f8, #6e7aff, #00d4ff);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 40px;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(0, 100, 255, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 100, 255, 0.4);
+  }
+}
