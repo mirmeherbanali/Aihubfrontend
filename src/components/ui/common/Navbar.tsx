@@ -113,7 +113,15 @@ export default function Navbar() {
             >
               About
             </button>
-
+            {token &&
+            <button onClick={() => handleNavigation("/dashboard")}
+            className={`${styles.navItem} ${
+                pathname === "/dashboard" ? styles.active : ""
+              }`}
+            >
+                Dashboard
+              </button>
+            }
             {!token && !isAuthPage && (
               <button onClick={handleLoginClick} className={styles.navItem}>
                 Login

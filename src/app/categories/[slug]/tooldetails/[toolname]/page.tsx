@@ -14,6 +14,7 @@ import { skipToken } from "@reduxjs/toolkit/query/react";
 
 import { getUserId, getUserType } from "@/utils/authStorage";
 import Loading from "@/app/loading";
+import Loader from "@/components/Loader/Loader";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams() as { slug: string; toolname: string };
@@ -69,7 +70,7 @@ const ToolDetailsPage = () => {
   );
 
   // Loading & Errors
-  if (catLoading || detailLoading) return <Loading />;
+  if (catLoading || detailLoading) return <Loader/>;
 
   if (catError || !category || detailError || !tool) return notFound();
 

@@ -39,5 +39,5 @@ export const registerFields = (
 
   { type: "password", name: "confirmPassword", label: "Confirm Password", placeholder: "Re-enter password", icon: <LockOutlined /> },
 
-  { type: "button", label: "Register" }
+  { type: "button", label: "" }
 ];

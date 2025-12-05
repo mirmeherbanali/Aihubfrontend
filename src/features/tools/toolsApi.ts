@@ -42,11 +42,23 @@ export const toolsApi = baseApi.injectEndpoints({
         (res) => res.result?.message || "Tool updated successfully"
       )
     }),
+    deleteTool: builder.mutation<AuthResponse, { id: string; adminId: string }>({
+      query: (body) => ({
+        url: "api/tool/deleteTool",
+        method: "PUT",
+        body,
+      }),
+      ...withToast<AuthResponse>(
+        "deleteTool",
+        (res) => res.result?.message || "Tool delete successfully"
+      )
+    }),
+    
     //   use PUT 
   }),
   overrideExisting: false,
 });
 
 export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation ,
- useUpdateToolMutation              // ✅ Missing in your code
+ useUpdateToolMutation ,useDeleteToolMutation             // ✅ Missing in your code
 } = toolsApi;

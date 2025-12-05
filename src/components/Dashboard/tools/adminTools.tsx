@@ -17,7 +17,8 @@ import { useGetAllCategoriesQuery } from "@/features/dashboard/category/category
 import {
   useCreateToolMutation,
   useGetAllToolsQuery,
-  useUpdateToolMutation
+  useUpdateToolMutation,
+  useDeleteToolMutation
 } from "@/features/tools/toolsApi";
 import { getUserId } from "@/utils/authStorage";
 
@@ -29,6 +30,7 @@ const AdminTools = () => {
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
   const { data: toolsData, refetch } = useGetAllToolsQuery();
+  const[deleteTool]=useDeleteToolMutation()
   const [isSubmitting, setIsSubmitting] = useState(false);
   const raw: any = toolsData?.result?.list;
 
@@ -77,6 +79,7 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
       disabled: !!editTool,
     },
   ];
+  
 
   const addForm = useForm<ToolsInput>({
     resolver: zodResolver(toolsSchema),
@@ -160,6 +163,8 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
     setIsSubmitting(false);
   }
 };
+
+
   const columns: TableColumn<Tool>[] = [
     { key: "toolName", label: "Tool Name" },
     {
@@ -230,17 +235,35 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
     },
 
     {
-      label: "Delete",
-      onClick: (row) => alert(`🗑️ Deleting: ${row.toolName}`),
+    label: "Delete",
+    onClick: async (row) => {
+      if (!confirm(`Delete tool "${row.toolName}"?`)) return;
+
+      await deleteTool({ id: row._id, adminId: userId??"" });
+
+      alert("Tool deleted");
+      refetch();
     },
+  },
   ];
 
   const bulkActions = [
-    {
-      label: "Delete Selected",
-      onClick: (rows: Tool[]) => alert(`Deleting ${rows.length} Tools`),
+  {
+    label: "Delete Selected",
+    onClick: async (rows: any[]) => {
+      if (!rows.length) return;
+      if (!confirm(`Delete ${rows.length} tools?`)) return;
+
+      for (const tool of rows) {
+        await deleteTool({ id: tool._id, adminId: userId??"" });
+      }
+
+      alert("Selected tools deleted");
+      refetch();
     },
-  ];
+  },
+];
+
 
   return (
     <div className="tab-content-wrapper">

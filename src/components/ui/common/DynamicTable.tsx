@@ -142,15 +142,16 @@ export default function DynamicTable<T extends { _id: string }>({
       {bulkActions.length > 0 && selectedRows.size > 0 && (
         <div className={styles.bulkActions}>
           {bulkActions.map((b) => (
-            <button
-              key={b.label}
-              onClick={() =>
-                b.onClick(data.filter((row) => selectedRows.has(row._id)))
-              }
-            >
-              {b.label}
-            </button>
-          ))}
+  <button
+    key={b.label}
+    onClick={() =>
+      b.onClick(data.filter((row) => selectedRows.has(row._id)))
+    }
+  >
+    {b.label}
+  </button>
+))
+}
         </div>
       )}
 
@@ -166,11 +167,12 @@ export default function DynamicTable<T extends { _id: string }>({
                   paginatedData.length > 0
                 }
                 onChange={() => {
-                  const allSelected = selectedRows.size === paginatedData.length;
-                  const newSet = new Set<T["_id"]>();
-                  if (!allSelected) paginatedData.forEach((row) => newSet.add(row._id));
-                  setSelectedRows(newSet);
-                }}
+  const allSelected = selectedRows.size === paginatedData.length;
+  const newSet = new Set<string>();
+  if (!allSelected) paginatedData.forEach((row) => newSet.add(row._id));
+  setSelectedRows(newSet);
+}}
+
               />
             </th>
             {columns.map((col) => (
@@ -182,7 +184,7 @@ export default function DynamicTable<T extends { _id: string }>({
 
         <tbody>
   {paginatedData.map((row, index) => {
-    const rowId = `${row._id}-${index}`;
+    const rowId = row._id;
     return (
       <tr key={rowId}>
         <td>

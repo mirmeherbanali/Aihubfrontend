@@ -54,7 +54,7 @@ export const authApi = baseApi.injectEndpoints({
   ...withToast<AuthResponse>("updateProfile", (res) => res.result?.message),
 }),
 
-deleteProfile: builder.mutation<AuthResponse, { id: string }>({
+deleteProfile: builder.mutation<AuthResponse, { userId: string; adminId: string }>({
   query: (body) => ({
     url: "api/user/deleteUser",
     method: "PUT",

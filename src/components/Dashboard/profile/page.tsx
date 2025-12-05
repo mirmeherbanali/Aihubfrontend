@@ -97,7 +97,7 @@ export default function ProfilePage() {
       console.error("Delete failed:", error);
     }
   };
-
+ 
   // ✅ Logout logic
   const confirmLogout = async () => {
     setLoadingLogout(true);
