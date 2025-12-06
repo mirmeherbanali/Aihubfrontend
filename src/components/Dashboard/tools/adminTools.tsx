@@ -20,10 +20,11 @@ import {
   useUpdateToolMutation,
   useDeleteToolMutation
 } from "@/features/tools/toolsApi";
-import { getUserId } from "@/utils/authStorage";
+import { getUserId, getUserType } from "@/utils/authStorage";
 
 const AdminTools = () => {
   const userId = getUserId();
+  const userType = getUserType()
   const [tab, setTab] = useState(1);
   const [editTool, setEditTool] = useState<Tool | null>(null);
   const router = useRouter();
@@ -33,6 +34,8 @@ const AdminTools = () => {
   const[deleteTool]=useDeleteToolMutation()
   const [isSubmitting, setIsSubmitting] = useState(false);
   const raw: any = toolsData?.result?.list;
+  const isAdmin = userType === "Admin";
+  const isEditMode = !!editTool;
 
   const baseTools: Tool[] = Array.isArray(raw)
     ? raw
@@ -150,7 +153,8 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
   
       const formData = buildFormData(data, {
         id: editTool._id,
-       updated_by: userId,
+        userId:userId,
+        updated_by: userId,
       });
   
       await updateTool(formData).unwrap();
@@ -228,6 +232,11 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
         addForm.reset({
           ...fullTool,
           category: allCategoryIds,
+          status: Array.isArray((fullTool as any)?.status)
+            ? (fullTool as any).status
+            : (fullTool as any)?.status
+            ? [(fullTool as any).status]
+            : undefined,
         });
 
         setTab(2);
@@ -299,7 +308,7 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
           }}
         >
           <DynamicForm
-            fields={toolsFields(categories)}
+            fields={toolsFields(categories, isAdmin, isEditMode)}
             control={addForm.control}
             handleSubmit={addForm.handleSubmit}
 onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
