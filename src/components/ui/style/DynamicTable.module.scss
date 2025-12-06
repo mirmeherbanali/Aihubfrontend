@@ -207,3 +207,33 @@
 .badge-info {
   background: #2563eb;
 }
+/* ================================
+   BULK ACTION BUTTON (Match Header Tabs)
+================================ */
+.bulkActions {
+  margin-bottom: 0px;
+}
+
+.bulkActions button {
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: #2563eb;   /* SAME BLUE as tabs/nav */
+  color: #ffffff;         /* white text */
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25); 
+}
+
+/* Hover effect like other buttons */
+.bulkActions button:hover {
+  background: #1e4fd1;    /* slightly darker blue */
+}
+
+/* Click animation */
+.bulkActions button:active {
+  transform: scale(0.96);
+}
+

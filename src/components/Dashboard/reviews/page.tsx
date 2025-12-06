@@ -6,6 +6,7 @@ import { TableColumn, TableAction } from "@/types/table.types";
 import { User } from "@/types/user.types";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import { dataConstant } from "../constant";
+import { FaTrash } from "react-icons/fa";
 
 export default function Reviews() {
   const [tab, setTab] = useState(1);
@@ -28,12 +29,18 @@ export default function Reviews() {
     }
   ];
 
-  const bulkActions = [
-    {
-      label: "Delete Selected",
-      onClick: (rows: User[]) => alert(`Deleting ${rows.length} reviewers`)
-    }
-  ];
+const bulkActions = [
+  {
+    label: (
+      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <FaTrash size={14} /> Delete Selected
+      </span>
+    ),
+    onClick: (rows: User[]) =>
+      alert(`Deleting ${rows.length} reviewers`)
+  }
+];
+
 
   const tabActions = [
     { label: "Manage Reviews" },

@@ -7,7 +7,6 @@ import { useGetAllCategoriesQuery } from "@/features/dashboard/category/category
 import { useGetAllToolsQuery } from "@/features/tools/toolsApi";
 import { useGetAllUsersQuery } from "@/features/auth/authApi";
 import Link from "next/link";
-import moment from "moment";
 
 const scrollTools = (offset: number) => {
   const slider = document.getElementById("toolsSlider");
@@ -31,15 +30,7 @@ const AdminHome = () => {
   const totalCategories = categories.length;
 
   // Recent users → latest 8
-  // Recent users → latest 8 sorted by createdAt
-const recentUsers = [...users]
-  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  .slice(0, 8)
-  .map(user => ({
-    ...user,
-    timeAgo: moment(user.createdAt).fromNow()
-  }));
-
+  const recentUsers = users.slice(-8).reverse();
 
   // Top tools → take first 10
   const topTools = tools.slice(0, 10);
@@ -125,17 +116,17 @@ const recentUsers = [...users]
             {recentUsers.map((user: any, i: number) => (
               <div key={i} className="user-item">
                 <div className="user-avatar">
-                  {user?.firstName?.charAt(0)?.toUpperCase() ||
-                    user?.email?.charAt(0)?.toUpperCase() ||
+                  {user.fullName?.charAt(0)?.toUpperCase() ||
+                    user.email?.charAt(0)?.toUpperCase() ||
                     "U"}
                 </div>
 
                 <div className="user-info">
-                  <h4>{[user?.firstName, user?.lastName].filter(Boolean).join(" ")}</h4>
-                  <p className="time-ago">{user.timeAgo}</p> {/* 🔥 ADDED */}
+                  <h4>{user.fullName || user.email}</h4>
+                  <p>New User</p>
                 </div>
 
-                <span className="status Active">{user?.userType}</span>
+                <span className="status Active">Active</span>
               </div>
             ))}
           </div>

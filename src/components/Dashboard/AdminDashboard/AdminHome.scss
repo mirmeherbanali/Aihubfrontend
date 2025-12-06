@@ -89,10 +89,12 @@
   }
 
   a {
-    color: #22c55e;
+    color: #2C5CD6 !important;   /* Navbar color */
+     text-decoration: none !important;
     cursor: pointer;
     font-weight: 600;
   }
+  
 }
 
 /* Horizontal scroll container */

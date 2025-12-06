@@ -7,7 +7,7 @@ import AddCategory from "./components/addCategories";
 import { TableColumn, TableAction } from "@/types/table.types";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
 import { Category } from "@/types/category.types";
-
+import { FaTrash } from "react-icons/fa";
 export default function CategoryPage() {
   const [tab, setTab] = useState(1);
   const [editCategory, setEditCategory] = useState<Category | undefined>(
@@ -56,13 +56,18 @@ export default function CategoryPage() {
     },
   ];
 
-  const bulkActions = [
-    {
-      label: "Delete Selected",
-      onClick: (rows: Category[]) =>
-        alert(`Deleting ${rows.length} categories`),
-    },
-  ];
+const bulkActions = [
+  {
+    label: (
+      <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <FaTrash size={14} /> Delete Selected
+      </span>
+    ),
+    onClick: (rows: Category[]) =>
+      alert(`Deleting ${rows.length} categories`),
+  },
+];
+
 
   const tabActions = [
     {

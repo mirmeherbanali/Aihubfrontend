@@ -15,10 +15,7 @@ export default function HomePage() {
   const { data: toolsData } = useGetAllToolsQuery();
 
   const categories = categoriesData?.result?.list || [];
-  const tools = (toolsData?.result?.list || [])?.filter(
-  (item: { status: string; }) => item.status === "Approved"
-);
-
+  const tools = toolsData?.result?.list || [];
   
 
   // 🧭 Handlers
