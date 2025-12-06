@@ -27,9 +27,14 @@ export default function ToolsPage() {
   const [showGridForm, setShowGridForm] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const { data: toolsData, refetch } = useGetAllToolsQuery({ userId });
-  const [createTool] = useCreateToolMutation();
-  const [updateTool] = useUpdateToolMutation();
+  const [createTool,{isLoading:toolLoading}] = useCreateToolMutation();
+  const [updateTool,{isLoading:toolUpdateLoading}] = useUpdateToolMutation();
   const tools = toolsData?.result?.list || [];
+  const totalSubmitted = tools.length;
+
+  const totalPending = tools.filter((t: { status: string; }) => t.status?.toLowerCase() === "pending").length;
+
+  const totalApproved = tools.filter((t: { status: string; }) => t.status?.toLowerCase() === "approved").length;
 
   const gridForm = useForm<ToolsInput>({
     resolver: zodResolver(toolsSchema),
@@ -111,10 +116,11 @@ const handleUpdateSubmit = async (data: ToolsInput) => {
 };
 
   const summaryItems = [
-    { title: "Total Tools Submitted", value: 18 },
-    { title: "Pending Approvals", value: 20 },
-    { title: "Approved Tools", value: 23 },
-  ];
+  { title: "Total Tools Submitted", value: totalSubmitted },
+  { title: "Pending Approvals", value: totalPending },
+  { title: "Approved Tools", value: totalApproved },
+];
+
 
   const gridData = tools?.map((tool: Tool, index: number) => ({
     id: tool._id || index,
@@ -185,6 +191,8 @@ const handleUpdateSubmit = async (data: ToolsInput) => {
                 >
                   <img src={tool.logo} className={styles.toolImage} />
                   <p className={styles.toolName}>{tool.toolName}</p>
+                  <p className={styles.toolName}>{tool.status}</p>
+
                 </div>
               ))}
             </div>
@@ -221,11 +229,12 @@ const handleUpdateSubmit = async (data: ToolsInput) => {
       {showGridForm && editingIndex !== null && (
         <Card className={styles.formCard}>
           <DynamicForm
-            fields={toolsFields(categories)}
+            fields={toolsFields(categories,false,false)}
             control={gridForm.control}
             handleSubmit={gridForm.handleSubmit}
             onSubmit={handleUpdateSubmit}
-            buttonText="Update Tool"
+            isLoading={toolUpdateLoading}
+            buttonText={toolUpdateLoading?"Updating..":"Update Tool"}
           />
         </Card>
       )}
@@ -233,11 +242,13 @@ const handleUpdateSubmit = async (data: ToolsInput) => {
       {showAddForm && (
         <Card className={styles.formCard}>
           <DynamicForm
-            fields={toolsFields(categories)}
+            fields={toolsFields(categories,false,false)}
             control={addForm.control}
             handleSubmit={addForm.handleSubmit}
             onSubmit={handleAddSubmit}
-            buttonText="Add Tool"
+            isLoading={toolLoading}
+
+            buttonText={toolLoading?"Adding":"Add Tool"}
           />
         </Card>
       )}

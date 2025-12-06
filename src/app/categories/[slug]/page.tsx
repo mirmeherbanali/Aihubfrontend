@@ -36,7 +36,10 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
   const listPayload = categoryDetail?.result?.list;
   const normalized = Array.isArray(listPayload) ? listPayload[0] ?? {} : (listPayload ?? {});
   const categoryInfo = (normalized as any).category ?? normalized;
-  const tools = (normalized as any).tools ?? [];
+  const tools = ((normalized as any).tools ?? []).filter(
+  (item: any) => item.status === "Approved"
+);
+
   const faqs = categoryInfo?.faqs ?? [];
 
   const totalPages = Math.ceil(tools.length / toolsPerPage);

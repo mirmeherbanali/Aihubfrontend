@@ -14,14 +14,14 @@ import {
   registerSchema,
 } from "@/lib/validators/userValidator";
 import { getUserId, getUserType } from "@/utils/authStorage";
-import { registerFields } from "@/lib/auth/fields/formFields";
+import { userFields } from "@/lib/auth/fields/formFields";
 
 export default function AddUser({ editData, setEditData,setTab,refetch}: any) {
   const userType = getUserType();
   const userId = getUserId();
   // ✅ Initialize the form with validation
   const [registerUser, { isLoading: registerLoading }] = useRegisterMutation();
-  const [updateProfile] = useUpdateProfileMutation();
+  const [updateProfile,{ isLoading: updateLoading }] = useUpdateProfileMutation();
     const { control: registerControl, handleSubmit, reset,setValue } =
       useForm<RegisterInput>({
         resolver: zodResolver(registerSchema),
@@ -61,30 +61,35 @@ export default function AddUser({ editData, setEditData,setTab,refetch}: any) {
   };
 
   return (
-    <div className={styles.profileContainer}>
-      <div className={styles.avatarSection}>
+  <div className={styles.pageWrapper}>
+    
+    <div className={styles.card}>
+      
+      <div className={styles.avatarWrapper}>
         <div className={styles.avatar}>
-          <span>C</span>
+          <span>{editData ? editData.firstName?.[0] : "C"}</span>
           <button className={styles.editBtn}>✏️</button>
         </div>
       </div>
 
-      <div className={styles.profileContent}>
-        {/* Profile Avatar */}
-
-        {/* Profile Form */}
-        <div className={styles.formSection}>
-          <DynamicForm
-      fields={registerFields(userType ?? undefined)}
-      control={registerControl}
-      handleSubmit={handleSubmit}
-      onSubmit={editData? onUpdate: onRegisterSubmit}
-      isLoading={registerLoading}
-      buttonText={editData? registerLoading?"Updating": "Update": "Register"}
-    />
-        </div>
+      <div className={styles.formWrapper}>
+        <DynamicForm
+          fields={userFields(userType ?? undefined)}
+          control={registerControl}
+          handleSubmit={handleSubmit}
+          onSubmit={editData ? onUpdate : onRegisterSubmit}
+          isLoading={editData?updateLoading:registerLoading}
+          buttonText={
+            editData
+              ? updateLoading
+                ? "Updating..."
+                : "Update"
+              : "Register"
+          }
+        />
       </div>
-
     </div>
-  );
+  </div>
+);
+
 }

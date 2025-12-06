@@ -40,6 +40,7 @@ export const toolsSchema = z.object({
   features: z.array(z.string()).optional(),
 
   logo: validatedFileOrUrl.optional(),
+  status: z.enum(["Pending", "Approved", "Rejected"]).optional(),
 
   screenshots: z.array(validatedFileOrUrl).optional(),
 });

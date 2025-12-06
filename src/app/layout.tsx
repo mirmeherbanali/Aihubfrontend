@@ -147,7 +147,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
 
           {/* 🔐 No token modal */}
-          {showTokenModal && (
+          {/* {showTokenModal && (
             <div className="token-modal-overlay">
   <div className="token-modal-container">
     <div className="token-modal-header">
@@ -193,7 +193,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </div>
   </div>
 </div>
-          )}
+          )} */}
 
           {!isDashboardPage && <Footer />}
           <ToastContainer position="top-right" autoClose={3000} />
