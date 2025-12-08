@@ -2,7 +2,6 @@
 
 import React, { useMemo } from "react";
 import { useParams, notFound } from "next/navigation";
-import Loader from "@/components/Loader/Loader";
 import styles from "@/components/ui/style/ToolPageDetails.module.scss";
 
 import ToolCardHeader from "@/components/Category/details/ToolCardHeader";
@@ -14,6 +13,8 @@ import { useGetToolReviewsQuery } from "@/features/review/reviewApi";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 
 import { getUserId, getUserType } from "@/utils/authStorage";
+import Loading from "@/app/loading";
+import Loader from "@/components/Loader/Loader";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams() as { slug: string; toolname: string };
@@ -69,7 +70,7 @@ const ToolDetailsPage = () => {
   );
 
   // Loading & Errors
-  if (catLoading || detailLoading) return <Loader />;
+  if (catLoading || detailLoading) return <Loader/>;
 
   if (catError || !category || detailError || !tool) return notFound();
 
@@ -87,7 +88,7 @@ const ToolDetailsPage = () => {
         <main className={styles.mainSection}>
           <ToolMainContent tool={tool} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
         </main>
-
+{alternativeTools.length > 0 && (
         <aside className={styles.sidebarSection}>
           <ToolRightSidebar
             tool={tool}
@@ -95,6 +96,8 @@ const ToolDetailsPage = () => {
             onViewAll={handleViewAll}
           />
         </aside>
+)
+}
       </div>
     </div>
   );

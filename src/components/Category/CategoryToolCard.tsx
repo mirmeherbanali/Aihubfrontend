@@ -44,6 +44,12 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
     e.stopPropagation();
     setIsBookmarked(!isBookmarked);
   };
+  const truncateWords = (text = "", limit =20) => {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(" ") + " ...";
+};
+
 
   return (
     <div
@@ -97,7 +103,7 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
 
       {/* Content */}
       <div className={styles.cardContent}>
-        <p className={styles.shortDescription}>{tool.description}</p>
+        <p className={styles.shortDescription}>  {truncateWords(tool.description,20)} </p>
         
         {tool.features?.length > 0 && (
           <section className={styles.features}>
@@ -106,7 +112,7 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
               {tool.features.slice(0, 3).map((feature: string, idx: number) => (
                 <li key={idx}>
                   <FaBolt className={styles.featureIcon} />
-                  {feature}
+                  {truncateWords(feature,10)}
                 </li>
               ))}
             </ul>

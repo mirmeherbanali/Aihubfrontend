@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const [token, setToken] = useState<string | null | undefined>(undefined);
   const [menuOpen, setMenuOpen] = useState(false);
-
+const [accordion, setAccordion] = useState<string | null>(null);
   // logout states (fixed)
   const [loadingLogout, setLoadingLogout] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
@@ -37,7 +37,7 @@ export default function Navbar() {
   // FIXED: `_blank` navigation support
   const handleNavigation = (path: string, newTab: boolean = false) => {
     setMenuOpen(false);
-
+    setAccordion(null);
     if (newTab) {
       window.open(path, "_blank");
       return;
@@ -138,26 +138,41 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.open : ""}`}>
-        <button
-          onClick={() => handleNavigation("/", true)}
-          className={`${styles.navItem} ${pathname === "/" ? styles.active : ""}`}
-        >
-          Home
-        </button>
+        
+        {/* ACCORDION ITEM 1 */}
+        <div className={styles.accordionItem}>
+         
 
-        <button
-          onClick={() => handleNavigation("/categories", true)}
-          className={`${styles.navItem} ${pathname === "/categories" ? styles.active : ""}`}
-        >
-          Category
-        </button>
+              <button
+                onClick={() => handleNavigation("/")}
+                className={styles.button}
+              >
+              Home
+              </button>
+        
+        </div>
 
-        <button
-          onClick={() => handleNavigation("/about", true)}
-          className={`${styles.navItem} ${pathname === "/about" ? styles.active : ""}`}
-        >
-          About
-        </button>
+        {/* ACCORDION ITEM 2 */}
+        <div className={styles.accordionItem}>
+
+              <button
+                onClick={() => handleNavigation("/categories")}
+                className={styles.button}
+              >
+               Categories
+              </button>
+        </div>
+
+        {/* ACCORDION ITEM 3 */}
+        <div className={styles.accordionItem}>
+  
+              <button
+                onClick={() => handleNavigation("/about")}
+                className={styles.button}
+              >
+                About Us
+              </button>
+        </div>
 
         {isDashPage && (
           <button onClick={confirmLogout} className={styles.navItem}>

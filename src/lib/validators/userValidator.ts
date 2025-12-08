@@ -11,7 +11,23 @@ export const registerSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Please confirm your password"),
     companyName: z.string().min(2, "Company Name is required").optional(),
-    companyWebsite: z.string().url("Invalid URL").optional(),
+    companyWebsite: z
+  .string()
+  .optional()
+  .refine(
+    (value) => {
+      if (!value) return true; // optional
+
+      // Accept: http, https, www, or plain domain
+      const pattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+
+      return pattern.test(value);
+    },
+    {
+      message: "Invalid URL (accepted formats: example.com, www.example.com, https://example.com)",
+    }
+  ),
+
     companyEmail: z.string().email("Invalid company email").optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {

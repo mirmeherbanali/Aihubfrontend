@@ -1,6 +1,6 @@
 .scrollDown {
   position: absolute;
-  bottom: 60px;
+  bottom: 50px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -53,5 +53,11 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .scrollDown  {
+    bottom: 30px;
   }
 }

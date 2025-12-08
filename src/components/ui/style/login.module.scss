@@ -1,167 +1,231 @@
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-margin-top: 80px;
-margin-bottom: 50px;
+/* ===========================
+   GLOBAL PAGE BACKGROUND
+=========================== */
+/* ===========================
+   BLUE RADIAL BACKGROUND GLOW
+=========================== */
+.authCardGlow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 420px;
+  height: 420px;
+  border-radius: 40px;
+  background: radial-gradient(
+      circle at 70% 30%,
+      rgba(180, 205, 255, 0.45) 0%,
+      rgba(220, 235, 255, 0.25) 35%,
+      rgba(240, 245, 250, 0.12) 60%,
+      rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(18px);
+  z-index: 0;
+  pointer-events: none;
 }
 
-.card {
-  background: #fff;
-  border-radius: 12px;
-  // margin-top: 20px;
-  
-  padding: 2rem;
+
+.pageWrapper {
+   padding: 100px 20px 40px;
+  position: relative; /* Important for glow positioning */
+}
+
+
+/* ===========================
+   MAIN AUTH CARD
+=========================== */
+.authCard {
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  max-width: 1250px;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 45px;
+  display: flex;
+  gap: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: fadeUp 0.5s ease-out;
+  align-items: center;
 }
 
-.logo {
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 1rem;
-  border-radius: 50%;
+/* ===========================
+   LEFT SIDE — ILLUSTRATION
+=========================== */
+.illustrationBox {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.illustrationBox img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 18px;
+  object-fit: cover;
+  animation: float 3s infinite ease-in-out;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+/* ===========================
+   RIGHT SIDE — FORM AREA
+=========================== */
+.formArea {
+  flex: 1.2;
+  width: 100%;
 }
 
 .title {
-  font-size: 1.5rem;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1b1c24;
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  color: #6d747d;
 }
 
-.or {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 1rem 0;
-
-  span {
-    flex: 1;
-    height: 1px;
-    background: #ddd;
-  }
-
-  p {
-    color: #888;
-    font-size: 0.85rem;
-  }
+/* Switch Text */
+.switchText {
+  margin-top: 20px;
+  text-align: center;
 }
 
-/* 🔹 Social Buttons (Row) */
-.socialsRow {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-
-  button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid #ccc;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
-/* Hover brand colors */
-.google:hover {
-  border-color: #db4437;
-}
-
-.facebook:hover {
-  border-color: #1877f2;
-}
-
-.github:hover {
-  border-color: #000;
-}
-
-.footer {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-.footer a,
-.footer button {
-  color: #007bff;
-  background: none;
+.switchText button {
   border: none;
-  padding: 0;
-  font: inherit;
+  background: none;
+  color: #3862f8;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: none;
 }
 
-.footer a:hover,
-.footer button:hover {
+.switchText button:hover {
   text-decoration: underline;
 }
 
-/* 🔹 RESPONSIVE */
-@media (max-width: 1024px) {
-  .card {
-    max-width: 380px;
-    padding: 1.8rem;
-  }
+/* ===========================
+   FORM GRID (REGISTER MODE)
+=========================== */
+.registerGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
 }
 
-@media (max-width: 768px) {
-  .card {
-    max-width: 350px;
-    padding: 1.5rem;
+.registerGrid .full {
+  grid-column: span 2;
+}
+
+/* ===========================
+   KEYFRAME ANIMATIONS
+=========================== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ===========================
+   RESPONSIVE — LARGE TABLET
+=========================== */
+@media (max-width: 1100px) {
+  .authCard {
+    padding: 35px;
+    gap: 30px;
   }
 
   .title {
-    font-size: 1.3rem;
+    font-size: 1.7rem;
   }
 }
 
-@media (max-width: 480px) {
-  .card {
+/* ===========================
+   RESPONSIVE — TABLET
+=========================== */
+@media (max-width: 900px) {
+  .authCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .illustrationBox {
+    order: -1;
+  }
+
+  .illustrationBox img {
+    width: 75%;
+    max-width: 360px;
+  }
+
+  .registerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .registerGrid .full {
+    grid-column: span 1;
+  }
+}
+
+/* ===========================
+   RESPONSIVE — MOBILE
+=========================== */
+@media (max-width: 600px) {
+  .authCard {
+    padding: 25px;
+    gap: 25px;
+  }
+
+  .illustrationBox img {
     width: 100%;
-    padding: 1rem;
+    max-width: 300px;
   }
 
   .title {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
+  }
+}
+
+/* ===========================
+   RESPONSIVE — SMALL MOBILE
+=========================== */
+@media (max-width: 420px) {
+  .authCard {
+    padding: 20px;
   }
 
-  .socialsRow {
-    gap: 0.6rem;
+  .title {
+    font-size: 1.4rem;
+  }
 
-    button {
-      width: 45px;
-      height: 45px;
+  .subtitle {
+    font-size: 0.85rem;
+  }
+}
+/* ===========================
+   MAIN FORM GRID SYSTEM
+=========================== */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
 
-      img {
-        width: 20px;
-        height: 20px;
-      }
-    }
+.formGrid .full {
+  grid-column: span 2;
+}
+
+/* Mobile: 1-column layout */
+@media (max-width: 900px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formGrid .full {
+    grid-column: span 1;
   }
 }

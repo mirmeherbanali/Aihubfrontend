@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FieldValues,
   Control,
@@ -56,6 +56,20 @@ function DynamicFormInner<T extends FieldValues>({
   });
 
   // Check if this row contains only image fields
+
+  useEffect(() => {
+  fields.forEach((f) => {
+    if (f.type === "image") {
+      const existing = watchedValues[f.name];
+      if (existing && typeof existing === "string") {
+        setImagePreviews((prev) => ({
+          ...prev,
+          [f.name]: existing, // Load existing logo URL
+        }));
+      }
+    }
+  });
+}, [watchedValues]);
 
   return (
     <form

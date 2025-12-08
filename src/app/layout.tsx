@@ -1,101 +1,118 @@
 "use client";
-import { useState, useEffect } from "react";
-import "antd/dist/reset.css";
+
+import { useState, useEffect,useRef } from "react";
 import "../globals.css";
 import Navbar from "@/components/ui/common/Navbar";
-import { ClientProviders } from "./provider/ClientProviders";
 import Footer from "@/components/ui/common/Footer";
+import { ClientProviders } from "./provider/ClientProviders";
 import { Inter } from "next/font/google";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { usePathname,useRouter  } from "next/navigation";
-import { getToken,clearAuthData } from "@/utils/authStorage";
-import Loader from "@/components/Loader/Loader";
+import { usePathname, useRouter } from "next/navigation";
+import moment from "moment";
+import type { CSSProperties } from "react";
+
+import {
+  getToken,
+  clearAuthData,
+  getLoginTime,
+  updateLoginTime,
+} from "@/utils/authStorage";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }: { children: React.ReactNode; }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+
+  const [showWarning, setShowWarning] = useState(false);
   const [showTokenModal, setShowTokenModal] = useState(false);
-  const [hasToken, setHasToken] = useState(false);
+  const logoutTriggered = useRef(false);
 
-  // Check for token using your authStorage utility
+  const MAX_TIME = 30 * 60 * 1000;
+  const WARNING_TIME = MAX_TIME - 25 * 60 * 1000;
+  const CHECK_INTERVAL = 15 * 1000; // 15 sec
+
+  // -----------------------------------------------------
+  // ✅ 1. CHECK EXPIRED SESSION ON PAGE LOAD
+  // -----------------------------------------------------
   useEffect(() => {
-    const checkToken = () => {
-      const token = getToken();
-      const tokenExists = !!token;
-      setHasToken(tokenExists);
-      
-      if (!tokenExists) {
-        setShowTokenModal(true);
-      }
-    };
+    const token = getToken();
+    const loginTime = getLoginTime();
 
-    checkToken();
-  }, []);
-
-  // 🔥 AUTO-LOGOUT AFTER 30 MINUTES OF NO MOUSE OR KEYBOARD ACTIVITY
-  useEffect(() => {
-    let inactivityTimer: NodeJS.Timeout;
-
-    const resetTimer = () => {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        const token = getToken();
-        if (token) {
-          clearAuthData(); // Clear token
-          toast.error("Logged out due to inactivity.");
-          router.push("/auth/login");
-        }
-      }, 30 * 60 * 1000); // ⏳ 30 minutes
-    };
-
-    // Events that reset inactivity timer
-    const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
-
-    events.forEach((event) =>
-      window.addEventListener(event, resetTimer)
-    );
-
-    resetTimer(); // Initialize timer on page load
-
-    return () => {
-      events.forEach((event) =>
-        window.removeEventListener(event, resetTimer)
-      );
-      clearTimeout(inactivityTimer);
-    };
-  }, []);
-
-  // Set up interval to check for token every 5 minutes
-  useEffect(() => {
-    if (hasToken) {
-      setShowTokenModal(false);
+    if (!token || !loginTime) {
+      setShowTokenModal(true);
       return;
     }
 
+    const diff = moment().diff(moment(loginTime), "milliseconds");
+
+    // ❗ Expire immediately if time already passed
+    if (diff >= MAX_TIME) {
+      clearAuthData();
+      toast.error("Session expired. Please login again.");
+      router.push("/auth/login");
+      return;
+    }
+  }, []);
+
+  // -----------------------------------------------------
+  // ✅ 2. AUTO-LOGOUT + WARNING + ACTIVITY RESET
+  // -----------------------------------------------------
+  useEffect(() => {
     const interval = setInterval(() => {
       const token = getToken();
-      
-      if (!token) {
-        setShowTokenModal(true);
-      } else {
-        setHasToken(true);
-        setShowTokenModal(false);
-        clearInterval(interval);
+      const loginTime = getLoginTime();
+
+      if (!token || !loginTime) return;
+
+      const diff = moment().diff(moment(loginTime), "milliseconds");
+
+      // ⚠ Show 1 min warning
+      if (diff >= WARNING_TIME && diff < MAX_TIME) {
+        setShowWarning(true);
       }
-    }, 5 * 60 * 1000);
 
-    return () => clearInterval(interval);
-  }, [hasToken]);
+      // ⏳ Auto logout at MAX_TIME
+      if (diff >= MAX_TIME) {
+        clearAuthData();
+        localStorage.setItem("logoutEvent", String(Date.now()));
+        toast.error("Session expired due to inactivity.");
+        router.push("/auth/login");
+      }
+    }, CHECK_INTERVAL);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setLoading(false), 100);
-  //   return () => clearTimeout(timer);
-  // }, []);
+    // Activity = reset timer
+    const reset = () => {
+      updateLoginTime();
+      setShowWarning(false);
+    };
 
+    const events = ["mousemove", "keydown", "mousedown", "scroll", "touchstart"];
+    events.forEach((event) => window.addEventListener(event, reset));
+
+    return () => {
+      clearInterval(interval);
+      events.forEach((event) => window.removeEventListener(event, reset));
+    };
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === "logoutEvent") {
+        if (logoutTriggered.current) return; // ⛔ STOP REPEATED LOGOUT
+
+        logoutTriggered.current = true;
+        clearAuthData();
+        toast.error("Logged out from another tab.");
+        router.push("/auth/login");
+      }
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
+ 
+  // -----------------------------------------------------
   const isDashboardPage = pathname?.startsWith("/dashboard");
 
   return (
@@ -103,20 +120,35 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
       <body>
         <ClientProviders>
           {!isDashboardPage && <Navbar />}
+
           <main style={{ minHeight: "100vh" }}>
-            {
-            // loading ? (
-            //   <Loader/>
-            // ) : 
-            (
-              children
-            )
-            }
+            {/* ⚠ Warning Popup */}
+            {showWarning && (
+              <div style={popupStyles.overlay}>
+                <div style={popupStyles.box}>
+                  <h3>⚠ Session Timeout Warning</h3>
+                  <p>You will be logged out in 1 minute (due to inactivity).</p>
+
+                  <button
+                    style={popupStyles.button}
+                    onClick={() => {
+                      updateLoginTime();
+                      setShowWarning(false);
+                      toast.success("Session extended.");
+                    }}
+                  >
+                    Stay Logged In
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {children}
           </main>
-          
-          {/* Custom Token Modal */}
+
+          {/* 🔐 No token modal */}
           {/* {showTokenModal && (
-           <div className="token-modal-overlay">
+            <div className="token-modal-overlay">
   <div className="token-modal-container">
     <div className="token-modal-header">
       <h2>🔐 Authentication Required</h2>
@@ -161,13 +193,46 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
     </div>
   </div>
 </div>
-
           )} */}
 
-          <ToastContainer position="top-right" autoClose={3000} />
           {!isDashboardPage && <Footer />}
+          <ToastContainer position="top-right" autoClose={3000} />
         </ClientProviders>
       </body>
     </html>
   );
 }
+
+const popupStyles: {
+  overlay: CSSProperties;
+  box: CSSProperties;
+  button: CSSProperties;
+} = {
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 999999,
+  },
+  box: {
+    background: "#fff",
+    padding: "30px",
+    borderRadius: "12px",
+    textAlign: "center",
+    width: "350px",
+    boxShadow: "0px 8px 20px rgba(0,0,0,0.2)",
+  },
+  button: {
+    marginTop: "15px",
+    padding: "12px 20px",
+    background: "#0066ff",
+    color: "white",
+    borderRadius: "8px",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+};

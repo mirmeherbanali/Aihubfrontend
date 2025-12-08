@@ -3,66 +3,62 @@
 import React, { useState } from "react";
 import DynamicTable from "@/components/ui/common/DynamicTable";
 import { TableColumn, TableAction } from "@/types/table.types";
-import { User } from "@/types/user.types";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import { dataConstant } from "../constant";
+import { FaTrash } from "react-icons/fa";
 
 export default function Reviews() {
   const [tab, setTab] = useState(1);
 
-  const columns: TableColumn<User>[] = [
-    { key: "reviewerId", label: "Reviewer ID" },
+  const columns: TableColumn<any>[] = [
     { key: "reviewerName", label: "Reviewer Name" },
-    { key: "reviewerEmail", label: "Reviewer Email" },
-    { key: "reviewerRole", label: "Reviewer Role" },
-    { key: "toolId", label: "Tool ID" },
+    { key: "reviewe", label: "Reviewer" },
+    { key: "rating", label: "Rating" },
     { key: "toolName", label: "Tool Name" }
   ];
 
-  const actions: TableAction<User>[] = [
+  const actions: TableAction<any>[] = [
     {
       label: "View Profile",
-      onClick: (row) => alert(`👤 Viewing: ${row.firstName} ${row.lastName}`)
+      onClick: (row) => alert(`👤 Viewing: ${row.reviewerName}`)
     },
     {
       label: "Edit",
-      onClick: (row) => alert(`✏️ Editing: ${row.firstName} ${row.lastName}`)
+      onClick: (row) => alert(`✏️ Editing: ${row.reviewerName}`)
     }
   ];
 
   const bulkActions = [
     {
       label: "Delete Selected",
-      onClick: (rows: User[]) => alert(`Deleting ${rows.length} users`)
+      onClick: (rows: any[]) => alert(`Deleting ${rows.length} reviewers`)
     }
   ];
 
   const tabActions = [
-    {
-      label: "Manage Reviews",
-      onClick: () => setTab(1)
-    },
-    { label: "Add Reviews", onClick: () => setTab(2) }
+    { label: "Manage Reviews" },
+    { label: "Add Reviews" }
   ];
 
   return (
     <div className="tab-content-wrapper">
-      <DynamicHeaderTabs actions={tabActions} defaultActive={0} />
+      <DynamicHeaderTabs
+        actions={tabActions}
+        activeIndex={tab - 1}
+        onTabChange={(index) => setTab(index + 1)}
+      />
+
       {tab === 1 ? (
-
-        <div>Add Reviewers</div>
-
-        // <DynamicTable
-        //   columns={columns}
-        //   data={dataConstant}
-        //   actions={actions}
-        //   bulkActions={bulkActions}
-        //   searchKey="reviewerName"
-        //   filterKeys={["reviewerRole"]}
-        //   itemsPerPage={10}
-        // />
+        <DynamicTable
+          columns={columns}
+          data={dataConstant}
+          actions={actions}
+          bulkActions={bulkActions}
+          searchKey="reviewerName"
+          filterKeys={["reviewerRole"]}
+          itemsPerPage={10}
+        />
       ) : (
-        // <AddCategory />
         <div>Add Reviewers</div>
       )}
     </div>

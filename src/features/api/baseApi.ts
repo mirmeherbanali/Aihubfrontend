@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ENV } from "../../env";
 import { DynamicMutationArgs, DynamicQueryArgs } from "../../types/base.types";
 
-
+console.log("ENV.API_URL",ENV.API_URL)
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: fetchBaseQuery({

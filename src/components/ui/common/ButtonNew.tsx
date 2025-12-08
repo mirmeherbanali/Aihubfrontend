@@ -1,9 +1,9 @@
 import React from "react";
 import "../style//ButtonNew.scss";
 
-const ButtonNew = () => {
+const ButtonNew = ({ handleLoginClick }: { handleLoginClick?: React.MouseEventHandler<HTMLButtonElement> }) => {
   return (
-    <button className="btn" aria-label="Get started">
+    <button className="btn" aria-label="Get started" onClick={handleLoginClick}>
       <span className="content">
         <svg
           className="icon"

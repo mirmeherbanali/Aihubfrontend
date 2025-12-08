@@ -13,21 +13,19 @@ import { getUserType } from "@/utils/authStorage";
 import AdminTools from "@/components/Dashboard/tools/adminTools";
 import CategoryPage from "@/components/Dashboard/categories/page";
 import Reviews from "@/components/Dashboard/reviews/page";
-
+import AdminHome from "@/components/Dashboard/AdminDashboard/page";
 const Dashboard = () => {
-  const searchParams = useSearchParams()!;   // ← FIXED
+  const searchParams = useSearchParams()!;
   const router = useRouter();
 
   const [userType, setUserType] = useState<string | null>(null);
 
   const tab = searchParams.get("tab") || "1";
 
-  // ✅ Check user immediately (no loading state)
   useEffect(() => {
     const storedType = getUserType();
 
     if (!storedType) {
-      // 🚀 Instant redirect — prevents UI from flashing
       router.replace("/auth/login");
       return;
     }
@@ -47,7 +45,7 @@ const Dashboard = () => {
   const renderAdminTabs = () => {
     switch (tab) {
       case "1":
-        return <div>🏠 Home Dashboard</div>;
+        return <AdminHome />;
       case "2":
         return <ProfilePage />;
       case "3":
