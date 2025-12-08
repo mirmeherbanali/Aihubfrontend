@@ -49,9 +49,8 @@ export default function CategoryPage() {
             <h2 className={styles.heading}>All Categories</h2>
 
             <CategoryGrid
-              items={filteredCategories}
-              onSelect={(item) => setSelectedCategory(item)}
-            />
+                    items={filteredCategories}
+                    onSelect={(item) => setSelectedCategory(item)} title={""}            />
           </>
         )}
       </section>
