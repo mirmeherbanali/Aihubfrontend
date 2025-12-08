@@ -8,7 +8,7 @@ type DynamicTableProps<T extends { _id: string | number }> = {
   columns: TableColumn<T>[];
   data: T[];
   actions?: TableAction<T>[];
-  bulkActions?: { label: string; onClick: (rows: T[]) => void }[];
+  bulkActions?: { label: React.ReactNode; onClick: (rows: T[]) => void }[];
   searchKey?: keyof T;
   itemsPerPage?: number;
   filterKeys?: (keyof T)[];
@@ -81,11 +81,11 @@ export default function DynamicTable<T extends { _id: string }>({
   return (
     <div className={styles.tableContainer}>
       <div className={styles.filters}>
-           {bulkActions.length > 0 && selectedRows.size > 0 && (
+      {bulkActions.length > 0 && selectedRows.size > 0 && (
         <div className={styles.bulkActions}>
-          {bulkActions.map((b) => (
+          {bulkActions.map((b, idx) => (
             <button
-              key={b.label}
+              key={typeof b.label === "string" || typeof b.label === "number" ? String(b.label) : idx}
               onClick={() =>
                 b.onClick(data.filter((row) => selectedRows.has(row._id)))
               }
