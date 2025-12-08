@@ -18,11 +18,11 @@ interface SummaryGridProps {
   style?: React.CSSProperties;
 }
 
-const iconMap = {
-  0: <FaTools />,
-  1: <FaClock />,
-  2: <FaCheckCircle />,
-};
+const iconMap: React.ReactNode[] = [
+  <FaTools />,
+  <FaClock />,
+  <FaCheckCircle />,
+];
 
 const SummaryGrid: React.FC<SummaryGridProps> = ({
   items,

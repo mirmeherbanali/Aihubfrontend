@@ -24,13 +24,14 @@ export default function UserPage() {
   const [editData, setEditData] = useState<User | null>(null);
 
 
+  const rawList = Array.isArray(data) ? data : ((data as any)?.result?.list ?? null);
   const allUsers =
-    data?.result?.list
-      ?.filter((u: User) => u.status !== "Deleted")
-      ?.sort((a: User, b: User) =>
+    (Array.isArray(rawList) ? rawList : [])
+      .filter((u: User) => u.status !== "Deleted")
+      .sort((a: User, b: User) =>
         (b.createdAt ? new Date(b.createdAt).getTime() : 0) -
         (a.createdAt ? new Date(a.createdAt).getTime() : 0)
-      ) || [];
+      );
 
   const safeValue = (value: any) =>
     value === undefined || value === null || value === "" ? "N/A" : value;
@@ -112,7 +113,7 @@ export default function UserPage() {
   return (
     <div className="tab-content-wrapper">
       {!selectedUser &&
-      <DynamicHeaderTabs actions={tabActions} defaultActive={0} />
+      <DynamicHeaderTabs actions={tabActions} activeIndex={0} />
       }
       {/* View User Screen (NO MODAL) */}
       {selectedUser ? (

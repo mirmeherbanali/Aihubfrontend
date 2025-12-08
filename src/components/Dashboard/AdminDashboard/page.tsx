@@ -20,10 +20,10 @@ const AdminHome = () => {
   const { data: toolsData } = useGetAllToolsQuery();
   const { data: usersData } = useGetAllUsersQuery();
 
-  // Extract results safely
-  const categories = categoriesData?.result?.list || []
-  const tools = toolsData?.result?.list || []
-  const users = usersData?.result?.list || []
+  // Extract results safely (handle cases where the hook returns an array directly or an object with result.list)
+    const categories = Array.isArray(categoriesData) ? categoriesData : ((categoriesData as any)?.result?.list ?? [])
+    const tools = Array.isArray(toolsData) ? toolsData : ((toolsData as any)?.result?.list ?? [])
+    const users = Array.isArray(usersData) ? usersData : ((usersData as any)?.result?.list ?? [])
 
   // Dynamic counts
   const totalUsers = users.length;

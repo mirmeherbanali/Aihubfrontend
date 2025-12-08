@@ -3,21 +3,20 @@
 import React, { useState } from "react";
 import DynamicTable from "@/components/ui/common/DynamicTable";
 import { TableColumn, TableAction } from "@/types/table.types";
-import { User } from "@/types/user.types";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import { dataConstant } from "../constant";
 
 export default function Reviews() {
   const [tab, setTab] = useState(1);
 
-  const columns: TableColumn<User>[] = [
+  const columns: TableColumn<any>[] = [
     { key: "reviewerName", label: "Reviewer Name" },
     { key: "reviewe", label: "Reviewer" },
     { key: "rating", label: "Rating" },
     { key: "toolName", label: "Tool Name" }
   ];
 
-  const actions: TableAction<User>[] = [
+  const actions: TableAction<any>[] = [
     {
       label: "View Profile",
       onClick: (row) => alert(`👤 Viewing: ${row.reviewerName}`)
@@ -31,7 +30,7 @@ export default function Reviews() {
   const bulkActions = [
     {
       label: "Delete Selected",
-      onClick: (rows: User[]) => alert(`Deleting ${rows.length} reviewers`)
+      onClick: (rows: any[]) => alert(`Deleting ${rows.length} reviewers`)
     }
   ];
 

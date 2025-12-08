@@ -47,13 +47,19 @@ const sortedBaseTools = [...baseTools].sort(
 );
 
 // 2️⃣ Build table rows from already-sorted tools
-const toolData: Tool[] = sortedBaseTools.flatMap((tool) =>
-  (tool.category || []).map((cat: any) => ({
+const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
+  const categoriesForTool = Array.isArray(tool.category)
+    ? tool.category
+    : tool.category
+    ? [tool.category]
+    : [];
+
+  return categoriesForTool.map((cat: any) => ({
     ...tool,
-    category: [cat],
+    category: cat,
     rowId: `${tool._id}-${cat._id}`,
-  }))
-)
+  }));
+});
   const [createTool] = useCreateToolMutation();
   const [updateTool] = useUpdateToolMutation();
   

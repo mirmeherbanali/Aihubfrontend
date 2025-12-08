@@ -53,7 +53,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
                 <div className={styles.textBox}>
                   <h3 className={styles.toolName}>{tool.toolName}</h3>
                   <p className={styles.desc}>
-                    {tool.description?.length > 60
+                    {tool.description && tool.description.length > 60
                       ? tool.description.slice(0, 60) + "..."
                       : tool.description || "No description available"}
                   </p>

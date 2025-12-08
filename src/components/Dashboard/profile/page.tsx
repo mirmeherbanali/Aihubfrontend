@@ -90,7 +90,7 @@ export default function ProfilePage() {
   // ✅ Delete account handler
   const handleDelete = async () => {
     try {
-      await deleteProfile({ id: userId ?? "" }).unwrap();
+      await deleteProfile({ userId: userId ?? "",adminId:userId??"" }).unwrap();
       clearAuthData();
       window.location.href = "/auth/login";
     } catch (error) {
