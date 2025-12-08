@@ -221,3 +221,16 @@
     height: 200px;
   }
 }
+
+.newsSection a {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: inline-block;
+}
+
+.newsSection a:hover,
+.newsSection a:active,
+.newsSection a:visited {
+  text-decoration: none !important;
+  color: inherit !important;
+}

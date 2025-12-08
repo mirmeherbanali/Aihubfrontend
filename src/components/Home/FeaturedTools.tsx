@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import styles from "../../components/ui/style/featuredTools.module.scss";
 
 interface Category {
@@ -20,13 +21,11 @@ interface Tool {
 interface FeaturedToolsProps {
   toolData: Tool[];
   allCategories: Category[];
-  onToolClick: (tool: Tool, category: Category) => void;
 }
 
 const FeaturedTools: React.FC<FeaturedToolsProps> = ({
   toolData,
   allCategories,
-  onToolClick,
 }) => {
   return (
     <section className={styles.featuredTools}>
@@ -37,12 +36,14 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
           const categoryId = tool?.category?.[0]?._id;
           const category = allCategories.find((c) => c._id === categoryId);
 
+          if (!category) return null;
+
+          const link = `/categories/${encodeURIComponent(
+            category.categoryName
+          )}/tooldetails/${encodeURIComponent(tool.toolName)}`;
+
           return (
-            <div
-              key={tool._id}
-              className={styles.card}
-              onClick={() => category && onToolClick(tool, category)}
-            >
+            <Link key={tool._id} href={link} className={styles.card}>
               <div className={styles.row}>
                 <img
                   src={tool.logo || "/placeholder.png"}
@@ -59,7 +60,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
