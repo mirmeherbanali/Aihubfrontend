@@ -31,8 +31,34 @@ export const toolsApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    updateTool: builder.mutation<AuthResponse, FormData>({
+      query: (body) => ({
+        url: "api/tool/updateTool",
+        method: "PUT",
+        body,
+      }),
+      ...withToast<AuthResponse>(
+        "updateTool",
+        (res) => res.result?.message || "Tool updated successfully"
+      )
+    }),
+    deleteTool: builder.mutation<AuthResponse, { id: string; adminId: string }>({
+      query: (body) => ({
+        url: "api/tool/deleteTool",
+        method: "PUT",
+        body,
+      }),
+      ...withToast<AuthResponse>(
+        "deleteTool",
+        (res) => res.result?.message || "Tool delete successfully"
+      )
+    }),
+    
+    //   use PUT 
   }),
   overrideExisting: false,
 });
 
-export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation } = toolsApi;
+export const { useCreateToolMutation, useGetAllToolsQuery, useGetToolDetailsByIdMutation ,
+ useUpdateToolMutation ,useDeleteToolMutation             // ✅ Missing in your code
+} = toolsApi;

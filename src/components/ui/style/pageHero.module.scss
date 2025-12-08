@@ -8,7 +8,7 @@
   overflow: hidden;
   min-height: 100vh;
   background: #ffffff;
-  padding: 20px;
+  padding: 140px 20px 80px; // space under navbar
 }
 
 .cyberGrid {
@@ -333,6 +333,28 @@
     &:hover .cyberGlow {
       left: 100%;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 110px 16px 60px;   // 🔥 reduced top + bottom
+    min-height: auto;           // 🔥 prevents unnecessary white height
+  }
+
+  .hero-title {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 6px;         // 🔥 reduced gap
+  }
+
+  .hero-subtext {
+    margin-bottom: 16px;        // 🔥 reduced gap
+  }
+
+  .cyberSearchContainer {
+    margin-top: 10px;           // 🔥 very small spacing
+    margin-bottom: 20px;
   }
 }
 

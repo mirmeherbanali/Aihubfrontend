@@ -2,7 +2,7 @@ import { baseApi } from "../api/baseApi";
 import { LoginInput,RegisterInput } from "@/lib/validators/userValidator";
 import { AuthResponse } from "../../types/form.types";
 import { withToast } from "@/store/middleware/toastMiddleware";
-import {User} from "../../types/user.types"
+import {User,UserProfile} from "../../types/user.types"
 
 // Inject auth endpoints into baseApi
 export const authApi = baseApi.injectEndpoints({
@@ -24,7 +24,7 @@ export const authApi = baseApi.injectEndpoints({
       },
       ...withToast<AuthResponse>("register", (res) => res.result?.message),
     }),
-    getProfile: builder.query<User, { token: string; userId: string }>({
+    getProfile: builder.query<UserProfile, { token: string; userId: string }>({
       query: ({ token, userId }) => ({
         url: "api/user/getUserById",
         method: "POST",
@@ -45,7 +45,7 @@ export const authApi = baseApi.injectEndpoints({
         body: {}, // You can remove this if the API doesn't need it
       }),
     }),
-    updateProfile: builder.mutation<AuthResponse, Partial<User>>({
+   updateProfile: builder.mutation<AuthResponse, Partial<User> & { id: string | null }>({
   query: (body) => ({
     url: "api/user/updateUser",
     method: "PUT",
@@ -54,7 +54,7 @@ export const authApi = baseApi.injectEndpoints({
   ...withToast<AuthResponse>("updateProfile", (res) => res.result?.message),
 }),
 
-deleteProfile: builder.mutation<AuthResponse, { id: string }>({
+deleteProfile: builder.mutation<AuthResponse, { userId: string; adminId: string }>({
   query: (body) => ({
     url: "api/user/deleteUser",
     method: "PUT",

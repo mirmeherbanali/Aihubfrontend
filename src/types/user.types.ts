@@ -30,12 +30,18 @@ export interface User {
   toolName?: string;
 }
 
-export interface UserResult {
-  message: string;
-  list: User;
-}
+// export interface UserResult {
+//   message: string;
+//   list: User;
+// }
 
 export interface UserProfile {
   success: boolean;
-  result: UserResult;
+  result: {
+    list: {
+      user: User;
+    };
+    message: string;
+  };
 }
+

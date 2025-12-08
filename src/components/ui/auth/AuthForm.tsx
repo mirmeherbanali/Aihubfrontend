@@ -60,6 +60,7 @@ export default function AuthForm() {
       handleSubmit={registerSubmit}
       onSubmit={onRegisterSubmit}
       isLoading={registerLoading}
+      buttonText={"Register"}
     />
   );
 }

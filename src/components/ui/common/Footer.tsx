@@ -1,36 +1,38 @@
 import React from "react";
+import Link from "next/link";
 import styles from "../style/footer.module.scss";
 
 const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.topSection}>
-        {/* Left Content */}
+        
+        {/* Left Section */}
         <div className={styles.left}>
           <h2 className={styles.logo}>Allisted</h2>
           <p>
             Allisted is your go-to directory for the best AI tools. Explore,
-            compare, and discover innovative solutions across categories — from
-            writing and design to automation and analytics. Stay updated with
-            trending tools and the latest launches, all in one place.
+            compare, and discover innovative solutions across categories —
+            from writing and design to automation and analytics.
           </p>
         </div>
 
-        {/* Right Links */}
+        {/* Right Section */}
         <div className={styles.right}>
           <ul>
-            <li>About Us</li>
-            <li>Blog</li>
-            <li>Categories</li>
+            <li><Link href="/about" className={styles.footerLink}>About Us</Link></li>
+            <li><Link href="/blog" className={styles.footerLink}>Blog</Link></li>
+            <li><Link href="/category" className={styles.footerLink}>Categories</Link></li>
           </ul>
+
           <ul>
-            <li>Terms & Conditions</li>
-            <li>Privacy Policy</li>
+            <li><Link href="/terms" className={styles.footerLink}>Terms & Conditions</Link></li>
+            <li><Link href="/privacy-policy" className={styles.footerLink}>Privacy Policy</Link></li>
           </ul>
         </div>
       </div>
 
-      {/* Bottom Copyright */}
+      {/* Copyright */}
       <div className={styles.bottom}>
         <p>Copyright 2025. All Rights Reserved.</p>
       </div>

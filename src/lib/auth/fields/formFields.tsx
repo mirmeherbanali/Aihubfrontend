@@ -39,5 +39,36 @@ export const registerFields = (
 
   { type: "password", name: "confirmPassword", label: "Confirm Password", placeholder: "Re-enter password", icon: <LockOutlined /> },
 
-  { type: "button", label: "Register" }
+  { type: "button", label: "" }
+];
+
+
+export const userFields = (userType?: string): FormField<RegisterInput>[] => [
+  {
+    type: "dropdown",
+    name: "userType",
+    label: "Role",
+    options:
+      userType === "Admin"
+        ? ["Reviewer", "Developer", "AdminUser"]
+        : ["Reviewer", "Developer"],
+    value: "Reviewer",
+    row: 1,
+    col: 6
+  },
+
+  { type: "input", name: "firstName", label: "First Name", placeholder: "Enter your First Name", row: 2, col: 6 },
+  { type: "input", name: "lastName", label: "Last Name", placeholder: "Enter your Last Name", row: 2, col: 6 },
+
+  { type: "input", name: "email", label: "Email", placeholder: "Enter your email", row: 3, col: 6, conditional: { field: "userType", value: ["Reviewer", "AdminUser"] } },
+
+  // Developer-specific
+  { type: "input", name: "companyName", label: "Company Name", placeholder: "Enter company name", row: 4, col: 6, conditional: { field: "userType", value: "Developer" } },
+  { type: "input", name: "companyWebsite", label: "Company Website", placeholder: "Enter company website", row: 4, col: 6, conditional: { field: "userType", value: "Developer" } },
+  { type: "input", name: "companyEmail", label: "Company Email", placeholder: "Enter company email", row: 5, col: 6, conditional: { field: "userType", value: "Developer" } },
+
+  { type: "password", name: "password", label: "Password", placeholder: "Enter your password", row: 6, col: 6 },
+  { type: "password", name: "confirmPassword", label: "Confirm Password", placeholder: "Re-enter password", row: 6, col: 6 },
+
+  { type: "button" }
 ];

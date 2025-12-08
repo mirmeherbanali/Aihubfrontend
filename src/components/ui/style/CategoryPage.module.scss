@@ -1,41 +1,39 @@
 .categorySection {
-  padding: 4rem 2rem;
-  background: #f9fafb;
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 50px 20px;
 }
 
-
-.loader {
-  color: #555;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-.error {
-  color: #d9534f;
+.heading {
   text-align: center;
-
-  button {
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    background: #007bff;
-    color: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-
-    &:hover {
-      background: #0056b3;
-    }
-  }
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 40px;
 }
 
-.empty {
-  color: #777;
-  font-size: 1.1rem;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.skeletonCard {
+  height: 48px;
+  border-radius: 8px;
+  background: #e4e7eb;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: .5; }
+  100% { opacity: 1; }
+}
+
+.empty, .error {
   text-align: center;
+  font-size: 18px;
+  color: #333;
+  margin-top: 30px;
 }
