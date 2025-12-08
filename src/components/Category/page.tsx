@@ -13,7 +13,6 @@ export default function CategoryPage() {
 
   const categories = data?.result?.list || [];
 
-  // Filter categories
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return categories;
     return categories.filter((item: any) =>

@@ -5,6 +5,7 @@ import DynamicTable from "@/components/ui/common/DynamicTable";
 import { TableColumn, TableAction } from "@/types/table.types";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import { dataConstant } from "../constant";
+import { FaTrash } from "react-icons/fa";
 
 export default function Reviews() {
   const [tab, setTab] = useState(1);

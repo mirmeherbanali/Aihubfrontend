@@ -19,7 +19,7 @@ const FaqItem = ({
     <div className={`${styles.faqItem} ${styles.animatedDesign} ${isOpen ? styles.open : ""}`}>
       <header className={styles.faqHeader} onClick={onClick}>
         <div className={styles.questionMain}>
-          <div className={styles.questionIndex}>0{index + 1}</div>
+         
           <h3 className={styles.question}>{item.question}</h3>
         </div>
         <div className={styles.iconWrapper}>

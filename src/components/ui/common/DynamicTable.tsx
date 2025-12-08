@@ -14,7 +14,6 @@ type DynamicTableProps<T extends { _id: string | number }> = {
   filterKeys?: (keyof T)[];
 };
 
-
 export default function DynamicTable<T extends { _id: string }>({
   columns,
   data,
@@ -22,38 +21,24 @@ export default function DynamicTable<T extends { _id: string }>({
   bulkActions = [],
   searchKey,
   itemsPerPage = 10,
-  filterKeys = [], // 👈 default: no filters
+  filterKeys = [],
 }: DynamicTableProps<T>) {
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [appliedFilters, setAppliedFilters] = useState<{ [key: string]: string }>({});
+  const [appliedFilters, setAppliedFilters] = useState<{
+    [key: string]: string;
+  }>({});
   const [openDropdown, setOpenDropdown] = useState<T["_id"] | null>(null);
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // 🧩 Close dropdown when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     // check if the click happened inside any registered dropdown element
-  //     const clickedInsideAny = Object.values(dropdownRefs.current).some((el) =>
-  //       el ? el.contains(event.target as Node) : false
-  //     );
-  //     if (!clickedInsideAny) {
-  //       setOpenDropdown(null);
-  //     }
-  //   };
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, []);
-
-  // 🧠 Dynamic filter values
   const dynamicFilterValues = useMemo(() => {
     const result: { [key: string]: string[] } = {};
 
     columns.forEach((col) => {
       const filteredDataset = data?.filter((item) =>
         Object.entries(appliedFilters).every(([key, value]) => {
-          if (!value || key === col.key) return true; // ignore self
+          if (!value || key === col.key) return true;
           return String(item[key as keyof T]) === value;
         })
       );
@@ -66,7 +51,6 @@ export default function DynamicTable<T extends { _id: string }>({
     return result;
   }, [data, appliedFilters, columns]);
 
-  // 🔍 Search + Filter logic
   const filteredData = useMemo(() => {
     return data
       .filter((row) =>
@@ -82,25 +66,35 @@ export default function DynamicTable<T extends { _id: string }>({
       );
   }, [data, appliedFilters, search, searchKey]);
 
-  // 📄 Pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // ✅ Toggle select row
   const toggleRow = (id: string) => {
-  const newSet = new Set(selectedRows);
-  newSet.has(id) ? newSet.delete(id) : newSet.add(id);
-  setSelectedRows(newSet);
-};
-
+    const newSet = new Set(selectedRows);
+    newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+    setSelectedRows(newSet);
+  };
 
   return (
     <div className={styles.tableContainer}>
-      {/* 🌟 Filters */}
       <div className={styles.filters}>
+           {bulkActions.length > 0 && selectedRows.size > 0 && (
+        <div className={styles.bulkActions}>
+          {bulkActions.map((b) => (
+            <button
+              key={b.label}
+              onClick={() =>
+                b.onClick(data.filter((row) => selectedRows.has(row._id)))
+              }
+            >
+              {b.label}
+            </button>
+          ))}
+        </div>
+      )}
         {filterKeys.map((key) => {
           const col = columns.find((c) => c.key === key);
           if (!col) return null;
@@ -136,26 +130,13 @@ export default function DynamicTable<T extends { _id: string }>({
             onChange={(e) => setSearch(e.target.value)}
           />
         )}
+
+        
       </div>
 
-      {/* 🌟 Bulk Actions */}
-      {bulkActions.length > 0 && selectedRows.size > 0 && (
-        <div className={styles.bulkActions}>
-          {bulkActions.map((b) => (
-  <button
-    key={b.label}
-    onClick={() =>
-      b.onClick(data.filter((row) => selectedRows.has(row._id)))
-    }
-  >
-    {b.label}
-  </button>
-))
-}
-        </div>
-      )}
+   
 
-      {/* 🌟 Table */}
+
       <table className={styles.table}>
         <thead>
           <tr>
@@ -167,12 +148,13 @@ export default function DynamicTable<T extends { _id: string }>({
                   paginatedData.length > 0
                 }
                 onChange={() => {
-  const allSelected = selectedRows.size === paginatedData.length;
-  const newSet = new Set<string>();
-  if (!allSelected) paginatedData.forEach((row) => newSet.add(row._id));
-  setSelectedRows(newSet);
-}}
-
+                  const allSelected =
+                    selectedRows.size === paginatedData.length;
+                  const newSet = new Set<string>();
+                  if (!allSelected)
+                    paginatedData.forEach((row) => newSet.add(row._id));
+                  setSelectedRows(newSet);
+                }}
               />
             </th>
             {columns.map((col) => (
@@ -183,74 +165,75 @@ export default function DynamicTable<T extends { _id: string }>({
         </thead>
 
         <tbody>
-  {paginatedData.map((row, index) => {
-    const rowId = row._id;
-    return (
-      <tr key={rowId}>
-        <td>
-          <input
-            type="checkbox"
-            checked={selectedRows.has(rowId)}
-            onChange={() => toggleRow(rowId)}
-          />
-        </td>
+          {paginatedData.map((row, index) => {
+            const rowId = row._id;
+            return (
+              <tr key={rowId}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.has(rowId)}
+                    onChange={() => toggleRow(rowId)}
+                  />
+                </td>
 
-        {columns.map((col) => (
-          <td key={String(col.key)}>
-            {col.render ? col.render(row) : String(row[col.key]) || "-"}
-          </td>
-        ))}
+                {columns.map((col) => (
+                  <td key={String(col.key)}>
+                    {col.render ? col.render(row) : String(row[col.key]) || "-"}
+                  </td>
+                ))}
 
-        {actions.length > 0 && (
-          <td className={styles.actions}>
-            <div
-              className={styles.dropdownWrapper}
-              ref={(el: HTMLDivElement | null) => {
-  dropdownRefs.current[rowId] = el;
-}}
-
-            >
-              <button
-                className={styles.threeDots}
-                onClick={() =>
-                  setOpenDropdown(openDropdown === rowId ? null : rowId)
-                }
-              >
-                ⋮
-              </button>
-              {openDropdown === rowId && (
-                <div className={styles.dropdownMenu}>
-                  {actions.map((act) => (
-                    <button
-                      key={act.label}
-                      disabled={act.disabled?.(row)}
-                      onClick={() => {
-                        act.onClick(row);
-                        setOpenDropdown(null);
+                {actions.length > 0 && (
+                  <td className={styles.actions}>
+                    <div
+                      className={styles.dropdownWrapper}
+                      ref={(el: HTMLDivElement | null) => {
+                        dropdownRefs.current[rowId] = el;
                       }}
                     >
-                      {act.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </td>
-        )}
-      </tr>
-    );
-  })}
-</tbody>
-
+                      <button
+                        className={styles.threeDots}
+                        onClick={() =>
+                          setOpenDropdown(openDropdown === rowId ? null : rowId)
+                        }
+                      >
+                        ⋮
+                      </button>
+                      {openDropdown === rowId && (
+                        <div className={styles.dropdownMenu}>
+                          {actions.map((act) => (
+                            <button
+                              key={act.label}
+                              disabled={act.disabled?.(row)}
+                              onClick={() => {
+                                act.onClick(row);
+                                setOpenDropdown(null);
+                              }}
+                            >
+                              {act.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
 
-      {/* 🌟 Pagination */}
+      
       <div className={styles.pagination}>
         <span>
           Page {currentPage} of {totalPages || 1}
         </span>
         <div>
-          <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
             {"<"}
           </button>
           <button
