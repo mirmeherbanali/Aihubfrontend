@@ -5,7 +5,10 @@ import { FormField } from "@/types/form.types";
 
 
 export const toolsFields = (
-  categories: { label: string; value: string }[],
+  categories: {
+    _id: any;
+    categoryName: any; label: string; value: string 
+}[],
   isAdmin: boolean,
   isEditMode: boolean
 ): FormField<any>[] => {
