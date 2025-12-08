@@ -37,7 +37,6 @@
   background: rgba(120, 180, 255, 0.45);
 }
 
-
 .featuredTools h2 {
   font-size: 44px;
   font-weight: 800;
@@ -62,7 +61,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;     /* smaller gap like screenshot */
+  gap: 20px; /* smaller gap like screenshot */
   margin-top: 25px;
 }
 
@@ -72,12 +71,12 @@
 .row {
   display: flex;
   align-items: center;
-  gap: 14px;               /* Gap same as screenshot */
+  gap: 14px; /* Gap same as screenshot */
   width: 100%;
 }
 
 .logo {
-  width: 42px;             /* Smaller logo */
+  width: 42px; /* Smaller logo */
   height: 42px;
   border-radius: 10px;
   object-fit: cover;
@@ -93,14 +92,14 @@
 }
 
 .toolName {
-  font-size: 15px;         /* SMALLER TEXT like screenshot */
+  font-size: 15px; /* SMALLER TEXT like screenshot */
   font-weight: 700;
   color: #111827;
   margin-bottom: 3px;
 }
 
 .desc {
-  font-size: 12px;         /* Description smaller */
+  font-size: 12px; /* Description smaller */
   color: #6b7280;
   line-height: 1.3;
   -webkit-line-clamp: 2;
@@ -110,20 +109,18 @@
 }
 
 
-/* ------------------------------------------------------
-   Your Original Card + Hover Effects (unchanged)
--------------------------------------------------------*/
 /* CARD */
 .card {
   background: #fff;
-  border-radius: 16px;          /* slightly bigger radius */
-  padding: 20px 18px;           /* little more padding */
+  border-radius: 16px; /* slightly bigger radius */
+  padding: 20px 18px; /* little more padding */
   cursor: pointer;
   transition: 0.3s ease;
   border: 1px solid #e5e7eb;
-  height: 130px;                /* increased height */
+  height: 130px; /* increased height */
   display: flex;
   align-items: center;
+  text-decoration: none !important;
 
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.08),
@@ -157,13 +154,13 @@
 .row {
   display: flex;
   align-items: center;
-  gap: 16px;                    
+  gap: 16px;
   width: 100%;
 }
 
 /* LOGO */
 .logo {
-  width: 48px;                   
+  width: 48px;
   height: 48px;
   border-radius: 12px;
   object-fit: cover;
@@ -181,7 +178,7 @@
 
 /* TOOL NAME */
 .toolName {
-  font-size: 17px;               
+  font-size: 17px;
   font-weight: 700;
   color: #111827;
   margin-bottom: 4px;
@@ -190,7 +187,7 @@
 
 /* DESCRIPTION */
 .desc {
-  font-size: 13px;                
+  font-size: 13px;
   color: #6b7280;
   line-height: 1.35;
   -webkit-line-clamp: 2;
@@ -198,7 +195,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 
 /* Hover gradient on image */
 .card:hover .logo {

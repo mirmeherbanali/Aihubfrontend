@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import styles from "../../components/ui/style/CategoryGrid.module.scss";
 
 interface CategoryGridProps {
-  title: string;
+  title?: string;
   items: any[];
   onSelect?: (item: any) => void;
   searchQuery?: string;
@@ -17,7 +17,6 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   onSelect,
   searchQuery = "",
 }) => {
-  const router = useRouter();
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
 
   const highlightMatch = (text: string) => {
@@ -26,31 +25,23 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
     return text.replace(regex, "<mark>$1</mark>");
   };
 
-  const handleClick = async (item: any) => {
-    if (loadingItem) return;
-
+  const handleClick = (item: any) => {
     setLoadingItem(item._id);
     onSelect?.(item);
-
-    try {
-      await router.push(`/categories/${item.categoryName.toLowerCase()}`);
-    } catch (e) {
-      console.error(e);
-      setLoadingItem(null);
-    }
   };
 
   return (
     <section className={styles.categorySection}>
-      <h2 className={styles.heading}>{title}</h2>
+      {title && <h2 className={styles.heading}>{title}</h2>}
 
       <div className={styles.grid}>
         {items?.map((item) => {
           const isLoading = loadingItem === item._id;
 
           return (
-            <button
+            <Link
               key={item._id}
+              href={`/categories/${item.categoryName.toLowerCase()}`}
               className={`${styles.card} ${isLoading ? styles.loading : ""}`}
               onClick={() => handleClick(item)}
             >
@@ -65,7 +56,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
                   }}
                 />
               )}
-            </button>
+            </Link>
           );
         })}
       </div>

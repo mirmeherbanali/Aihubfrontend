@@ -26,7 +26,8 @@
 
 .pageWrapper {
    padding: 100px 20px 40px;
-  position: relative; /* Important for glow positioning */
+  position: relative;
+  overflow-x: hidden; 
 }
 
 
@@ -35,7 +36,8 @@
 =========================== */
 .authCard {
   width: 100%;
-  max-width: 1250px;
+  max-width: 1100px;   // cleaner & fits all screens
+  margin: 0 auto;
   background: #ffffff;
   border-radius: 22px;
   padding: 45px;
@@ -68,8 +70,7 @@
    RIGHT SIDE — FORM AREA
 =========================== */
 .formArea {
-  flex: 1.2;
-  width: 100%;
+  flex: 1;
 }
 
 .title {

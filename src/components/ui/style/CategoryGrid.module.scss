@@ -152,3 +152,8 @@
     font-size: 14px;
   }
 }
+.card, 
+.card a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
