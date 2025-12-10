@@ -33,7 +33,7 @@ export default function Reviews() {
   const reviews = data?.result?.list || [];
   const tools = allToolsData?.result?.list || [];
 
-  /** 🔥 Convert tools → dropdown format */
+ 
   const toolOptions = tools.map((t: any) => ({
     label: t.toolName,
     value: t._id,
@@ -46,35 +46,44 @@ export default function Reviews() {
   const [editReview, setEditReview] = useState<any | null>(null);
   const isEditMode = Boolean(editReview);
 
+
   const {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { isSubmitting },
-  } = useForm<ReviewInput & { toolId?: string }>({
+  } = useForm<ReviewInput>({
     resolver: zodResolver(reviewSchema),
     mode: "onBlur",
   });
 
-  /** 🔥 Prefill form on edit */
+
   useEffect(() => {
     if (editReview) {
       reset({
         rating: editReview.rating,
         reviewText: editReview.reviewText || "",
-        toolId: editReview.toolId, // preload dropdown
+        toolId: editReview.toolId?._id,
+        status: editReview.status || "Pending",
       });
       setTab(2);
     }
   }, [editReview, reset]);
 
-  /** TABLE CONFIG */
+
   const columns: TableColumn<any>[] = [
-    { key: "reviewerName", label: "Reviewer Name" },
-    { key: "reviewerRole", label: "Reviewer Role" },
+    {
+      key: "reviewerName",
+      label: "Reviewer Name",
+      render: (row) =>
+        row?.userId
+          ? `${row.userId.firstName} ${row.userId.lastName}`
+          : "N/A",
+    },
+    { key: "reviewText", label: "Review Text" },
     { key: "rating", label: "Rating" },
     { key: "toolId.toolName", label: "Tool Name" },
+    { key: "status", label: "Status" },
   ];
 
   const actions: TableAction<any>[] = [
@@ -84,12 +93,13 @@ export default function Reviews() {
     },
   ];
 
+  /** Tab Buttons */
   const tabActions = [
     {
       label: "Manage Reviews",
       onClick: () => {
-        setEditReview(null);
         reset();
+        setEditReview(null);
         setTab(1);
       },
     },
@@ -99,20 +109,25 @@ export default function Reviews() {
     },
   ];
 
-  /** 🔥 SUBMIT = CREATE + UPDATE */
+  /** Submit Handler */
   const onSubmit = async (data: any) => {
     try {
       if (isEditMode) {
+        /** UPDATE Review Correct Payload */
         await updateReview({
-          toolId: editReview.toolId,
-          userId: editReview.userId?._id ?? "",
-          ...data,
+          reviewId: editReview._id,
+          userId: userId,
+          rating: data.rating,
+          reviewText: data.reviewText,
+          status: data.status,
         }).unwrap();
       } else {
+        /** ADD Review */
         await addReview({
-          toolId: data.toolId, // selected dropdown value
-          userId: userId, // logged-in user
-          ...data,
+          toolId: data.toolId,
+          userId: userId,
+          rating: data.rating,
+          reviewText: data.reviewText,
         }).unwrap();
       }
 
@@ -121,11 +136,11 @@ export default function Reviews() {
       setTab(1);
       refetch();
     } catch (error) {
-      console.error(error);
+      console.error("Error:", error);
       alert("Something went wrong!");
     }
   };
-console.log("reviews",reviews)
+
   return (
     <div className={styles.reviewsWrapper}>
       <DynamicHeaderTabs
@@ -135,8 +150,8 @@ console.log("reviews",reviews)
           const t = (index + 1) as 1 | 2;
           setTab(t);
           if (t === 1) {
-            setEditReview(null);
             reset();
+            setEditReview(null);
           }
         }}
       />
@@ -152,15 +167,15 @@ console.log("reviews",reviews)
             data={reviews}
             actions={actions}
             searchKey="reviewerName"
-            filterKeys={["reviewerRole"]}
+            filterKeys={["status"]}
             itemsPerPage={10}
           />
         )
       ) : (
         <div className={styles.formContainer}>
           <DynamicForm
-            fields={reviewFields(userType === "Admin", toolOptions)}
-            control={control as any}
+            fields={reviewFields(userType === "Admin", toolOptions, isEditMode)}
+            control={control}
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}
             isLoading={isSubmitting}
