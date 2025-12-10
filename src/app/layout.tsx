@@ -123,7 +123,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <main style={{ minHeight: "100vh" }}>
             {/* ⚠ Warning Popup */}
-            {showWarning && (
+            {/* {showWarning && (
               <div style={popupStyles.overlay}>
                 <div style={popupStyles.box}>
                   <h3>⚠ Session Timeout Warning</h3>
@@ -141,7 +141,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
 
             {children}
           </main>

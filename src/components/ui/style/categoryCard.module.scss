@@ -203,3 +203,17 @@
     width: 100%;
   }
 }
+/* Remove underline + default link color inside Categories section */
+.categoriesSection a {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: inline-block;
+}
+
+/* Ensure hover does not change link color */
+.categoriesSection a:hover,
+.categoriesSection a:active,
+.categoriesSection a:visited {
+  text-decoration: none !important;
+  color: inherit !important;
+}

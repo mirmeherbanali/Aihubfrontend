@@ -3,8 +3,12 @@ import { z } from "zod";
 // Allow File OR string (URL)
 const fileOrUrl = z.union([
   z.instanceof(File),
-  z.string().url().optional()
+  z.string(),  // accept normal string also (not only URL)
+  z.string().url().optional(),
+  z.null(),
+  z.literal("")
 ]);
+
 
 // Apply 10MB validation only when file is File
 const validatedFileOrUrl = fileOrUrl.refine(
@@ -27,7 +31,7 @@ export const toolsSchema = z.object({
 
   description: z.string().min(10, "Description is too short"),
 
-  pricingType: z.enum(["Free", "Paid", "Freemium"], {
+  pricingType: z.enum(["Free", "Paid", "Premium"], {
     required_error: "Pricing Type is required",
   }),
 
@@ -41,7 +45,8 @@ export const toolsSchema = z.object({
 
   logo: validatedFileOrUrl.optional(),
   status: z.enum(["Pending", "Approved", "Rejected"]).optional(),
-
+  referringDomains: z.string().optional(),
+  uniqueBacklinks: z.string().optional(),
   screenshots: z.array(validatedFileOrUrl).optional(),
 });
 

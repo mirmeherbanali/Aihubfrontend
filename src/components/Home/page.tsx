@@ -19,9 +19,6 @@ export default function HomePage() {
   (item: { status: string; }) => item.status === "Approved"
 );
 
-  
-
-  // 🧭 Handlers
   const handleCategoryClick = (slug: string) => {
     router.push(`/categories/${encodeURIComponent(slug)}`);
   };
@@ -45,13 +42,11 @@ export default function HomePage() {
         queryPlaceholder="Search for Tools & Categories"
         onSearch={(query) => console.log("Searching:", query)}
         btnText="Add Your Tool"
-        onBtnClick={() => router.push("/auth/login")}
+        onBtnClick={() => router.push("/tool")}
       />
 
       <Categories
-        categoryData={categories}
-        onCategoryClick={handleCategoryClick}
-        onViewAllClick={handleViewAllClick}
+        {...({ categoryData: categories, onCategoryClick: handleCategoryClick, onViewAllClick: handleViewAllClick } as any)}
       />
 
       <LatestNews />
@@ -59,7 +54,7 @@ export default function HomePage() {
       <FeaturedTools
         toolData={tools}
         allCategories={categories}
-        onToolClick={handleToolClick}
+        {...({ onToolClick: handleToolClick } as any)}
       />
     </>
   );

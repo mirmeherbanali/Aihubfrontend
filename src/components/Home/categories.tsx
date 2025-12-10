@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import styles from "../../components/ui/style/categoryCard.module.scss";
 
 import { FaImage, FaVideo, FaMusic, FaPenNib } from "react-icons/fa";
@@ -12,40 +13,35 @@ interface Category {
 
 interface CategoriesProps {
   categoryData: Category[];
-  onCategoryClick: (slug: string) => void;
-  onViewAllClick: () => void;
 }
 
 const iconList = [<FaImage />, <FaVideo />, <FaMusic />, <FaPenNib />];
 
-const Categories: React.FC<CategoriesProps> = ({
-  categoryData,
-  onCategoryClick,
-  onViewAllClick,
-}) => {
+const Categories: React.FC<CategoriesProps> = ({ categoryData }) => {
   return (
     <section className={styles.categoriesSection}>
       <h2 className={styles.heading}>Top Categories</h2>
       <div className={styles.categoryUnderline}></div>
+
       <div className={styles.grid}>
         {categoryData.slice(0, 4).map((cat, index) => (
-          <div
+          <Link
             key={cat._id}
+            href={`/categories/${encodeURIComponent(cat.categoryName)}`}
             className={styles.cardContainer}
-            onClick={() => onCategoryClick(cat.categoryName)}
           >
             <div className={styles.cardBox}>
               <div className={styles.icon}>{iconList[index]}</div>
               <p className={styles.title}>{cat.categoryName}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
       <div className={styles.viewAllWrapper}>
-        <button onClick={onViewAllClick} className={styles.viewBtn}>
+        <Link href="/categories" className={styles.viewBtn}>
           View All <span>›</span>
-        </button>
+        </Link>
       </div>
     </section>
   );

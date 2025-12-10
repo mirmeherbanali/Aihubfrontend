@@ -66,6 +66,22 @@ export default function DynamicTable<T extends { _id: string }>({
       );
   }, [data, appliedFilters, search, searchKey]);
 
+
+  /** Get nested value from object using dot + bracket paths */
+const getNestedValue = (obj: any, path: string) => {
+  if (!obj || !path) return undefined;
+
+  // Convert "a.b[0].c" → ["a", "b", "0", "c"]
+  const keys = path.replace(/\[(\w+)\]/g, ".$1").split(".");
+
+  return keys.reduce((acc, key) => {
+    if (acc && typeof acc === "object" && key in acc) {
+      return acc[key];
+    }
+    return undefined;
+  }, obj);
+};
+
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -177,9 +193,11 @@ export default function DynamicTable<T extends { _id: string }>({
                   />
                 </td>
 
-                {columns.map((col) => (
+                {columns?.map((col) => (
                   <td key={String(col.key)}>
-                    {col.render ? col.render(row) : String(row[col.key]) || "-"}
+                    {col.render
+  ? col?.render(row)
+  : String(getNestedValue(row, String(col?.key))) || "-"}
                   </td>
                 ))}
 
