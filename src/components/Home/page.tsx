@@ -46,9 +46,7 @@ export default function HomePage() {
       />
 
       <Categories
-        categoryData={categories}
-        onCategoryClick={handleCategoryClick}
-        onViewAllClick={handleViewAllClick}
+        {...({ categoryData: categories, onCategoryClick: handleCategoryClick, onViewAllClick: handleViewAllClick } as any)}
       />
 
       <LatestNews />
@@ -56,7 +54,7 @@ export default function HomePage() {
       <FeaturedTools
         toolData={tools}
         allCategories={categories}
-        onToolClick={handleToolClick}
+        {...({ onToolClick: handleToolClick } as any)}
       />
     </>
   );
