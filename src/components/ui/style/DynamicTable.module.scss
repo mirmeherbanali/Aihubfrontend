@@ -237,3 +237,10 @@
   transform: scale(0.96);
 }
 
+.nodatatext {
+  text-align: center;
+  color: #6b7280;       // gray-500
+  padding: 24px 0;      // py-6
+  font-size: 18px;      // text-lg
+  font-weight: 500;     // font-medium
+}

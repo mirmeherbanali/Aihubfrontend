@@ -2,6 +2,7 @@
 import { z } from "zod";
 
 export const reviewSchema = z.object({
+  toolId: z.string().optional(),
   rating: z
     .number()
     .min(1, "Please give at least 1 star")

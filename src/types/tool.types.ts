@@ -11,6 +11,7 @@ export interface ToolCardProps {
 
 
 export interface Tool {
+  userId: any;
   _id: string;
   toolName: string;
   logo?: string;
@@ -19,7 +20,7 @@ export interface Tool {
     categoryName: string;
   } | null; // populated Category object
   description?: string;
-  pricingType?: "Free" | "Paid" | "Freemium";
+  pricingType?: "Free" | "Paid" | "Premium";
   websiteUrl?: string;
   demoVideoUrl?: string;
   tags?: string[];

@@ -28,15 +28,21 @@ export const reviewApi = baseApi.injectEndpoints({
     getToolReviews: builder.query<AuthResponse, { toolId: string }>({
       query: ({ toolId }) => ({
         url: `api/review/tool/${toolId}`,
-        method: "GET",
+        method: "POST",
       })
     }),
-
+getAllReviews: builder.query<AuthResponse, void>({
+      query: () => ({
+        url: `api/review/getAllReviews`,
+        method: "POST",
+      }),
+      keepUnusedDataFor: 300,
+    }),
     // ✅ Get User Reviews
     getUserReviews: builder.query<AuthResponse, { userId: string }>({
       query: ({ userId }) => ({
         url: `api/review/user/${userId}`,
-        method: "GET",
+        method: "POST",
       })
     }),
   }),
@@ -48,4 +54,5 @@ export const {
   useUpdateReviewMutation,
   useGetToolReviewsQuery,
   useGetUserReviewsQuery,
+  useGetAllReviewsQuery,
 } = reviewApi;

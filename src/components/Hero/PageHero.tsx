@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "../ui/style/pageHero.module.scss";
 import { FaSearch, FaCogs, FaNetworkWired, FaRobot, FaArrowRight } from "react-icons/fa";
 import ScrollDownArrow from "../shared/ScrollDownArrow";
+import Link from "next/link";
 
 interface PageHeroProps {
   content: string;
@@ -112,10 +113,10 @@ const PageHero: React.FC<PageHeroProps> = ({
         {/* CTA Section */}
         {btnText && onBtnClick && (
           <div className={styles.ctaWrapper}>
-            <button className={styles.cyberCta} onClick={onBtnClick}>
-              <span>{btnText}</span>
-              <div className={styles.cyberGlow}></div>
-            </button>
+            <Link href="/auth/login" className={styles.cyberCta}>
+  <span>Add Your Tool</span>
+  <div className={styles.cyberGlow}></div>
+</Link>
           </div>
         )}
       </div>
