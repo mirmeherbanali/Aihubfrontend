@@ -12,6 +12,7 @@ export const reviewSchema = z.object({
     .min(3, "Comment must be at least 3 characters long")
     .max(300, "Comment too long")
     .optional(),
+    status:z.enum(["Pending", "Approved", "Rejected"]).optional()
 });
 
 export type ReviewInput = z.infer<typeof reviewSchema>;

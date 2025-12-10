@@ -35,11 +35,7 @@ export const reviewFields = (
       type: "dropdown",
       name: "status",
       label: "Status",
-      options: [
-        { label: "Pending", value: "Pending" },
-        { label: "Approved", value: "Approved" },
-        { label: "Rejected", value: "Rejected" },
-      ],
+      options: ["Pending", "Approved", "Rejected"],
     });
   }
 

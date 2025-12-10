@@ -161,7 +161,7 @@ const tabActions = [
   
       const formData = buildFormData(data, {
         id: editTool._id,
-        userId:editTool?.userId?._id,
+        userId:userId,
         updated_by: userId,
       });
   

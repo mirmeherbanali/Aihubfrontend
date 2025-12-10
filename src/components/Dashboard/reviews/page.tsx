@@ -48,14 +48,15 @@ export default function Reviews() {
 
 
   const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<ReviewInput>({
-    resolver: zodResolver(reviewSchema),
-    mode: "onBlur",
-  });
+  control,
+  handleSubmit,
+  reset,
+  formState: { isSubmitting },
+} = useForm<ReviewInput & { _id?: string }>({
+  resolver: zodResolver(reviewSchema),
+  mode: "onBlur",
+});
+
 
 
   useEffect(() => {
@@ -98,14 +99,17 @@ export default function Reviews() {
     {
       label: "Manage Reviews",
       onClick: () => {
-        reset();
+              reset({});
         setEditReview(null);
         setTab(1);
       },
     },
     {
       label: isEditMode ? "Update Review" : "Add Review",
-      onClick: () => setTab(2),
+      onClick: () =>{
+              reset({});
+         setTab(2);
+      },
     },
   ];
 
@@ -115,23 +119,20 @@ export default function Reviews() {
       if (isEditMode) {
         /** UPDATE Review Correct Payload */
         await updateReview({
-          reviewId: editReview._id,
-          userId: userId,
-          rating: data.rating,
-          reviewText: data.reviewText,
-          status: data.status,
+          reviewId: editReview._id??"",
+          userId: userId??"",
+          ...data
         }).unwrap();
       } else {
         /** ADD Review */
         await addReview({
           toolId: data.toolId,
-          userId: userId,
-          rating: data.rating,
-          reviewText: data.reviewText,
+          userId: userId??"",
+          ...data
         }).unwrap();
       }
 
-      reset();
+      reset({});
       setEditReview(null);
       setTab(1);
       refetch();
@@ -174,7 +175,7 @@ export default function Reviews() {
       ) : (
         <div className={styles.formContainer}>
           <DynamicForm
-            fields={reviewFields(userType === "Admin", toolOptions, isEditMode)}
+            fields={reviewFields(userType === "Admin", toolOptions, isEditMode) as any}
             control={control}
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}

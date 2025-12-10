@@ -16,7 +16,7 @@ export const reviewApi = baseApi.injectEndpoints({
     }),
 
     // ✅ Update Review
-    updateReview: builder.mutation<AuthResponse,{ toolId: string; userId: string } & ReviewInput>({
+    updateReview: builder.mutation<AuthResponse,{ reviewId: string; userId: string } & ReviewInput>({
   query: (body) => ({
     url: "api/review/updateReview",
     method: "PUT",
