@@ -98,7 +98,7 @@ const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <DynamicForm
-              fields={reviewFields() as unknown as FormField<ReviewInput>[]}
+              fields={reviewFields(userType === "Admin") as unknown as FormField<ReviewInput>[]}
               control={reviewForm.control}
               handleSubmit={reviewForm.handleSubmit}
               onSubmit={handleReviewSubmit}

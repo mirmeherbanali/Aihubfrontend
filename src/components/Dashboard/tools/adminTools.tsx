@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import DynamicTable from "@/components/ui/common/DynamicTable";
 import DynamicForm from "@/components/ui/DynamicForm";
-
+import styles from "../../ui/style/ToolsPage.module.scss"
 import { toolsFields } from "@/lib/dashboard/tools/fields/formFields";
 import { ToolsInput, toolsSchema } from "@/lib/validators/toolsValidator";
 import { TableAction, TableColumn } from "@/types/table.types";
@@ -36,6 +36,7 @@ const AdminTools = () => {
   const raw: any = toolsData?.result?.list;
   const isAdmin = userType === "Admin";
   const isEditMode = !!editTool;
+
 
   const baseTools: Tool[] = Array.isArray(raw)
     ? raw
@@ -67,21 +68,22 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
     setEditTool(null);
     addForm.reset();
   };
-  const tabActions = [
+
+const tabActions = [
     {
       label: "Manage Tools",
       onClick: () => {
-        resetFormAndState();
+        setEditTool(null);
+  addForm.reset({});
         setTab(1);
       },
     },
-
     {
       label: editTool ? "Edit Tool" : "Add Tool",
       onClick: () => {
         if (!editTool) {
-          setEditTool(null);
-          addForm.reset();
+            setEditTool(null);
+  addForm.reset({});
         }
         setTab(2);
       },
@@ -151,7 +153,7 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
   };
 
   const handleUpdateSubmit = async (data: ToolsInput) => {
-    
+  
     try {
       setIsSubmitting(true);
 
@@ -164,7 +166,8 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
       });
   
       await updateTool(formData).unwrap();
-  resetFormAndState();
+     setEditTool(null); 
+addForm.reset({});      // FULL RESET
     refetch();
     setTab(1);
   } catch (error) {
@@ -238,11 +241,11 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
         addForm.reset({
           ...fullTool,
           category: allCategoryIds,
-          status: Array.isArray((fullTool as any)?.status)
-            ? (fullTool as any).status
-            : (fullTool as any)?.status
-            ? [(fullTool as any).status]
-            : undefined,
+          status: Array.isArray(fullTool?.status)
+    ? fullTool.status[0]
+    : fullTool?.status ?? "",
+    logo: fullTool?.logo ?? "",
+  screenshots: fullTool?.screenshots ?? []
         });
 
         setTab(2);
@@ -294,7 +297,10 @@ const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
         }}
       />
 
-      {tab === 1 ? (
+      {tab === 1 ? 
+  toolData.length === 0 ? (
+    <p className={styles.nodatatext}>No Tools Found</p>
+  ) : (
         <DynamicTable
           columns={columns}
           data={toolData}
@@ -327,7 +333,7 @@ onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
             }
           />
         </div>
-      )}
+     )}
     </div>
   );
 };

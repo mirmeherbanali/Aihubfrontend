@@ -11,7 +11,7 @@ import {
   useGetUserReviewsQuery,
   useUpdateReviewMutation,
 } from "@/features/review/reviewApi";
-import { getUserId } from "@/utils/authStorage";
+import { getUserId, getUserType } from "@/utils/authStorage";
 import { reviewSchema, ReviewInput } from "@/lib/validators/reviewValidator";
 import DynamicForm from "@/components/ui/DynamicForm";
 import { FormField } from "@/types/form.types";
@@ -42,13 +42,12 @@ const RatingPage = () => {
   if (isLoading) return <div className={styles.loading}>Loading your reviews...</div>;
   if (!reviewsList.length)
     return <div className={styles.noReviews}>You haven’t reviewed any tools yet.</div>;
-console.log("selectedToolId",selectedToolId)
   // ✅ Handle Review Update — only pass edit ID + tool ID separately
   const handleUpdate = async (data: ReviewInput) => {
     if (!editingReviewId || !selectedToolId) return;
     try {
       await updateReview({
-      toolId: selectedToolId,
+      reviewId: editingReviewId,
         userId: userId ?? "",
         ...data,
     }).unwrap()
@@ -127,7 +126,7 @@ console.log("selectedToolId",selectedToolId)
           .map((r: any) => (
             <div key={r._id}>
               <DynamicForm
-                fields={reviewFields() as unknown as FormField<ReviewInput>[]}
+                fields={reviewFields(getUserType()==="Admin") as unknown as FormField<ReviewInput>[]}
                 control={reviewForm.control}
                 handleSubmit={reviewForm.handleSubmit}
                 onSubmit={handleUpdate}

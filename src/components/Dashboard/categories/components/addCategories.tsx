@@ -56,6 +56,7 @@ export default function AddCategory({
   }, [editCategory, setValue, reset]);
 
   const onSubmit = async (formData: any) => {
+    console.log("formData",formData)
     try {
       const payload = {
         ...formData,
@@ -65,7 +66,7 @@ export default function AddCategory({
       };
 
       if (editCategory) {
-        await updateCategory({ ...payload, _id: editCategory._id }).unwrap();
+        await updateCategory({ ...payload, id: editCategory._id }).unwrap();
       } else {
         await createCategory(payload).unwrap();
       }

@@ -2,19 +2,23 @@
 
 import React, { useState } from "react";
 import DynamicTable from "@/components/ui/common/DynamicTable";
+import styles from "../../ui/style/DynamicTable.module.scss"
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import AddCategory from "./components/addCategories";
 import { TableColumn, TableAction } from "@/types/table.types";
-import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
+import { useGetAllCategoriesQuery,useDeleteCategoryMutation } from "@/features/dashboard/category/categoryApi";
 import { Category } from "@/types/category.types";
 import { FaTrash } from "react-icons/fa";
+import { getUserId } from "@/utils/authStorage";
 export default function CategoryPage() {
+  const userId=getUserId()
   const [tab, setTab] = useState(1);
   const [editCategory, setEditCategory] = useState<Category | undefined>(
     undefined
   );
 
   const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
+  const [deleteCategory]=useDeleteCategoryMutation()
 
   const categoryData: Category[] =
     data?.result?.list?.map((item: any) => ({
@@ -51,8 +55,13 @@ export default function CategoryPage() {
     {
       label: "Delete",
       onClick: (row) => {
-        alert(`🗑️ Deleting: ${row.categoryName}`);
-      },
+  deleteCategory({ 
+    id: row?._id,
+    adminId: userId??""
+  });
+  refetch()
+},
+
     },
   ];
 
@@ -63,9 +72,24 @@ const bulkActions = [
         <FaTrash size={14} /> Delete Selected
       </span>
     ),
-    onClick: (rows: Category[]) =>
-      alert(`Deleting ${rows.length} categories`),
-  },
+     onClick: async (rows: Category[]) => {
+      try {
+        // Collect all IDs
+        const ids = rows.map((item) => item.id);
+
+        // Loop delete
+        for (const id of ids) {
+          await deleteCategory({
+            id,
+            adminId: userId??""
+          });
+        }
+       refetch()
+      } catch (error) {
+        console.error("Failed to delete selected categories");
+      }
+    },
+  }
 ];
 
 
@@ -106,25 +130,32 @@ const bulkActions = [
       />
 
       {tab === 1 ? (
-        <DynamicTable
-          columns={columns}
-          data={categoryData}
-          actions={actions}
-          bulkActions={bulkActions}
-          filterKeys={["status"]}
-          searchKey="categoryName"
-          itemsPerPage={10}
-        />
-      ) : (
-        <AddCategory
-          refetch={refetch}
-          editCategory={editCategory}
-          onSuccess={() => {
-            setEditCategory(undefined);
-            setTab(1);
-          }}
-        />
-      )}
+  categoryData.length === 0 ? (
+    <p className={styles.nodatatext}>
+      No Category Found
+    </p>
+  ) : (
+    <DynamicTable
+      columns={columns}
+      data={categoryData}
+      actions={actions}
+      bulkActions={bulkActions}
+      filterKeys={["status"]}
+      searchKey="categoryName"
+      itemsPerPage={10}
+    />
+  )
+) : (
+  <AddCategory
+    refetch={refetch}
+    editCategory={editCategory}
+    onSuccess={() => {
+      setEditCategory(undefined);
+      setTab(1);
+    }}
+  />
+)}
+
     </div>
   );
 }

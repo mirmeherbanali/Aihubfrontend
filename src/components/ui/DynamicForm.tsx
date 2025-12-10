@@ -242,6 +242,8 @@ function DynamicFormInner<T extends FieldValues>({
 
                 case "multi-image":
                   return (
+                    <>
+                    <p>{field?.label}</p>
                     <Controller
                       key={field.name || idx}
                       name={field.name!}
@@ -255,6 +257,8 @@ function DynamicFormInner<T extends FieldValues>({
                         />
                       )}
                     />
+                    </>
+
                   );
 case "rating":
   return (

@@ -8,6 +8,7 @@ import DynamicForm from "@/components/ui/DynamicForm";
 import { toolsFields } from "@/lib/dashboard/tools/fields/formFields";
 import { toolsSchema, ToolsInput } from "@/lib/validators/toolsValidator";
 import styles from "@/components/ui/style/ToolsPage.module.scss";
+
 import SummaryGrid from "@/components/ui/SummaryGrid";
 import GridCards from "@/components/ui/GridCards";
 import {
@@ -30,6 +31,7 @@ export default function ToolsPage() {
   const [createTool,{isLoading:toolLoading}] = useCreateToolMutation();
   const [updateTool,{isLoading:toolUpdateLoading}] = useUpdateToolMutation();
   const tools = toolsData?.result?.list || [];
+
   const totalSubmitted = tools.length;
 
   const totalPending = tools.filter((t: { status: string; }) => t.status?.toLowerCase() === "pending").length;
@@ -117,7 +119,7 @@ const handleUpdateSubmit = async (data: ToolsInput) => {
 
   const summaryItems = [
   { title: "Total Tools Submitted", value: totalSubmitted },
-  { title: "Pending Approvals", value: totalPending },
+  { title: "Pending Tools", value: totalPending },
   { title: "Approved Tools", value: totalApproved },
 ];
 
