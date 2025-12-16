@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
 import styles from "../../ui/style/Navbar.module.scss";
 import { getToken } from "@/utils/authStorage";
 import { useAuthToggle } from "@/context/AuthToggleContext";
@@ -11,7 +11,7 @@ import ButtonNew from "./ButtonNew";
 export default function NavbarClient() {
   const pathname = usePathname() ?? "";
   const { setIsLogin } = useAuthToggle();
-
+  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -37,6 +37,11 @@ export default function NavbarClient() {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const handleToolClick = () => {
+    setMenuOpen(false);
+    setIsLogin(true);
+    router.push("/tool");
+  };
 
   return (
     <>
@@ -49,20 +54,17 @@ export default function NavbarClient() {
             className={styles.profileImage}
           />
         ) : (
-          !isAuthPage && <ButtonNew />
+          !isAuthPage && <ButtonNew handleLoginClick={handleToolClick} />
         )}
       </div>
-
       {/* MOBILE MENU ICON */}
-      <button
-        type="button"
-        className={styles.mobileMenuIcon}
-        onClick={() => setMenuOpen((prev) => !prev)}
-        aria-label="Toggle navigation menu"
-        aria-expanded={menuOpen}
-      >
-        ☰
-      </button>
+      <div
+          className={styles.mobileMenuIcon}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "✖" : "☰"}
+        </div>
+        
 
       {/* MOBILE MENU */}
       <nav
@@ -104,7 +106,7 @@ export default function NavbarClient() {
 
             {/* MOBILE ONLY CTA */}
             <div className={styles.mobileOnly}>
-              <ButtonNew />
+              <ButtonNew handleLoginClick={handleToolClick}/>
             </div>
           </>
         ) : (

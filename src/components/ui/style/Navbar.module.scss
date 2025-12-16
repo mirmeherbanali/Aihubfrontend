@@ -297,16 +297,4 @@
   }
 }
 
-.noscriptMenu {
-  display: none;
-}
 
-@media (max-width: 768px) {
-  .noscriptMenu {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px;
-    background: white;
-  }
-}
