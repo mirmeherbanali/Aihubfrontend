@@ -142,6 +142,9 @@
       transform: scale(1.05);
     }
   }
+  @media (max-width: 768px) {
+    display: none; // hide on mobile
+  }
 }
 
 /* ============================
@@ -272,7 +275,7 @@
 }
 
 @media (max-width: 768px) {
-  .navContainer {
+  .desktopMenu {
     display: none;
   }
 
@@ -291,5 +294,19 @@
     .logoIcon {
       font-size: 24px;
     }
+  }
+}
+
+.noscriptMenu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .noscriptMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    background: white;
   }
 }
