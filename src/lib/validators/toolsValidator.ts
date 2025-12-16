@@ -28,22 +28,23 @@ export const toolsSchema = z.object({
   category: z
     .array(z.string())
     .min(1, "At least one category is required"),
+  
+  shortDescription: z.string().min(10, "Short Description is too short"),
 
   description: z.string().min(10, "Description is too short"),
 
   pricingType: z.enum(["Free", "Paid", "Premium"], {
     required_error: "Pricing Type is required",
   }),
-
+ 
   websiteUrl: z.string().url("Invalid website URL"),
 
   demoVideoUrl: z.string().url("Invalid demo video URL").optional(),
 
   tags: z.array(z.string()).optional(),
-
+  startingPrice: z.string().optional(),
   features: z.array(z.string()).optional(),
-
-  logo: validatedFileOrUrl.optional(),
+  logo: validatedFileOrUrl.optional(), 
   status: z.enum(["Pending", "Approved", "Rejected"]).optional(),
   referringDomains: z.string().optional(),
   uniqueBacklinks: z.string().optional(),

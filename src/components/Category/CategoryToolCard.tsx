@@ -58,12 +58,22 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
             />
           </div>
 
-          <button
+          {/* <button
             className={`${styles.bookmarkBtn} ${isBookmarked ? styles.bookmarked : ""}`}
             onClick={toggleBookmark}
           >
             <FaBookmark />
-          </button>
+          </button> */}
+           <div className={styles.gradientPrice}>
+ 
+           <div className={styles.priceTag}>
+              <span className={styles.priceLabel}>Starting Price</span>
+              <span className={styles.priceAmount}>
+                ${tool.pricingType || "Free"}
+              </span>
+            </div>
+           </div>
+
         </div>
 
         {/* Content */}
@@ -87,12 +97,7 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
           )}
 
           <div className={styles.cardFooter}>
-            <div className={styles.priceTag}>
-              <span className={styles.priceLabel}>Starting at</span>
-              <span className={styles.priceAmount}>
-                {tool.pricingType || "Free"}
-              </span>
-            </div>
+           
 
             <button className={styles.ctaButton} disabled={buttonLoading}>
               {buttonLoading ? (

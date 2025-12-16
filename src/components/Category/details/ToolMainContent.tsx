@@ -7,11 +7,12 @@ import ReviewSection from "./ReviewSection";
 
 interface ToolMainContentProps {
   tool: any;
+  category:any,
   reviewsData?: any;
   isReviewsLoading?: boolean;
 }
 
-const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData, isReviewsLoading }) => {
+const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData,category, isReviewsLoading }) => {
   if (!tool) return null;
 
   // TRACK ACTIVE SCREENSHOT
@@ -94,9 +95,12 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData, is
         {/* Tags */}
         {tool.tags?.length > 0 && (
           <div className={styles.tagsBox}>
-            <h3>Tags</h3>
+            <h3>Category</h3>
             <div className={styles.tagsGrid}>
-              <span className={styles.tag}>{tool.tags.join(", ")}</span>
+              
+              <span className={styles.tag}>{category.categoryName}</span>
+
+              {/* <span className={styles.tag}>{tool.tags.join(", ")}</span> */}
             </div>
           </div>
         )}

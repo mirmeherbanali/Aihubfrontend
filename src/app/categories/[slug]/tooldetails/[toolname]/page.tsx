@@ -86,7 +86,7 @@ const ToolDetailsPage = () => {
 
       <div className={styles.pageLayout}>
         <main className={styles.mainSection}>
-          <ToolMainContent tool={tool} reviewsData={reviewsData} isReviewsLoading={isReviewsLoading} />
+          <ToolMainContent tool={tool} reviewsData={reviewsData} category={category} isReviewsLoading={isReviewsLoading} />
         </main>
 {alternativeTools.length > 0 && (
         <aside className={styles.sidebarSection}>
