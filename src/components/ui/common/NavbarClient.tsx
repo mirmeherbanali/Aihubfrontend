@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname,useRouter } from "next/navigation";
-import styles from "../../ui/style/Navbar.module.scss";
+import styles from "../style/Navbar.module.scss";
 import { getToken } from "@/utils/authStorage";
 import { useAuthToggle } from "@/context/AuthToggleContext";
 import ButtonNew from "./ButtonNew";

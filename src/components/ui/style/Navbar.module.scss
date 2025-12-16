@@ -200,7 +200,10 @@
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
-  button {
+  a {
+     display: flex;              // ✅ use flex
+    align-items: center;        // vertical center
+    justify-content: center;
     width: 100%;
     padding: 14px;
     background: rgba(255, 255, 255, 0.08);
@@ -209,6 +212,7 @@
     font-size: 17px;
     font-weight: 600;
     color: #e8f4ff;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
 
@@ -226,6 +230,7 @@
     }
   }
 }
+
 
 /* ============================
    LOGIN + ADD TOOL SECTION
