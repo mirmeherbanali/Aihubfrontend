@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import DynamicHeaderTabs from "@/components/DynamicHeaderTabs/DynamicHeaderTabs";
 import DynamicTable from "@/components/ui/common/DynamicTable";
 import DynamicForm from "@/components/ui/DynamicForm";
-import styles from "../../ui/style/ToolsPage.module.scss"
+import styles from "../../ui/style/ToolsPage.module.scss";
 import { toolsFields } from "@/lib/dashboard/tools/fields/formFields";
 import { ToolsInput, toolsSchema } from "@/lib/validators/toolsValidator";
 import { TableAction, TableColumn } from "@/types/table.types";
@@ -18,63 +18,64 @@ import {
   useCreateToolMutation,
   useGetAllToolsQuery,
   useUpdateToolMutation,
-  useDeleteToolMutation
+  useDeleteToolMutation,
 } from "@/features/tools/toolsApi";
 import { getUserId, getUserType } from "@/utils/authStorage";
 
 const AdminTools = () => {
   const userId = getUserId();
-  const userType = getUserType()
+  const userType = getUserType();
   const [tab, setTab] = useState(1);
   const [editTool, setEditTool] = useState<Tool | null>(null);
   const router = useRouter();
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const categories = categoriesData?.result?.list || [];
   const { data: toolsData, refetch } = useGetAllToolsQuery();
-  const[deleteTool]=useDeleteToolMutation()
+  const [deleteTool] = useDeleteToolMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const raw: any = toolsData?.result?.list;
   const isAdmin = userType === "Admin";
   const isEditMode = !!editTool;
-
 
   const baseTools: Tool[] = Array.isArray(raw)
     ? raw
     : Array.isArray(toolsData?.result)
       ? toolsData?.result
       : raw?.list || [];
-const sortedBaseTools = [...baseTools].sort(
-  (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-);
+  const sortedBaseTools = [...baseTools].sort(
+    (a, b) =>
+      new Date(b.createdAt ?? 0).getTime() -
+      new Date(a.createdAt ?? 0).getTime()
+  );
 
-// 2️⃣ Build table rows from already-sorted tools
-const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
-  const categoriesForTool = Array.isArray(tool.category)
-    ? tool.category
-    : tool.category
-    ? [tool.category]
-    : [];
+  // 2️⃣ Build table rows from already-sorted tools
+  const toolData: Tool[] = sortedBaseTools.flatMap((tool) => {
+    const categoriesForTool = Array.isArray(tool.category)
+      ? tool.category
+      : tool.category
+        ? [tool.category]
+        : [];
 
-  return categoriesForTool.map((cat: any) => ({
-    ...tool,
-    category: cat,
-    rowId: `${tool._id}-${cat._id}`,
-  }));
-});
+    return categoriesForTool.map((cat: any) => ({
+      ...tool,
+      category: cat,
+      rowId: `${tool._id}-${cat._id}`,
+    }));
+  });
   const [createTool] = useCreateToolMutation();
   const [updateTool] = useUpdateToolMutation();
-  
+
   const resetFormAndState = () => {
     setEditTool(null);
     addForm.reset();
   };
 
-const tabActions = [
+  const tabActions = [
     {
       label: "Manage Tools",
       onClick: () => {
         setEditTool(null);
-  addForm.reset({});
+        addForm.reset({});
         setTab(1);
       },
     },
@@ -82,41 +83,40 @@ const tabActions = [
       label: editTool ? "Edit Tool" : "Add Tool",
       onClick: () => {
         if (!editTool) {
-            setEditTool(null);
-  addForm.reset({});
+          setEditTool(null);
+          addForm.reset({});
         }
         setTab(2);
       },
       disabled: !!editTool,
     },
   ];
-  
 
   const addForm = useForm<ToolsInput>({
     resolver: zodResolver(toolsSchema),
     mode: "onBlur",
   });
 
-   const buildFormData = (data: ToolsInput, extra: Record<string, any> = {}) => {
+  const buildFormData = (data: ToolsInput, extra: Record<string, any> = {}) => {
     const formData = new FormData();
-  
+
     // handle screenshots (new + existing)
     if (Array.isArray(data.screenshots)) {
       const uploaded = data.screenshots.filter((f) => f instanceof File);
       const existing = data.screenshots.filter((f) => typeof f === "string");
-  
+
       uploaded.forEach((file) => formData.append("screenshots", file));
-  
+
       if (existing.length > 0) {
         formData.append("existingScreenshots", JSON.stringify(existing));
       }
     }
-  
+
     const merged = { ...data, ...extra };
-  
+
     Object.entries(merged).forEach(([key, value]) => {
       if (key === "screenshots") return;
-  
+
       if (Array.isArray(value)) {
         formData.append(key, JSON.stringify(value));
       } else if (value instanceof File) {
@@ -125,15 +125,18 @@ const tabActions = [
         formData.append(key, String(value));
       }
     });
-  
+
     return formData;
   };
 
   const handleAddSubmit = async (data: ToolsInput) => {
     try {
       setIsSubmitting(true);
-      const formData = buildFormData(data, { userId,created_by: userId,
-        status: "Approved",}) 
+      const formData = buildFormData(data, {
+        userId,
+        created_by: userId,
+        status: "Approved",
+      });
       // const submissionData = {
       //   ...data,
       //   userId: userId,
@@ -153,30 +156,28 @@ const tabActions = [
   };
 
   const handleUpdateSubmit = async (data: ToolsInput) => {
-  
     try {
       setIsSubmitting(true);
 
-    if (!editTool?._id) return;
-  
+      if (!editTool?._id) return;
+
       const formData = buildFormData(data, {
         id: editTool._id,
-        userId:userId,
+        userId: userId,
         updated_by: userId,
       });
-  
-      await updateTool(formData).unwrap();
-     setEditTool(null); 
-addForm.reset({});      // FULL RESET
-    refetch();
-    setTab(1);
-  } catch (error) {
-    console.error("Error updating tool:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
 
+      await updateTool(formData).unwrap();
+      setEditTool(null);
+      addForm.reset({}); // FULL RESET
+      refetch();
+      setTab(1);
+    } catch (error) {
+      console.error("Error updating tool:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const columns: TableColumn<Tool>[] = [
     { key: "toolName", label: "Tool Name" },
@@ -184,15 +185,15 @@ addForm.reset({});      // FULL RESET
       key: "category",
       label: "Category",
       render: (tool) => {
-          // support both array or single-object shapes for tool.category
-          const catId =
-            Array.isArray(tool?.category) && tool.category.length > 0
-              ? tool.category[0]._id
-              : (tool as any)?.category?._id;
+        // support both array or single-object shapes for tool.category
+        const catId =
+          Array.isArray(tool?.category) && tool.category.length > 0
+            ? tool.category[0]._id
+            : (tool as any)?.category?._id;
 
-          const category = categories.find((c: any) => c._id === catId);
-          return category ? category.categoryName : "—";
-        },
+        const category = categories.find((c: any) => c._id === catId);
+        return category ? category.categoryName : "—";
+      },
     },
     { key: "status", label: "Status" },
     {
@@ -242,10 +243,10 @@ addForm.reset({});      // FULL RESET
           ...fullTool,
           category: allCategoryIds,
           status: Array.isArray(fullTool?.status)
-    ? fullTool.status[0]
-    : fullTool?.status ?? "",
-    logo: fullTool?.logo ?? "",
-  screenshots: fullTool?.screenshots ?? []
+            ? fullTool.status[0]
+            : (fullTool?.status ?? ""),
+          logo: fullTool?.logo ?? "",
+          screenshots: fullTool?.screenshots ?? [],
         });
 
         setTab(2);
@@ -253,35 +254,34 @@ addForm.reset({});      // FULL RESET
     },
 
     {
-    label: "Delete",
-    onClick: async (row) => {
-      if (!confirm(`Delete tool "${row.toolName}"?`)) return;
+      label: "Delete",
+      onClick: async (row) => {
+        if (!confirm(`Delete tool "${row.toolName}"?`)) return;
 
-      await deleteTool({ id: row._id, adminId: userId??"" });
+        await deleteTool({ id: row._id, adminId: userId ?? "" });
 
-      alert("Tool deleted");
-      refetch();
+        alert("Tool deleted");
+        refetch();
+      },
     },
-  },
   ];
 
   const bulkActions = [
-  {
-    label: "Delete Selected",
-    onClick: async (rows: any[]) => {
-      if (!rows.length) return;
-      if (!confirm(`Delete ${rows.length} tools?`)) return;
+    {
+      label: "Delete Selected",
+      onClick: async (rows: any[]) => {
+        if (!rows.length) return;
+        if (!confirm(`Delete ${rows.length} tools?`)) return;
 
-      for (const tool of rows) {
-        await deleteTool({ id: tool._id, adminId: userId??"" });
-      }
+        for (const tool of rows) {
+          await deleteTool({ id: tool._id, adminId: userId ?? "" });
+        }
 
-      alert("Selected tools deleted");
-      refetch();
+        alert("Selected tools deleted");
+        refetch();
+      },
     },
-  },
-];
-
+  ];
 
   return (
     <div className="tab-content-wrapper">
@@ -297,19 +297,20 @@ addForm.reset({});      // FULL RESET
         }}
       />
 
-      {tab === 1 ? 
-  toolData.length === 0 ? (
-    <p className={styles.nodatatext}>No Tools Found</p>
-  ) : (
-        <DynamicTable
-          columns={columns}
-          data={toolData}
-          actions={actions}
-          bulkActions={bulkActions}
-          searchKey="toolName"
-          filterKeys={["status"]}
-          itemsPerPage={10}
-        />
+      {tab === 1 ? (
+        toolData.length === 0 ? (
+          <p className={styles.nodatatext}>No Tools Found</p>
+        ) : (
+          <DynamicTable
+            columns={columns}
+            data={toolData}
+            actions={actions}
+            bulkActions={bulkActions}
+            searchKey="toolName"
+            filterKeys={["status"]}
+            itemsPerPage={10}
+          />
+        )
       ) : (
         <div
           style={{
@@ -323,7 +324,7 @@ addForm.reset({});      // FULL RESET
             fields={toolsFields(categories, isAdmin, isEditMode)}
             control={addForm.control}
             handleSubmit={addForm.handleSubmit}
-onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
+            onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
             buttonText={
               isSubmitting
                 ? "Submitting..."
@@ -333,7 +334,7 @@ onSubmit={editTool ? handleUpdateSubmit : handleAddSubmit}
             }
           />
         </div>
-     )}
+      )}
     </div>
   );
 };
