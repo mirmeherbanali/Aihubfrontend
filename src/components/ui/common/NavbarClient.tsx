@@ -54,7 +54,7 @@ export default function NavbarClient() {
             className={styles.profileImage}
           />
         ) : (
-          !isAuthPage && <ButtonNew handleLoginClick={handleToolClick} />
+          !isAuthPage && <ButtonNew href ="/tool"  onClick={handleToolClick} />
         )}
       </div>
       {/* MOBILE MENU ICON */}
@@ -106,7 +106,7 @@ export default function NavbarClient() {
 
             {/* MOBILE ONLY CTA */}
             <div className={styles.mobileOnly}>
-              <ButtonNew handleLoginClick={handleToolClick}/>
+              <ButtonNew href="/tool" onClick={handleToolClick}/>
             </div>
           </>
         ) : (

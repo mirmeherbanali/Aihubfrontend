@@ -34,12 +34,13 @@ export const toolsSchema = z.object({
   demoVideoUrl: z.string().url("Invalid demo video URL").optional(),
 
   tags: z.array(z.string()).optional(),
-  startingPrice: z.string().optional(),
+  startingPrice: z.union([z.string(), z.number()]).optional(),
+
   features: z.array(z.string()).optional(),
   logo: validatedFileOrUrl.optional(),
   status: z.enum(["Pending", "Approved", "Rejected"]).optional(),
-  referringDomains: z.string().optional(),
-  uniqueBacklinks: z.string().optional(),
+  // referringDomains: z.string().optional(),
+  // uniqueBacklinks: z.string().optional(),
   screenshots: z.array(validatedFileOrUrl).optional(),
 });
 
