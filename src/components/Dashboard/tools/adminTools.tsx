@@ -69,7 +69,7 @@ const AdminTools = () => {
     setEditTool(null);
     addForm.reset();
   };
-console.log("editTool",editTool)
+
   const tabActions = [
     {
       label: "Manage Tools",
