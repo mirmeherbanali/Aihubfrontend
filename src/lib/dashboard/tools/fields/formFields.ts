@@ -32,10 +32,18 @@ export const toolsFields = (
     },
     {
       type: "textarea",
+      name: "shortDescription",
+      label: "Short Description",
+      placeholder: "Enter a Short  description",
+      row: 3,
+      col: 1,
+    },
+    {
+      type: "textarea",
       name: "description",
       label: "Tool Description",
       placeholder: "Enter a detailed description",
-      row: 3,
+      row: 4,
       col: 1,
     },
     {
@@ -43,7 +51,15 @@ export const toolsFields = (
       name: "pricingType",
       label: "Pricing Type",
       options: ["Free", "Paid", "Premium"],
-      row: 4,
+      row: 5,
+      col: 1,
+    },
+    {
+      type: "input",
+      name: "startingPrice",
+      label: "Monthly Starting Price( in USD )",
+      placeholder: "Enter Price",
+      row: 6,
       col: 1,
     },
     {
@@ -51,35 +67,42 @@ export const toolsFields = (
       name: "websiteUrl",
       label: "Website URL",
       placeholder: "https://example.com",
-      row: 5,
+      row: 7,
       col: 1,
     },
-    {
-      type: "chips",
-      name: "tags",
-      label: "Tags",
-      row: 7,
+    // {
+    //   type: "chips",
+    //   name: "tags",
+    //   label: "Tags",
+    //   row: 7,
+    //   col: 1,
+    // },
+     {
+      type: "input",
+      name: "demoVideoUrl ",
+      label: "Product Demo Video YouTube Link",
+      row: 8,
       col: 1,
     },
     {
       type: "chips",
       name: "features",
       label: "Key Features",
-      row: 8,
+      row: 9,
       col: 1,
     },
     {
       type: "image",
       name: "logo",
       label: "Tool Logo",
-      row: 11,
+      row: 12,
       col: 1,
     },
     {
       type: "multi-image",
       name: "screenshots",
       label: "Screenshots",
-      row: 12,
+      row: 13,
       col: 1,
     },
   ];
@@ -100,7 +123,7 @@ if (isAdmin && isEditMode) {
       name: "referringDomains",
       label: "Referring Domains",
       placeholder: "Enter referring domains",
-      row: 9,
+      row: 10,
       col: 1,
     },
     {
@@ -108,7 +131,7 @@ if (isAdmin && isEditMode) {
       name: "uniqueBacklinks",
       label: "Unique Backlinks",
       placeholder: "Enter unique backlinks",
-      row: 10,
+      row: 11,
       col: 1,
     }
   );
@@ -118,7 +141,7 @@ if (isAdmin && isEditMode) {
   fields.push({
     type: "button",
     label: "",
-    row: 13,
+    row: 14,
     col: 1,
   });
 

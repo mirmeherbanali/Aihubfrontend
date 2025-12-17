@@ -1,9 +1,20 @@
 import React from "react";
-import "../style//ButtonNew.scss";
+import Link from "next/link";
+import "../style/ButtonNew.scss";
 
-const ButtonNew = ({ handleLoginClick }: { handleLoginClick?: React.MouseEventHandler<HTMLButtonElement> }) => {
+type ButtonNewProps = {
+  href: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+};
+
+const ButtonNew = ({ href, onClick }: ButtonNewProps) => {
   return (
-    <button className="btn" aria-label="Get started" onClick={handleLoginClick}>
+    <Link
+      href={href}
+      className="btn"
+      aria-label="Get started"
+      onClick={onClick}
+    >
       <span className="content">
         <svg
           className="icon"
@@ -29,8 +40,9 @@ const ButtonNew = ({ handleLoginClick }: { handleLoginClick?: React.MouseEventHa
         </svg>
         <span>Add Tool</span>
       </span>
+
       <span className="badge">New</span>
-    </button>
+    </Link>
   );
 };
 
