@@ -24,7 +24,9 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
 
   const truncateWords = (text = "", limit = 20) => {
     const words = text.trim().split(/\s+/);
-    return words.length <= limit ? text : words.slice(0, limit).join(" ") + " ...";
+    return words.length <= limit
+      ? text
+      : words.slice(0, limit).join(" ") + " ...";
   };
 
   return (
@@ -43,7 +45,11 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
         <div className={styles.gradientHeader}>
           <div className={styles.logoContainer}>
             {tool.logo ? (
-              <img src={tool.logo} alt={tool.toolName} className={styles.logo} />
+              <img
+                src={tool.logo}
+                alt={tool.toolName}
+                className={styles.logo}
+              />
             ) : (
               <div className={styles.placeholderLogo}>{tool.toolName[0]}</div>
             )}
@@ -58,12 +64,20 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
             />
           </div>
 
-          <button
+          {/* <button
             className={`${styles.bookmarkBtn} ${isBookmarked ? styles.bookmarked : ""}`}
             onClick={toggleBookmark}
           >
             <FaBookmark />
-          </button>
+          </button> */}
+          <div className={styles.gradientPrice}>
+            <div className={styles.priceTag}>
+              <span className={styles.priceLabel}>Starting Price</span>
+              <span className={styles.priceAmount}>
+                ${tool.startingPrice || "0"}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
@@ -76,24 +90,19 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
             <section className={styles.features}>
               <h3 className={styles.featuresTitle}>Key Features</h3>
               <ul className={styles.featuresList}>
-                {tool.features.slice(0, 3).map((feature: string, idx: number) => (
-                  <li key={idx}>
-                    <FaBolt className={styles.featureIcon} />
-                    {truncateWords(feature, 10)}
-                  </li>
-                ))}
+                {tool.features
+                  .slice(0, 3)
+                  .map((feature: string, idx: number) => (
+                    <li key={idx}>
+                      <FaBolt className={styles.featureIcon} />
+                      {truncateWords(feature, 10)}
+                    </li>
+                  ))}
               </ul>
             </section>
           )}
 
           <div className={styles.cardFooter}>
-            <div className={styles.priceTag}>
-              <span className={styles.priceLabel}>Starting at</span>
-              <span className={styles.priceAmount}>
-                {tool.pricingType || "Free"}
-              </span>
-            </div>
-
             <button className={styles.ctaButton} disabled={buttonLoading}>
               {buttonLoading ? (
                 <>

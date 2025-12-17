@@ -5,7 +5,7 @@ import styles from "@/components/ui/style/ToolRightSidebar.module.scss";
 
 interface ToolRightSidebarProps {
   tool: any;
-  category: any; // includes `tools` for alternatives
+  category: any; 
   onViewAll: () => void;
 }
 
@@ -13,7 +13,18 @@ const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category, onV
   if (!tool || !category?.tools) return null;
 
   return (
+    
     <aside className={styles.sidebar}>
+       <div className={styles.pricingCard}>
+        <h3 className={styles.pricingTitle}>Pricing</h3>
+        <div className={styles.priceBox}>
+          <span className={styles.priceLabel}>Starting Price</span>
+          <span className={styles.priceValue}>
+            ${tool.startingPrice || "0"}
+          </span>
+        </div>
+      </div>
+      
       <h2 className={styles.title}>{tool.toolName} Alternatives</h2>
 
       <div className={styles.cardList}>

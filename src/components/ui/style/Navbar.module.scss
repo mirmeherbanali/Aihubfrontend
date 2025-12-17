@@ -39,7 +39,7 @@
   font-size: 30px;
   color: #fff;
   text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-
+  text-decoration: none;
   .logoIcon {
     font-size: 28px;
     animation: pulse 2s infinite;
@@ -142,6 +142,9 @@
       transform: scale(1.05);
     }
   }
+  @media (max-width: 768px) {
+    display: none; // hide on mobile
+  }
 }
 
 /* ============================
@@ -197,7 +200,10 @@
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
-  button {
+  a {
+     display: flex;              // ✅ use flex
+    align-items: center;        // vertical center
+    justify-content: center;
     width: 100%;
     padding: 14px;
     background: rgba(255, 255, 255, 0.08);
@@ -206,6 +212,7 @@
     font-size: 17px;
     font-weight: 600;
     color: #e8f4ff;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.25s ease;
 
@@ -223,6 +230,7 @@
     }
   }
 }
+
 
 /* ============================
    LOGIN + ADD TOOL SECTION
@@ -272,7 +280,7 @@
 }
 
 @media (max-width: 768px) {
-  .navContainer {
+  .desktopMenu {
     display: none;
   }
 
@@ -293,3 +301,5 @@
     }
   }
 }
+
+

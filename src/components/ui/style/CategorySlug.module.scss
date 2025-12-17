@@ -27,21 +27,19 @@
   padding: 20px 0;
 }
 
-/* Tools Grid - Beautiful clean layout */
+/* Tools list - column layout */
 .toolsGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 25px;
   transition: 0.3s ease;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 22px;
+  @media (max-width: 768px) {
+    gap: 20px;
   }
 
   @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 16px;
   }
 }
 
@@ -52,7 +50,7 @@
   padding: 20px 0 10px;
 }
 
-/* Smooth fade animation for grid items */
+/* Smooth fade animation for items */
 .toolsGrid > * {
   animation: fadeIn 0.4s ease-in-out;
 }
