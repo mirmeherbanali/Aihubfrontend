@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import styles from "../ui/style/pageHero.module.scss";
 import { FaSearch, FaCogs, FaNetworkWired, FaRobot, FaArrowRight } from "react-icons/fa";

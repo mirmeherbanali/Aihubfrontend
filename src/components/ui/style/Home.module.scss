@@ -1,0 +1,19 @@
+/* Default: JavaScript DISABLED */
+.homeServer {
+  display: block;
+}
+
+.homeClient {
+  display: none;
+}
+
+/* When JavaScript is ENABLED */
+:global(html.js-enabled) {
+  .homeServer {
+    display: none;
+  }
+
+  .homeClient {
+    display: block;
+  }
+}
