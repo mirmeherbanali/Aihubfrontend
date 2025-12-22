@@ -4,19 +4,32 @@ import { useState, useMemo } from "react";
 import PageHero from "@/components/Hero/PageHero";
 import RadioPagination from "@/components/ui/common/RadioPagination";
 import styles from "../../components/ui/style/Blog.module.scss"
+import { useRouter } from "next/navigation";
 
-const blogs = Array.from({ length: 24 }).map((_, i) => ({
-  id: i + 1,
-  title: `How AI Tools Improve Productivity ${i + 1}`,
-  category: "AI Tools",
-  author: "Mir Meherban Alli",
-  date: "December 19, 2025",
-  image: "/blog-placeholder.png",
-}));
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+
+const blogs = Array.from({ length: 24 }).map((_, i) => {
+  const title = `How AI Tools Improve Productivity ${i + 1}`;
+  return {
+    id: i + 1,
+    title,
+    slug: slugify(title),
+    category: "AI Tools",
+    author: "Mir Meherban Alli",
+    date: "December 19, 2025",
+    image: "/blog-placeholder.png",
+  };
+});
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
 
   const blogsPerPage = 6;
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
@@ -56,7 +69,12 @@ export default function BlogPage() {
       {/* BLOG CARDS */}
       <section className={styles.gridWrapper}>
         {paginatedBlogs.map((blog) => (
-          <article key={blog.id} className={styles.blogCard}>
+          <article
+  key={blog.id}
+  className={styles.blogCard}
+  onClick={() => router.push(`/blog/${blog.slug}`)}
+>
+
             <div className={styles.imageWrapper}>
               <img src={blog.image} alt={blog.title} />
             </div>
