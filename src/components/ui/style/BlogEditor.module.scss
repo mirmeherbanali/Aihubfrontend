@@ -1,0 +1,216 @@
+/* =========================
+   CONTAINER
+========================= */
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   GRID ROWS (CMS STYLE)
+========================= */
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+/* =========================
+   COMMON FIELD
+========================= */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    background: #fff;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  input[type="date"] {
+    cursor: pointer;
+  }
+}
+
+/* =========================
+   INLINE ACTION BUTTON
+========================= */
+.inlineBtn {
+  margin-top: 24px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #007acc;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: #007acc;
+  }
+}
+
+/* =========================
+   RICH TEXT EDITOR
+========================= */
+.editorWrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+
+  :global(.ql-toolbar) {
+    border-radius: 14px 14px 0 0;
+    border-color: #e5e7eb;
+  }
+
+  :global(.ql-container) {
+    border-radius: 0 0 14px 14px;
+    font-size: 15px;
+  }
+
+  :global(.ql-editor) {
+    min-height: 520px; /* 🔥 HEIGHT FIX */
+    padding: 18px;
+    line-height: 1.7;
+  }
+}
+
+/* =========================
+   IMAGE PICKER
+========================= */
+.imageBox {
+  width: 120px;
+  height: 120px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: #eef2ff;
+    border-color: #2563eb;
+    color: #2563eb;
+  }
+}
+
+/* =========================
+   RADIO GROUP
+========================= */
+.radioGroup {
+  display: flex;
+  gap: 28px;
+  margin-top: 6px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  input {
+    accent-color: #2563eb;
+  }
+}
+
+/* =========================
+   AUTHOR GRID
+========================= */
+.authorGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 36px;
+
+  button {
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  button:first-child {
+    background: #e5e7eb;
+    color: #111827;
+
+    &:hover {
+      background: #d1d5db;
+    }
+  }
+
+  .primary {
+    background: #2563eb;
+    color: #fff;
+
+    &:hover {
+      background: #1e40af;
+    }
+  }
+}
+.radioGroup {
+  display: flex;
+  gap: 28px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  input {
+    accent-color: #2563eb;
+  }
+}
