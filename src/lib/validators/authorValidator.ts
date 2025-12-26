@@ -12,13 +12,11 @@ export const authorSchema = z.object({
     .optional(),
 
   socialLinks: z
-    .array(
-      z
-        .string()
-        .url("Enter a valid URL")
-        .min(5, "Invalid social link")
-    )
-    .optional(),
+  .string()
+  .url("Enter a valid URL")
+  .min(5, "Invalid social link")
+  .optional(),
+
 
   authorImage: z
     .any()
