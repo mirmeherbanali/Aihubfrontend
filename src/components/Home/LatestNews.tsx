@@ -1,42 +1,59 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/latestNews.module.scss";
+import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 
 const LatestNews = () => {
-  const news = [
-    { id: 1, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
-    { id: 2, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
-    { id: 3, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
-    { id: 4, title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit" },
-  ];
+  const { data, isLoading } = useGetAllBlogsQuery();
+
+  // ✅ only published blogs
+  const blogs =
+    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+
+  // ✅ take latest 4 blogs
+  const latestBlogs = blogs.slice(0, 4);
+
+  if (isLoading) return null;
 
   return (
     <section className={styles.newsSection}>
-      <h2>Latest News on AI</h2>
+      <h2>Latest Blogs</h2>
 
       <div className={styles.newsGrid}>
-        {news.map((item) => (
+        {latestBlogs.map((item: any) => (
           <Link
-            key={item.id}
-            href={`/news/${item.id}`}
+            key={item._id}
+            href={`/blog/${item.slug}`}
             className={styles.card}
           >
+            {/* ===== UPPER PART ===== */}
             <div className={styles.upperPart}>
-              <div className={styles.upperPartFace}>{item.title}</div>
+              <div className={styles.upperPartFace}>
+                {item.blogTitle}
+              </div>
+
               <div className={styles.upperPartBack}>
-                Some Additional Information At The Back Side
+                {item.metaDescription}
               </div>
             </div>
 
+            {/* ===== LOWER PART ===== */}
             <div className={styles.lowerPart}>
-              <div className={styles.lowerPartFace}>Face Side</div>
-              <div className={styles.lowerPartBack}>Back Side</div>
+              <div className={styles.lowerPartFace}>
+                {item.author}
+              </div>
+
+              <div className={styles.lowerPartBack}>
+                {new Date(item.createdAt).toLocaleDateString()}
+              </div>
             </div>
           </Link>
         ))}
       </div>
 
-      <Link href="/news" className={styles.viewBtn}>
+      <Link href="/blog" className={styles.viewBtn}>
         View All <span>›</span>
       </Link>
     </section>
