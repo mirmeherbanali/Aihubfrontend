@@ -17,7 +17,6 @@ export const authorSchema = z.object({
   .min(5, "Invalid social link")
   .optional(),
 
-
   authorImage: z
     .any()
     .optional(), // handled as File via FormData

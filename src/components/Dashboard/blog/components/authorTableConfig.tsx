@@ -65,10 +65,10 @@ export const BLOG_COLUMNS = [
     key: "featuredImage",
     label: "Image",
     render: (row: any) =>
-      row.featuredImage ? (
+      row?.featuredImage ? (
         <img
-          src={row.featuredImage}
-          alt={row.title}
+          src={row?.featuredImage?.url}
+          alt={row.featuredImage?.titleText}
           width={50}
           height={40}
           style={{ borderRadius: 6, objectFit: "cover" }}
@@ -78,10 +78,10 @@ export const BLOG_COLUMNS = [
       ),
   },
   {
-    key: "title",
+    key: "blogTitle",
     label: "Title",
     render: (row: any) =>
-      row.title?.length > 50 ? row.title.slice(0, 50) + "..." : row.title || "-",
+      row.blogTitle?.length > 50 ? row.blogTitle.slice(0, 50) + "..." : row.blogTitle || "-",
   },
   {
     key: "slug",
@@ -93,10 +93,19 @@ export const BLOG_COLUMNS = [
     render: (row: any) => row.author?.authorName || row.author || "-",
   },
   {
-    key: "category",
-    label: "Category",
-    render: (row: any) => row.category?.name || row.category || "-",
-  },
+  key: "categories",
+  label: "Category",
+  render: (row: any) =>
+    row.categories?.map((p: any) => p?.categoryName).join(", ") || "-",
+}
+,
+
+ {
+  key: "status",
+  label: "Status",
+  render: (row: any) =>  row.status || "-",
+}
+,
   {
     key: "publishedDate",
     label: "Published",

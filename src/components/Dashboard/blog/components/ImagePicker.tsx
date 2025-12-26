@@ -10,23 +10,31 @@ export default function ImagePicker({ value, onChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!value) {
-      setPreview(null);
-      return;
-    }
+  if (!value) {
+    setPreview(null);
+    return;
+  }
 
-    if (typeof value === "string") {
-      // Existing image URL
-      setPreview(value);
-    } else {
-      // New File object
-      const objectUrl = URL.createObjectURL(value);
-      setPreview(objectUrl);
+  // ✅ Existing image URL (string)
+  if (typeof value === "string") {
+    setPreview(value);
+    return;
+  }
 
-      // Cleanup when component unmounts or value changes
-      return () => URL.revokeObjectURL(objectUrl);
-    }
-  }, [value]);
+  // ✅ New upload
+  if (value instanceof File) {
+    const objectUrl = URL.createObjectURL(value);
+    setPreview(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }
+
+  // ✅ Fallback for edit-mode objects (important)
+  if (typeof value === "object" && "url" in value) {
+    setPreview((value as any).url);
+  }
+}, [value]);
+
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent opening file selector

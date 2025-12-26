@@ -29,8 +29,8 @@ export const BLOG_FORM = [
     type: "select",
     name: "author",
     label: "Select Author",
-    isMulti: true,
-    options: [],
+    isMulti: false,
+    // options: [],
   },
 
   /* ================= CATEGORY ================= */
@@ -98,13 +98,13 @@ export const BLOG_FORM = [
     fields: [
       {
         type: "action",
-        action: "draft",       // 👈 IMPORTANT
+        action: "Draft",       // 👈 IMPORTANT
         label: "Save Draft",
         variant: "secondary",
       },
       {
         type: "action",
-        action: "publish",     // 👈 IMPORTANT
+        action: "Published",     // 👈 IMPORTANT
         label: "Publish",
         variant: "primary",
       },

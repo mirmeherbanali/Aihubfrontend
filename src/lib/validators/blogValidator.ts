@@ -25,7 +25,7 @@ export const blogSchema = z.object({
 
   /* ================= AUTHOR ================= */
   author: z
-    .array(z.string())
+    .string()
     .min(1, "At least one author is required"),
 
   /* ================= CATEGORY ================= */
@@ -51,7 +51,21 @@ export const blogSchema = z.object({
   lastModifiedDate: z.string().optional(),
 
   /* ================= SEO ================= */
-  jsonLdSchema: z.string().optional(),
+  jsonLdSchema: z
+  .string()
+  .optional()
+  .refine((val) => {
+    if (!val) return true;
+    try {
+      JSON.parse(val);
+      return true;
+    } catch {
+      return false;
+    }
+  }, {
+    message: "Invalid JSON format",
+  }),
+
 
 //   robots: z
 //     .enum(["index,follow", "noindex,nofollow"])

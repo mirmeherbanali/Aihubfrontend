@@ -19,7 +19,7 @@ type Props<T extends FieldValues> = {
   handleSubmit: UseFormHandleSubmit<T>;
   onSubmit: SubmitHandler<T>;
   errors: FieldErrors<T>;
-  onActionClick?: (action: "draft" | "publish") => void;
+  onActionClick?: (action: "Draft" | "Published") => void;
   loading?: boolean;
 };
 

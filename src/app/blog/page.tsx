@@ -3,54 +3,54 @@
 import { useState, useMemo } from "react";
 import PageHero from "@/components/Hero/PageHero";
 import RadioPagination from "@/components/ui/common/RadioPagination";
-import styles from "../../components/ui/style/Blog.module.scss"
+import styles from "../../components/ui/style/Blog.module.scss";
 import { useRouter } from "next/navigation";
+import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
-
-const blogs = Array.from({ length: 24 }).map((_, i) => {
-  const title = `How AI Tools Improve Productivity ${i + 1}`;
-  return {
-    id: i + 1,
-    title,
-    slug: slugify(title),
-    category: "AI Tools",
-    author: "Mir Meherban Alli",
-    date: "December 19, 2025",
-    image: "/blog-placeholder.png",
-  };
-});
+const formatDate = (date?: string) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
 
 export default function BlogPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const router = useRouter();
 
+  const { data, isLoading } = useGetAllBlogsQuery();
+
+  // Filter only published blogs
+  const blogs = data?.result?.list?.filter((b: any) => b.status === "Published") || []
   const blogsPerPage = 6;
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
+  /* ================= FILTER ================= */
   const filteredBlogs = useMemo(() => {
     if (!searchQuery) return blogs;
-    return blogs.filter((b) =>
-      b.title.toLowerCase().includes(searchQuery.toLowerCase())
+    return blogs.filter((b: any) =>
+      b.title?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [blogs, searchQuery]);
+
+  /* ================= PAGINATION ================= */
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
 
   const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
 
+  /* ================= HIGHLIGHT ================= */
   const highlightMatch = (text: string) => {
     if (!searchQuery) return text;
     const regex = new RegExp(`(${searchQuery})`, "gi");
     return text.replace(regex, "<mark>$1</mark>");
   };
+
+  if (isLoading) return <p style={{ textAlign: "center" }}>Loading blogs…</p>;
 
   return (
     <>
@@ -68,32 +68,36 @@ export default function BlogPage() {
 
       {/* BLOG CARDS */}
       <section className={styles.gridWrapper}>
-        {paginatedBlogs.map((blog) => (
+        {paginatedBlogs.map((blog: any) => (
           <article
-  key={blog.id}
-  className={styles.blogCard}
-  onClick={() => router.push(`/blog/${blog.slug}`)}
->
-
+            key={blog._id}
+            className={styles.blogCard}
+            onClick={() => router.push(`/blog/${blog.slug}`)}
+          >
             <div className={styles.imageWrapper}>
-              <img src={blog.image} alt={blog.title} />
+              <img
+                src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                alt={blog.featuredImage?.altText || blog.blogTitle}
+              />
             </div>
 
-            <span className={styles.category}>{blog.category}</span>
+            <span className={styles.category}>
+              {blog.categories?.[0]?.categoryName || "-"}
+            </span>
 
             <h3
               className={styles.title}
               dangerouslySetInnerHTML={{
-                __html: highlightMatch(blog.title),
+                __html: highlightMatch(blog.blogTitle),
               }}
             />
 
             <p className={styles.meta}>
-              Published By <span>{blog.author}</span>
+              Published By <span>{blog.author?.authorName || "-"}</span>
             </p>
 
             <p className={styles.meta}>
-              Published On <span>{blog.date}</span>
+              Published On <span>{formatDate(blog.publishedDate)}</span>
             </p>
           </article>
         ))}

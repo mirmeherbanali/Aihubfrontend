@@ -31,18 +31,39 @@ import {
 
 import { TAB_CONFIG } from "./components/dashboardConfig";
 import { COMMON_ACTIONS } from "./components/authorTableConfig";
-import { BLOG_FORM } from "@/lib/dashboard/blog/fields/formFields";
 import { getUserId } from "@/utils/authStorage";
 
 type TabType = "blog" | "author" | "category";
 type ModeType = "list" | "form";
+
+const TABLE_SEARCH_CONFIG: Record<
+  TabType,
+  {
+    searchKey: string;
+    filterKeys: string[];
+  }
+> = {
+  blog: {
+    searchKey: "blogTitle",
+    filterKeys: ["status","author","publishedDate"],
+  },
+  author: {
+    searchKey: "authorName",
+    filterKeys: ["authorName"],
+  },
+  category: {
+    searchKey: "categoryName",
+    filterKeys: ["categoryName"],
+  },
+};
+
 
 export default function CreateBlogPage() {
   const userId =getUserId()
   const [activeTab, setActiveTab] = useState<TabType>("blog");
   const [mode, setMode] = useState<ModeType>("list");
   const [editItem, setEditItem] = useState<any>(null);
-  const [submitAction, setSubmitAction] = useState<"draft" | "publish">("draft");
+  const [submitAction, setSubmitAction] = useState<"Draft" | "Published">("Draft");
 
   /* ===================== CALL ALL HOOKS (NO DYNAMIC) ===================== */
 
@@ -51,7 +72,7 @@ export default function CreateBlogPage() {
   const [createBlog, blogCreate] = useCreateBlogMutation();
   const [updateBlog, blogUpdate] = useUpdateBlogMutation();
   const [deleteBlog] = useDeleteBlogMutation();
-
+//   console.log("blogQuery",blogQuery)
   // AUTHOR
  const authorQuery = useGetAllAuthorsQuery(undefined, {
   skip: activeTab !== "author" && activeTab !== "blog",
@@ -67,6 +88,8 @@ export default function CreateBlogPage() {
   const [createCategory, categoryCreate] = useCreateBlogCategoryMutation();
   const [updateCategory, categoryUpdate] = useUpdateBlogCategoryMutation();
   const [deleteCategory] = useDeleteBlogCategoryMutation();
+  const { searchKey, filterKeys } = TABLE_SEARCH_CONFIG[activeTab];
+
 
   /* ===================== MAP BY TAB ===================== */
 
@@ -117,19 +140,58 @@ export default function CreateBlogPage() {
     mode: "onTouched",
   });
 
-  useEffect(() => {
-    if (editItem) {
-      Object.entries(editItem).forEach(([key, value]) => {
-        setValue(key, value as any);
-      });
-    } else {
-      reset();
-    }
-  }, [editItem, reset, setValue]);
+useEffect(() => {
+  if (!editItem) {
+    reset();
+    return;
+  }
+
+  Object.entries(editItem).forEach(([key, value]) => {
+    if (
+      ["author", "categories", "featuredImage", "publishedDate"].includes(key)
+    )
+      return;
+
+    setValue(key, value as any);
+  });
+
+  /* ================= AUTHOR ================= */
+  if (editItem.author?._id) {
+    setValue("author", editItem.author._id);
+  }
+
+  /* ================= CATEGORIES ================= */
+  if (Array.isArray(editItem.categories)) {
+    setValue(
+      "categories",
+      editItem.categories.map((c: any) => c._id)
+    );
+  }
+
+  /* ================= FEATURED IMAGE ================= */
+  if (editItem.featuredImage) {
+    setValue("featuredImage", editItem.featuredImage.url);
+    setValue("featuredImageAltText", editItem.featuredImage.altText || "");
+    setValue("featuredImageTitleText", editItem.featuredImage.titleText || "");
+  }
+
+  /* ================= PUBLISHED DATE (🔥 FIX) ================= */
+  if (editItem.publishedDate) {
+    const formattedDate = new Date(editItem.publishedDate)
+      .toISOString()
+      .split("T")[0]; // YYYY-MM-DD
+
+    setValue("publishedDate", formattedDate);
+  }
+}, [editItem, reset, setValue]);
+
+
+
 
   /* ===================== SUBMIT ===================== */
 
 const onSubmit: SubmitHandler<any> = async (data) => {
+    // console.log("data",data)
   try {
     // 👇 set status based on clicked button
     const finalData =
@@ -146,30 +208,39 @@ const onSubmit: SubmitHandler<any> = async (data) => {
     if (hasFile) {
       const formData = new FormData();
       Object.entries(finalData).forEach(([key, value]) => {
-        if (value instanceof File) formData.append(key, value);
-        else if (value !== undefined && value !== null)
-          formData.append(key, String(value));
-      });
+  if (value instanceof File) {
+    formData.append(key, value);
+  } else if (Array.isArray(value)) {
+    formData.append(key, JSON.stringify(value)); // ✅ IMPORTANT
+  } else if (value !== undefined && value !== null) {
+    formData.append(key, String(value));
+  }
+});
+
       payload = formData;
     }
 
     if (editItem) {
       await currentApi.update({
-        ...(hasFile ? payload : { id: editItem._id, ...payload }),
+        ...(hasFile ? payload : { id: editItem._id, ...(activeTab === "blog" ? { updated_by: userId } : {}), ...payload }),
       } as any).unwrap();
     } else {
-      await currentApi.create(payload).unwrap();
+      const res = await currentApi.create(payload).unwrap();
+      console.log("✅ SUCCESS RESPONSE:", res);
     }
 
     reset();
     setEditItem(null);
     setMode("list");
     refetch();
-  } catch (err) {
-    console.error("❌ Submit failed:", err);
-  }
+  } 
+ catch (err: any) {
+   console.log("❌ FULL ERROR OBJECT:", err);
+  console.log("❌ ERROR DATA:", err?.data);
+  console.log("❌ ERROR MESSAGE:", err?.data?.message);
+  console.log("❌ ERROR DETAILS:", err?.data?.errors);
 };
-
+}
 
 
   /* ===================== DELETE ===================== */
@@ -214,7 +285,23 @@ const dynamicFormFields = useMemo(() => {
   });
 }, [activeTab, config.formFields, authorOptions, categoryOptions]);
 
+ const bulkActions = [
+    {
+      label: "Delete Selected",
+      onClick: async (rows: any[]) => {
+        if (!rows.length) return;
+        if (!confirm(`Delete ${rows.length} ${activeTab}?`)) return;
 
+        for (const row of rows) {
+          await currentApi.delete({ id: row._id, });
+        }
+
+        alert(`Selected ${activeTab} deleted`);
+        refetch();
+      },
+    },
+  ];
+  
   /* ===================== UI ===================== */
 
   return (
@@ -259,7 +346,9 @@ const dynamicFormFields = useMemo(() => {
           columns={config.columns}
           data={items}
           actions={actions}
-          searchKey="name"
+          bulkActions={bulkActions}
+          searchKey={searchKey}
+          filterKeys={filterKeys}
           itemsPerPage={10}
         />
       ) : (

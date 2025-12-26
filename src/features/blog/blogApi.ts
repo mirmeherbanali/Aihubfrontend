@@ -17,7 +17,7 @@ export const blogApi = baseApi.injectEndpoints({
         (res) => res.result?.message
       ),
     }),
-    updateBlog: builder.mutation<AuthResponse, BlogInput & { id: string }>({
+    updateBlog: builder.mutation<AuthResponse, FormData & { id: string }>({
       query: (body) => ({
         url: "api/blog/updateBlog",
         method: "PUT",

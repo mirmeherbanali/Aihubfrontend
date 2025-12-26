@@ -7,6 +7,7 @@ import FeaturedTools from "./FeaturedTools";
 import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
 import { useGetAllToolsQuery } from "@/features/tools/toolsApi";
 import styles from "../ui/style/Home.module.scss";
+import LatestNews from "./LatestNews";
 
 export default function HomeClient() {
   const router = useRouter();
@@ -112,6 +113,7 @@ export default function HomeClient() {
       <Categories
         {...({ categoryData: categories, onCategoryClick: handleCategoryClick, onViewAllClick: handleViewAllClick } as any)}
       />
+        <LatestNews/>
 
 
       <FeaturedTools
