@@ -32,7 +32,7 @@ export default function FormRenderer<T extends FieldValues>({
   onActionClick,
   loading,
 }: Props<T>) {
-const [activeModalField, setActiveModalField] = useState<any>(null);
+  const [activeModalField, setActiveModalField] = useState<any>(null);
 
   const renderError = (name: string, index?: number) => {
     const fieldErr: any = (errors as any)?.[name];
@@ -41,8 +41,6 @@ const [activeModalField, setActiveModalField] = useState<any>(null);
     }
     return fieldErr?.message as string | undefined;
   };
-
-
 
   const renderField = (field: any, index?: number) => {
     /* ================= TEXT ================= */
@@ -85,33 +83,31 @@ const [activeModalField, setActiveModalField] = useState<any>(null);
     if (field.type === "select") {
       return (
         <>
-      <Controller
-  name={field.name}
-  control={control}
-  render={({ field: rhf }) => (
-    <Select
-      isMulti={field.isMulti}
-      options={field.options}
-      value={
-        field.isMulti
-          ? field.options?.filter((opt: any) =>
-              rhf.value?.includes(opt.value)
-            )
-          : field.options?.find(
-              (opt: any) => opt.value === rhf.value
-            )
-      }
-      onChange={(selected: any) => {
-        if (field.isMulti) {
-          rhf.onChange(selected.map((s: any) => s.value));
-        } else {
-          rhf.onChange(selected?.value);
-        }
-      }}
-      placeholder={`Select ${field.label}`}
-    />
-  )}
-/>
+          <Controller
+            name={field.name}
+            control={control}
+            render={({ field: rhf }) => (
+              <Select
+                isMulti={field.isMulti}
+                options={field.options}
+                value={
+                  field.isMulti
+                    ? field.options?.filter((opt: any) =>
+                        rhf.value?.includes(opt.value)
+                      )
+                    : field.options?.find((opt: any) => opt.value === rhf.value)
+                }
+                onChange={(selected: any) => {
+                  if (field.isMulti) {
+                    rhf.onChange(selected.map((s: any) => s.value));
+                  } else {
+                    rhf.onChange(selected?.value);
+                  }
+                }}
+                placeholder={`Select ${field.label}`}
+              />
+            )}
+          />
           {renderError(field.name) && (
             <p className={styles.error}>{renderError(field.name)}</p>
           )}
@@ -202,65 +198,69 @@ const [activeModalField, setActiveModalField] = useState<any>(null);
     }
 
     /* ================= BOTH IMAGE + INPUT (MODAL) ================= */
-if (field.type === "bothImageInput") {
-  return (
-    <>
-      {/* Trigger */}
-      <button
-        type="button"
-        className={styles.imageInputTrigger}
-        onClick={() => setActiveModalField(field)}
-      >
-        Configure {field.label}
-      </button>
+    if (field.type === "bothImageInput") {
+      return (
+        <>
+          {/* Trigger */}
+          <button
+            type="button"
+            className={styles.imageInputTrigger}
+            onClick={() => setActiveModalField(field)}
+          >
+            Configure {field.label}
+          </button>
 
-      {/* Modal */}
-      <Modal
-        open={activeModalField?.imageField === field.imageField}
-        onClose={() => setActiveModalField(null)}
-      >
-        <h3>{field.label}</h3>
+          {/* Modal */}
+          <Modal
+            open={activeModalField?.imageField === field.imageField}
+            onClose={() => setActiveModalField(null)}
+          >
+            <h3>{field.label}</h3>
 
-        {/* Image */}
-        <Controller
-          name={field.imageField}
-          control={control}
-          render={({ field: f }) => (
-            <ImagePicker value={f.value} onChange={f.onChange} />
-          )}
-        />
-
-        {/* Inputs */}
-        {field.inputs.map((input: any) => (
-          <div key={input.name} className={styles.field}>
-            <label>{input.label}</label>
+            {/* Image */}
             <Controller
-              name={input.name}
+              name={field.imageField}
               control={control}
               render={({ field: f }) => (
-                <input {...f} placeholder={input.placeholder} />
+                <ImagePicker value={f.value} onChange={f.onChange} />
               )}
             />
-            {renderError(input.name) && (
-              <p className={styles.error}>{renderError(input.name)}</p>
-            )}
-          </div>
-        ))}
-      </Modal>
-    </>
-  );
-}
+
+            {/* Inputs */}
+            {field.inputs.map((input: any) => (
+              <div key={input.name} className={styles.field}>
+                <label>{input.label}</label>
+                <Controller
+                  name={input.name}
+                  control={control}
+                  render={({ field: f }) => (
+                    <input {...f} placeholder={input.placeholder} />
+                  )}
+                />
+                {renderError(input.name) && (
+                  <p className={styles.error}>{renderError(input.name)}</p>
+                )}
+              </div>
+            ))}
+          </Modal>
+        </>
+      );
+    }
 
     /* ================= ACTION ================= */
     if (field.type === "action") {
       return (
         <button
           type="submit"
-          className={field?.variant=="secondary"?styles.secondaryBtn:styles.inlineBtn}
+          className={
+            field?.variant == "secondary"
+              ? styles.secondaryBtn
+              : styles.inlineBtn
+          }
           disabled={loading}
           onClick={() => {
-        onActionClick?.(field.action);
-      }}
+            onActionClick?.(field.action);
+          }}
         >
           {loading ? "Submitting..." : field.action}
         </button>
@@ -271,31 +271,30 @@ if (field.type === "bothImageInput") {
   };
 
   return (
-  <form onSubmit={handleSubmit(onSubmit)}>
-    {config.map((item: any, i: number) => {
-      // 🟢 ROW LAYOUT
-      if (item.row && Array.isArray(item.fields)) {
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {config.map((item: any, i: number) => {
+        // 🟢 ROW LAYOUT
+        if (item.row && Array.isArray(item.fields)) {
+          return (
+            <div key={i} className={styles.row}>
+              {item.fields.map((field: any, idx: number) => (
+                <div key={field.name || idx} className={styles.field}>
+                  {field.label && <label>{field.label}</label>}
+                  {renderField(field, idx)}
+                </div>
+              ))}
+            </div>
+          );
+        }
+
+        // 🔵 NORMAL FIELD
         return (
-          <div key={i} className={styles.row}>
-            {item.fields.map((field: any, idx: number) => (
-              <div key={field.name || idx} className={styles.field}>
-                {field.label && <label>{field.label}</label>}
-                {renderField(field, idx)}
-              </div>
-            ))}
+          <div key={item.name || i} className={styles.field}>
+            {item.label && <label>{item.label}</label>}
+            {renderField(item)}
           </div>
         );
-      }
-
-      // 🔵 NORMAL FIELD
-      return (
-        <div key={item.name || i} className={styles.field}>
-          {item.label && <label>{item.label}</label>}
-          {renderField(item)}
-        </div>
-      );
-    })}
-  </form>
-);
-
+      })}
+    </form>
+  );
 }

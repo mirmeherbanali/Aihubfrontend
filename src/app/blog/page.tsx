@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import PageHero from "@/components/Hero/PageHero";
 import RadioPagination from "@/components/ui/common/RadioPagination";
-import styles from "../../components/ui/style/Blog.module.scss";
-import { useRouter } from "next/navigation";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
+import styles from "../../components/ui/style/Blog.module.scss";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -23,19 +23,20 @@ export default function BlogPage() {
 
   const { data, isLoading } = useGetAllBlogsQuery();
 
-  // Filter only published blogs
-  const blogs = data?.result?.list?.filter((b: any) => b.status === "Published") || []
+  const blogs =
+    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+
   const blogsPerPage = 6;
 
-  /* ================= FILTER ================= */
+  /* FILTER */
   const filteredBlogs = useMemo(() => {
     if (!searchQuery) return blogs;
     return blogs.filter((b: any) =>
-      b.title?.toLowerCase().includes(searchQuery.toLowerCase())
+      b.blogTitle?.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [blogs, searchQuery]);
 
-  /* ================= PAGINATION ================= */
+  /* PAGINATION */
   const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
 
   const paginatedBlogs = filteredBlogs.slice(
@@ -43,18 +44,20 @@ export default function BlogPage() {
     currentPage * blogsPerPage
   );
 
-  /* ================= HIGHLIGHT ================= */
+  /* SEARCH HIGHLIGHT */
   const highlightMatch = (text: string) => {
     if (!searchQuery) return text;
     const regex = new RegExp(`(${searchQuery})`, "gi");
     return text.replace(regex, "<mark>$1</mark>");
   };
 
-  if (isLoading) return <p style={{ textAlign: "center" }}>Loading blogs…</p>;
+  if (isLoading) {
+    return <p style={{ textAlign: "center", padding: 40 }}>Loading blogs…</p>;
+  }
 
   return (
     <>
-      {/* PAGE HERO */}
+      {/* HERO */}
       <PageHero
         content="Explore <span style='color:#ffd700'>Blogs</span>"
         subcontent="Latest insights, tutorials, and updates from the AI world."
@@ -66,7 +69,7 @@ export default function BlogPage() {
         liveSearch
       />
 
-      {/* BLOG CARDS */}
+      {/* BLOG GRID */}
       <section className={styles.gridWrapper}>
         {paginatedBlogs.map((blog: any) => (
           <article
@@ -74,6 +77,7 @@ export default function BlogPage() {
             className={styles.blogCard}
             onClick={() => router.push(`/blog/${blog.slug}`)}
           >
+            {/* IMAGE */}
             <div className={styles.imageWrapper}>
               <img
                 src={blog.featuredImage?.url || "/blog-placeholder.png"}
@@ -81,10 +85,12 @@ export default function BlogPage() {
               />
             </div>
 
+            {/* CATEGORY */}
             <span className={styles.category}>
               {blog.categories?.[0]?.categoryName || "-"}
             </span>
 
+            {/* TITLE */}
             <h3
               className={styles.title}
               dangerouslySetInnerHTML={{
@@ -92,6 +98,7 @@ export default function BlogPage() {
               }}
             />
 
+            {/* META */}
             <p className={styles.meta}>
               Published By <span>{blog.author?.authorName || "-"}</span>
             </p>

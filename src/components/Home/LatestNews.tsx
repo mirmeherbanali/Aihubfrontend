@@ -8,18 +8,18 @@ import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 const LatestNews = () => {
   const { data, isLoading } = useGetAllBlogsQuery();
 
-  // ✅ only published blogs
+  // only published blogs
   const blogs =
     data?.result?.list?.filter((b: any) => b.status === "Published") || [];
 
-  // ✅ take latest 4 blogs
+  // latest 4
   const latestBlogs = blogs.slice(0, 4);
 
   if (isLoading) return null;
 
   return (
     <section className={styles.newsSection}>
-      <h2>Latest Blogs</h2>
+      <h2>Latest News on AI</h2>
 
       <div className={styles.newsGrid}>
         {latestBlogs.map((item: any) => (
@@ -28,31 +28,37 @@ const LatestNews = () => {
             href={`/blog/${item.slug}`}
             className={styles.card}
           >
-            {/* ===== UPPER PART ===== */}
-            <div className={styles.upperPart}>
-              <div className={styles.upperPartFace}>
-                {item.blogTitle}
-              </div>
-
-              <div className={styles.upperPartBack}>
-                {item.metaDescription}
-              </div>
+            {/* IMAGE */}
+            <div className={styles.imageWrapper}>
+              <img
+                src={item.featuredImage?.url || "/blog-placeholder.jpg"}
+                alt={item.blogTitle}
+              />
             </div>
 
-            {/* ===== LOWER PART ===== */}
-            <div className={styles.lowerPart}>
-              <div className={styles.lowerPartFace}>
-                {item.author}
-              </div>
+            {/* CONTENT */}
+            <div className={styles.cardContent}>
+              <h3>{item.blogTitle}</h3>
 
-              <div className={styles.lowerPartBack}>
-                {new Date(item.createdAt).toLocaleDateString()}
+              <p>
+                {item.metaDescription?.slice(0, 90)}...
+              </p>
+
+              <div className={styles.meta}>
+                <span className={styles.author}>
+                  {item.author}
+                </span>
+
+                <span className={styles.date}>
+                  {new Date(item.createdAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </Link>
         ))}
       </div>
 
+      {/* SAME VIEW ALL BUTTON */}
       <Link href="/blog" className={styles.viewBtn}>
         View All <span>›</span>
       </Link>

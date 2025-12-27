@@ -45,7 +45,7 @@ const TABLE_SEARCH_CONFIG: Record<
 > = {
   blog: {
     searchKey: "blogTitle",
-    filterKeys: ["status","author","publishedDate"],
+    filterKeys: ["status", "author", "publishedDate"],
   },
   author: {
     searchKey: "authorName",
@@ -57,39 +57,41 @@ const TABLE_SEARCH_CONFIG: Record<
   },
 };
 
-
 export default function CreateBlogPage() {
-  const userId =getUserId()
+  const userId = getUserId();
   const [activeTab, setActiveTab] = useState<TabType>("blog");
   const [mode, setMode] = useState<ModeType>("list");
   const [editItem, setEditItem] = useState<any>(null);
-  const [submitAction, setSubmitAction] = useState<"Draft" | "Published">("Draft");
+  const [submitAction, setSubmitAction] = useState<"Draft" | "Published">(
+    "Draft"
+  );
 
   /* ===================== CALL ALL HOOKS (NO DYNAMIC) ===================== */
 
   // BLOG
-  const blogQuery = useGetAllBlogsQuery(undefined, { skip: activeTab !== "blog" });
+  const blogQuery = useGetAllBlogsQuery(undefined, {
+    skip: activeTab !== "blog",
+  });
   const [createBlog, blogCreate] = useCreateBlogMutation();
   const [updateBlog, blogUpdate] = useUpdateBlogMutation();
   const [deleteBlog] = useDeleteBlogMutation();
-//   console.log("blogQuery",blogQuery)
+  //   console.log("blogQuery",blogQuery)
   // AUTHOR
- const authorQuery = useGetAllAuthorsQuery(undefined, {
-  skip: activeTab !== "author" && activeTab !== "blog",
-});
+  const authorQuery = useGetAllAuthorsQuery(undefined, {
+    skip: activeTab !== "author" && activeTab !== "blog",
+  });
   const [createAuthor, authorCreate] = useCreateAuthorMutation();
   const [updateAuthor, authorUpdate] = useUpdateAuthorMutation();
   const [deleteAuthor] = useDeleteAuthorMutation();
 
   // CATEGORY
   const categoryQuery = useGetAllBlogCategoriesQuery(undefined, {
-  skip: activeTab !== "category" && activeTab !== "blog",
-});
+    skip: activeTab !== "category" && activeTab !== "blog",
+  });
   const [createCategory, categoryCreate] = useCreateBlogCategoryMutation();
   const [updateCategory, categoryUpdate] = useUpdateBlogCategoryMutation();
   const [deleteCategory] = useDeleteBlogCategoryMutation();
   const { searchKey, filterKeys } = TABLE_SEARCH_CONFIG[activeTab];
-
 
   /* ===================== MAP BY TAB ===================== */
 
@@ -140,108 +142,112 @@ export default function CreateBlogPage() {
     mode: "onTouched",
   });
 
-useEffect(() => {
-  if (!editItem) {
-    reset();
-    return;
-  }
-
-  Object.entries(editItem).forEach(([key, value]) => {
-    if (
-      ["author", "categories", "featuredImage", "publishedDate"].includes(key)
-    )
+  useEffect(() => {
+    if (!editItem) {
+      reset();
       return;
+    }
 
-    setValue(key, value as any);
-  });
+    Object.entries(editItem).forEach(([key, value]) => {
+      if (
+        ["author", "categories", "featuredImage", "publishedDate"].includes(key)
+      )
+        return;
 
-  /* ================= AUTHOR ================= */
-  if (editItem.author?._id) {
-    setValue("author", editItem.author._id);
-  }
+      setValue(key, value as any);
+    });
 
-  /* ================= CATEGORIES ================= */
-  if (Array.isArray(editItem.categories)) {
-    setValue(
-      "categories",
-      editItem.categories.map((c: any) => c._id)
-    );
-  }
+    /* ================= AUTHOR ================= */
+    if (editItem.author?._id) {
+      setValue("author", editItem.author._id);
+    }
 
-  /* ================= FEATURED IMAGE ================= */
-  if (editItem.featuredImage) {
-    setValue("featuredImage", editItem.featuredImage.url);
-    setValue("featuredImageAltText", editItem.featuredImage.altText || "");
-    setValue("featuredImageTitleText", editItem.featuredImage.titleText || "");
-  }
+    /* ================= CATEGORIES ================= */
+    if (Array.isArray(editItem.categories)) {
+      setValue(
+        "categories",
+        editItem.categories.map((c: any) => c._id)
+      );
+    }
 
-  /* ================= PUBLISHED DATE (🔥 FIX) ================= */
-  if (editItem.publishedDate) {
-    const formattedDate = new Date(editItem.publishedDate)
-      .toISOString()
-      .split("T")[0]; // YYYY-MM-DD
+    /* ================= FEATURED IMAGE ================= */
+    if (editItem.featuredImage) {
+      setValue("featuredImage", editItem.featuredImage.url);
+      setValue("featuredImageAltText", editItem.featuredImage.altText || "");
+      setValue(
+        "featuredImageTitleText",
+        editItem.featuredImage.titleText || ""
+      );
+    }
 
-    setValue("publishedDate", formattedDate);
-  }
-}, [editItem, reset, setValue]);
+    /* ================= PUBLISHED DATE (🔥 FIX) ================= */
+    if (editItem.publishedDate) {
+      const formattedDate = new Date(editItem.publishedDate)
+        .toISOString()
+        .split("T")[0]; // YYYY-MM-DD
 
-
-
+      setValue("publishedDate", formattedDate);
+    }
+  }, [editItem, reset, setValue]);
 
   /* ===================== SUBMIT ===================== */
 
-const onSubmit: SubmitHandler<any> = async (data) => {
+  const onSubmit: SubmitHandler<any> = async (data) => {
     // console.log("data",data)
-  try {
-    // 👇 set status based on clicked button
-    const finalData =
-      activeTab === "blog"
-        ? { ...data,userId:userId, status: submitAction }
-        : data;
+    try {
+      // 👇 set status based on clicked button
+      const finalData =
+        activeTab === "blog"
+          ? { ...data, userId: userId, status: submitAction }
+          : data;
 
-    const hasFile = Object.values(finalData).some(
-      (v) => v instanceof File
-    );
+      const hasFile = Object.values(finalData).some((v) => v instanceof File);
 
-    let payload: any = finalData;
+      let payload: any = finalData;
 
-    if (hasFile) {
-      const formData = new FormData();
-      Object.entries(finalData).forEach(([key, value]) => {
-  if (value instanceof File) {
-    formData.append(key, value);
-  } else if (Array.isArray(value)) {
-    formData.append(key, JSON.stringify(value)); // ✅ IMPORTANT
-  } else if (value !== undefined && value !== null) {
-    formData.append(key, String(value));
-  }
-});
+      if (hasFile) {
+        const formData = new FormData();
+        Object.entries(finalData).forEach(([key, value]) => {
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value)); // ✅ IMPORTANT
+          } else if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
+        });
 
-      payload = formData;
+        payload = formData;
+      }
+
+      if (editItem) {
+        await currentApi
+          .update({
+            ...(hasFile
+              ? payload
+              : {
+                  id: editItem._id,
+                  ...(activeTab === "blog" ? { updated_by: userId } : {}),
+                  ...payload,
+                }),
+          } as any)
+          .unwrap();
+      } else {
+        const res = await currentApi.create(payload).unwrap();
+        console.log("✅ SUCCESS RESPONSE:", res);
+      }
+
+      reset();
+      setEditItem(null);
+      setMode("list");
+      refetch();
+    } catch (err: any) {
+      console.log("❌ FULL ERROR OBJECT:", err);
+      console.log("❌ ERROR DATA:", err?.data);
+      console.log("❌ ERROR MESSAGE:", err?.data?.message);
+      console.log("❌ ERROR DETAILS:", err?.data?.errors);
     }
-
-    if (editItem) {
-      await currentApi.update({
-        ...(hasFile ? payload : { id: editItem._id, ...(activeTab === "blog" ? { updated_by: userId } : {}), ...payload }),
-      } as any).unwrap();
-    } else {
-      const res = await currentApi.create(payload).unwrap();
-      console.log("✅ SUCCESS RESPONSE:", res);
-    }
-
-    reset();
-    setEditItem(null);
-    setMode("list");
-    refetch();
-  } 
- catch (err: any) {
-   console.log("❌ FULL ERROR OBJECT:", err);
-  console.log("❌ ERROR DATA:", err?.data);
-  console.log("❌ ERROR MESSAGE:", err?.data?.message);
-  console.log("❌ ERROR DETAILS:", err?.data?.errors);
-};
-}
-
+  };
 
   /* ===================== DELETE ===================== */
 
@@ -255,37 +261,35 @@ const onSubmit: SubmitHandler<any> = async (data) => {
     }
   };
 
-  const actions = COMMON_ACTIONS(
-    (row) => {
-      setEditItem(row);
-      setMode("form");
-    },
-    handleDelete
-  );
+  const actions = COMMON_ACTIONS((row) => {
+    setEditItem(row);
+    setMode("form");
+  }, handleDelete);
 
   const authorOptions =
-  authorQuery.data?.result?.list?.map((a: any) => ({
-    label: a.authorName,
-    value: a._id,
-  })) ?? [];
+    authorQuery.data?.result?.list?.map((a: any) => ({
+      label: a.authorName,
+      value: a._id,
+    })) ?? [];
 
-const categoryOptions =
-  categoryQuery.data?.result?.list?.map((c: any) => ({
-    label: c.categoryName,
-    value: c._id,
-  })) ?? [];
+  const categoryOptions =
+    categoryQuery.data?.result?.list?.map((c: any) => ({
+      label: c.categoryName,
+      value: c._id,
+    })) ?? [];
 
-const dynamicFormFields = useMemo(() => {
-  if (activeTab !== "blog") return config.formFields;
+  const dynamicFormFields = useMemo(() => {
+    if (activeTab !== "blog") return config.formFields;
 
-  return config.formFields.map((field: any) => {
-    if (field.name === "author") return { ...field, options: authorOptions };
-    if (field.name === "categories") return { ...field, options: categoryOptions };
-    return field;
-  });
-}, [activeTab, config.formFields, authorOptions, categoryOptions]);
+    return config.formFields.map((field: any) => {
+      if (field.name === "author") return { ...field, options: authorOptions };
+      if (field.name === "categories")
+        return { ...field, options: categoryOptions };
+      return field;
+    });
+  }, [activeTab, config.formFields, authorOptions, categoryOptions]);
 
- const bulkActions = [
+  const bulkActions = [
     {
       label: "Delete Selected",
       onClick: async (rows: any[]) => {
@@ -293,7 +297,7 @@ const dynamicFormFields = useMemo(() => {
         if (!confirm(`Delete ${rows.length} ${activeTab}?`)) return;
 
         for (const row of rows) {
-          await currentApi.delete({ id: row._id, });
+          await currentApi.delete({ id: row._id });
         }
 
         alert(`Selected ${activeTab} deleted`);
@@ -301,7 +305,7 @@ const dynamicFormFields = useMemo(() => {
       },
     },
   ];
-  
+
   /* ===================== UI ===================== */
 
   return (
@@ -324,7 +328,7 @@ const dynamicFormFields = useMemo(() => {
         ))}
       </div>
 
-      {/* ACTIONS */}
+      {/* ACTIONS
       <div className={styles.tabActions}>
         <button
           onClick={() => {
@@ -336,6 +340,28 @@ const dynamicFormFields = useMemo(() => {
           Manage {activeTab}
         </button>
         <button onClick={() =>{ setMode("form");reset();}}>
+          {editItem ? "Edit" : "Add"} {activeTab}
+        </button>
+      </div> */}
+      <div className={styles.tabActions}>
+        <button
+          className={mode === "list" ? styles.activeAction : ""}
+          onClick={() => {
+            setMode("list");
+            setEditItem(null);
+            reset();
+          }}
+        >
+          Manage {activeTab}
+        </button>
+
+        <button
+          className={mode === "form" ? styles.activeAction : ""}
+          onClick={() => {
+            setMode("form");
+            reset();
+          }}
+        >
           {editItem ? "Edit" : "Add"} {activeTab}
         </button>
       </div>
@@ -357,14 +383,9 @@ const dynamicFormFields = useMemo(() => {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          loading={
-            isSubmitting ||
-            currentApi.creating ||
-            currentApi.updating
-          }
+          loading={isSubmitting || currentApi.creating || currentApi.updating}
           errors={errors}
           onActionClick={setSubmitAction}
-
         />
       )}
     </div>

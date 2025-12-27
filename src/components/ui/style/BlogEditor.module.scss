@@ -384,8 +384,8 @@
 
   /* Primary action (Add / Edit) */
   button:last-child {
-    background: linear-gradient(135deg, #6366f1, #3b82f6);
-    color: #ffffff;
+     background: #f3f4f6;
+    color: #111827;
 
     &:hover {
       opacity: 0.9;
@@ -402,4 +402,11 @@
   color: #e63946;
   font-size: 12px;
   margin-top: 4px;
+}
+/* ================= TAB ACTION ACTIVE ================= */
+.activeAction {
+  background: linear-gradient(135deg, #6366f1, #3b82f6) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
 }
