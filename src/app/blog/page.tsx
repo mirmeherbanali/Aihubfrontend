@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import PageHero from "@/components/Hero/PageHero";
 import RadioPagination from "@/components/ui/common/RadioPagination";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "../../components/ui/style/Blog.module.scss";
+import Link from "next/link";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -17,7 +17,6 @@ const formatDate = (date?: string) => {
 };
 
 export default function BlogPage() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -70,12 +69,12 @@ export default function BlogPage() {
       />
 
       {/* BLOG GRID */}
-      <section className={styles.gridWrapper}>
+      <div className={styles.gridWrapper}>
         {paginatedBlogs.map((blog: any) => (
-          <article
+          <Link
             key={blog._id}
+            href={`/blog/${blog.slug}`}
             className={styles.blogCard}
-            onClick={() => router.push(`/blog/${blog.slug}`)}
           >
             {/* IMAGE */}
             <div className={styles.imageWrapper}>
@@ -100,15 +99,15 @@ export default function BlogPage() {
 
             {/* META */}
             <p className={styles.meta}>
-              Published By <span>{blog.author?.authorName || "-"}</span>
+              Published By <span>{blog.author?.authorName}</span>
             </p>
 
             <p className={styles.meta}>
               Published On <span>{formatDate(blog.publishedDate)}</span>
             </p>
-          </article>
+          </Link>
         ))}
-      </section>
+      </div>
 
       {/* PAGINATION */}
       {totalPages > 1 && (

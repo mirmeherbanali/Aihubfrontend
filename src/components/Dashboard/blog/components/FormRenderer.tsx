@@ -42,6 +42,15 @@ export default function FormRenderer<T extends FieldValues>({
     return fieldErr?.message as string | undefined;
   };
 
+  const getButtonText =(field: { action: string; })=>{
+  if (!loading) return field.action;
+
+  if (field.action === "Draft")return "Submitting Draft...";
+  if (field.action ===" Published") return "Publishing...";
+
+  return "Submitting...";
+};
+
   const renderField = (field: any, index?: number) => {
     /* ================= TEXT ================= */
     if (field.type === "text") {
@@ -262,7 +271,7 @@ export default function FormRenderer<T extends FieldValues>({
             onActionClick?.(field.action);
           }}
         >
-          {loading ? "Submitting..." : field.action}
+  {getButtonText(field)}
         </button>
       );
     }

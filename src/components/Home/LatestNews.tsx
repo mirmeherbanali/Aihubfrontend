@@ -20,7 +20,6 @@ const LatestNews = () => {
   return (
     <section className={styles.newsSection}>
       <h2>Latest News on AI</h2>
-
       <div className={styles.newsGrid}>
         {latestBlogs.map((item: any) => (
           <Link

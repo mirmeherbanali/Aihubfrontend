@@ -193,61 +193,71 @@ export default function CreateBlogPage() {
   /* ===================== SUBMIT ===================== */
 
   const onSubmit: SubmitHandler<any> = async (data) => {
-    // console.log("data",data)
-    try {
-      // 👇 set status based on clicked button
-      const finalData =
-        activeTab === "blog"
-          ? { ...data, userId: userId, status: submitAction }
-          : data;
+  try {
+    /* ================= SET FINAL DATA ================= */
+    const finalData =
+      activeTab === "blog"
+        ? { ...data, status: submitAction }
+        : data;
 
-      const hasFile = Object.values(finalData).some((v) => v instanceof File);
+    const hasFile = Object.values(finalData).some(
+      (v) => v instanceof File
+    );
 
-      let payload: any = finalData;
+    let payload: any;
 
-      if (hasFile) {
-        const formData = new FormData();
-        Object.entries(finalData).forEach(([key, value]) => {
-          if (value instanceof File) {
-            formData.append(key, value);
-          } else if (Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value)); // ✅ IMPORTANT
-          } else if (value !== undefined && value !== null) {
-            formData.append(key, String(value));
-          }
-        });
+    /* ================= FILE HANDLING ================= */
+    if (hasFile) {
+      const formData = new FormData();
 
-        payload = formData;
-      }
+      Object.entries(finalData).forEach(([key, value]) => {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
 
+      // ✅ REQUIRED FIELDS
       if (editItem) {
-        await currentApi
-          .update({
-            ...(hasFile
-              ? payload
-              : {
-                  id: editItem._id,
-                  ...(activeTab === "blog" ? { updated_by: userId } : {}),
-                  ...payload,
-                }),
-          } as any)
-          .unwrap();
-      } else {
-        const res = await currentApi.create(payload).unwrap();
-        console.log("✅ SUCCESS RESPONSE:", res);
+        formData.append("id", editItem._id);
       }
 
-      reset();
-      setEditItem(null);
-      setMode("list");
-      refetch();
-    } catch (err: any) {
-      console.log("❌ FULL ERROR OBJECT:", err);
-      console.log("❌ ERROR DATA:", err?.data);
-      console.log("❌ ERROR MESSAGE:", err?.data?.message);
-      console.log("❌ ERROR DETAILS:", err?.data?.errors);
+      if (activeTab === "blog") {
+        formData.append("userId", userId??"")
+      }
+
+      payload = formData;
+    } else {
+      payload = {
+        ...finalData,
+        ...(editItem ? { id: editItem._id } : {}),
+        ...(activeTab === "blog" ? { userId } : {}),
+        ...(activeTab === "blog" && editItem ? { updated_by: userId } : {}),
+      };
     }
-  };
+
+    /* ================= API CALL ================= */
+    if (editItem) {
+      await currentApi.update(payload as any).unwrap();
+    } else {
+      await currentApi.create(payload as any).unwrap();
+    }
+
+    /* ================= CLEANUP ================= */
+    reset();
+    setEditItem(null);
+    setMode("list");
+    refetch();
+  } catch (err: any) {
+    console.error("❌ ERROR:", err);
+    console.error("❌ MESSAGE:", err?.data?.message);
+    console.error("❌ DETAILS:", err?.data?.errors);
+  }
+};
+
 
   /* ===================== DELETE ===================== */
 
@@ -383,7 +393,7 @@ export default function CreateBlogPage() {
           control={control}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
-          loading={isSubmitting || currentApi.creating || currentApi.updating}
+          loading={isSubmitting}
           errors={errors}
           onActionClick={setSubmitAction}
         />
