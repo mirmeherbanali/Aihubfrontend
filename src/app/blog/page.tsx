@@ -1,124 +1,115 @@
-"use client";
-
-import { useState, useMemo } from "react";
 import PageHero from "@/components/Hero/PageHero";
-import RadioPagination from "@/components/ui/common/RadioPagination";
-import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
-import styles from "../../components/ui/style/Blog.module.scss";
+import BlogClient from "./BlogClient";
+import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
+import { getAllBlogs } from "@/features/serverApi/serverApi";
+import { getPaginationRange } from "@/components/shared/utilPagination";
+const BLOGS_PER_PAGE = 6;
 
-const formatDate = (date?: string) => {
-  if (!date) return "-";
-  return new Date(date).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-};
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
 
-export default function BlogPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const data = await getAllBlogs();
 
-  const { data, isLoading } = useGetAllBlogsQuery();
+  // ✅ only published blogs
+  const blogs = data.filter((b: any) => b.status === "Published");
 
-  const blogs =
-    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+  const totalPages = Math.ceil(blogs.length / BLOGS_PER_PAGE);
 
-  const blogsPerPage = 6;
-
-  /* FILTER */
-  const filteredBlogs = useMemo(() => {
-    if (!searchQuery) return blogs;
-    return blogs.filter((b: any) =>
-      b.blogTitle?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [blogs, searchQuery]);
-
-  /* PAGINATION */
-  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
-
-  const paginatedBlogs = filteredBlogs.slice(
-    (currentPage - 1) * blogsPerPage,
-    currentPage * blogsPerPage
+  const paginatedBlogs = blogs.slice(
+    (page - 1) * BLOGS_PER_PAGE,
+    page * BLOGS_PER_PAGE
   );
 
-  /* SEARCH HIGHLIGHT */
-  const highlightMatch = (text: string) => {
-    if (!searchQuery) return text;
-    const regex = new RegExp(`(${searchQuery})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
-  };
-
-  if (isLoading) {
-    return <p style={{ textAlign: "center", padding: 40 }}>Loading blogs…</p>;
-  }
 
   return (
     <>
-      {/* HERO */}
-      <PageHero
-        content="Explore <span style='color:#ffd700'>Blogs</span>"
-        subcontent="Latest insights, tutorials, and updates from the AI world."
-        queryPlaceholder="Search Blogs"
-        onSearch={(q) => {
-          setSearchQuery(q);
-          setCurrentPage(1);
-        }}
-        liveSearch
-      />
+      {/* ================= SERVER FALLBACK (NO JS) ================= */}
+      <div className={styles.homeServer}>
+        <PageHero
+          content="Explore <span style='color:#ffd700'>Blogs</span>"
+          subcontent="Latest insights, tutorials, and updates from the AI world."
+          queryPlaceholder="Search Blogs"
+        />
 
-      {/* BLOG GRID */}
-      <div className={styles.gridWrapper}>
-        {paginatedBlogs.map((blog: any) => (
-          <Link
-            key={blog._id}
-            href={`/blog/${blog.slug}`}
-            className={styles.blogCard}
-          >
-            {/* IMAGE */}
-            <div className={styles.imageWrapper}>
-              <img
-                src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                alt={blog.featuredImage?.altText || blog.blogTitle}
-              />
-            </div>
+        {/* SERVER BLOG GRID */}
+        <div className={styles.gridWrapper}>
+          {paginatedBlogs.map((blog: any) => (
+            <Link
+              key={blog._id}
+              href={`/blog/${blog.slug}`}
+              className={styles.blogCard}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                  alt={blog.blogTitle}
+                />
+              </div>
 
-            {/* CATEGORY */}
-            <span className={styles.category}>
-              {blog.categories?.[0]?.categoryName || "-"}
-            </span>
+              <span className={styles.category}>
+                {blog.categories?.[0]?.categoryName || "-"}
+              </span>
 
-            {/* TITLE */}
-            <h3
-              className={styles.title}
-              dangerouslySetInnerHTML={{
-                __html: highlightMatch(blog.blogTitle),
-              }}
-            />
+              <h3 className={styles.title}>{blog.blogTitle}</h3>
 
-            {/* META */}
-            <p className={styles.meta}>
-              Published By <span>{blog.author?.authorName}</span>
-            </p>
+              <p className={styles.meta}>
+                Published By <span>{blog.author?.authorName}</span>
+              </p>
+            </Link>
+          ))}
+        </div>
 
-            <p className={styles.meta}>
-              Published On <span>{formatDate(blog.publishedDate)}</span>
-            </p>
-          </Link>
-        ))}
+        {/* SERVER PAGINATION */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+  {/* PREVIOUS */}
+  <Link
+    href={`/blog?page=${Math.max(1, page - 1)}`}
+    className={page === 1 ? styles.disabled : ""}
+    aria-disabled={page === 1}
+  >
+    &lt;
+  </Link>
+
+  {/* PAGE NUMBERS */}
+  {getPaginationRange(page, totalPages).map((item, i) =>
+    item === "..." ? (
+      <span key={i} className={styles.ellipsis}>
+        …
+      </span>
+    ) : (
+      <Link
+        key={i}
+        href={`/blog?page=${item}`}
+        className={page === item ? styles.activePage : ""}
+      >
+        {item}
+      </Link>
+    )
+  )}
+
+  {/* NEXT */}
+  <Link
+    href={`/blog?page=${Math.min(totalPages, page + 1)}`}
+    className={page === totalPages ? styles.disabled : ""}
+    aria-disabled={page === totalPages}
+  >
+    &gt;
+  </Link>
+</div>
+
+        )}
       </div>
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
-        <div className={styles.paginationWrapper}>
-          <RadioPagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onChange={setCurrentPage}
-          />
-        </div>
-      )}
+      {/* ================= CLIENT UI (JS ENABLED) ================= */}
+      <div className={styles.homeClient}>
+        <BlogClient />
+      </div>
     </>
   );
 }

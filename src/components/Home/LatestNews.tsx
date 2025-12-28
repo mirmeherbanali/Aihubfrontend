@@ -45,7 +45,7 @@ const LatestNews = () => {
 
               <div className={styles.meta}>
                 <span className={styles.author}>
-                  {item.author}
+                  {item.author?.authorName}
                 </span>
 
                 <span className={styles.date}>

@@ -21,3 +21,14 @@ export async function getTools() {
     (item: { status: string }) => item.status === "Approved"
   );
 }
+
+
+export async function getAllBlogs() {
+  const res = await fetch(`${API}/api/blog/getAllBlogs`, {
+    method: "POST",
+    next: { revalidate: 3600 }, // 🔥 cache for 1 hour
+  });
+
+  const data = await res.json();
+  return data?.result?.list || [];
+}
