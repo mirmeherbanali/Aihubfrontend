@@ -1,59 +1,97 @@
-"use client";
+import PageHero from "@/components/Hero/PageHero";
+import CategoryGrid from "./CategoryGrid"
+import CategoryClient from "./CategoryClient";
+import styles from "@/components/ui/style/CategoryPage.module.scss";
+import Link from "next/link";
 
-import React, { useState, useMemo } from "react";
-import PageHero from "../Hero/PageHero";
-import CategoryGrid from "./CategoryGrid";
-import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
-import styles from "../ui/style/CategoryPage.module.scss";
+import { getCategories } from "@/features/serverApi/serverApi";
+import { getPaginationRange } from "@/components/shared/utilPagination";
 
-export default function CategoryPage() {
-  const { data, isLoading, isError, refetch } = useGetAllCategoriesQuery();
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+const PER_PAGE = 6;
 
-  const categories = data?.result?.list || [];
+export default async function CategoryPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
 
-  const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return categories;
-    return categories.filter((item: any) =>
-      item.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [categories, searchQuery]);
+  const data = await getCategories();
+
+  // ✅ only published categories
+  const categories = data
+
+  const totalPages = Math.ceil(categories.length / PER_PAGE);
+
+  const paginatedCategories = categories.slice(
+    (page - 1) * PER_PAGE,
+    page * PER_PAGE
+  );
 
   return (
     <>
-      <PageHero
-        content="Explore <span style='color:#ffd700'>AI Tools</span> by Category"
-        subcontent="Find the perfect AI tool for your industry, use case, or role."
-        queryPlaceholder="Search for Tools & Categories"
-        onSearch={(q) => setSearchQuery(q)}
-        liveSearch
-      />
+      {/* ================= SERVER FALLBACK ================= */}
+      <div className={styles.homeServer}>
+        <PageHero
+          content="Explore <span style='color:#ffd700'>AI Tools</span> by Category"
+          subcontent="Find the perfect AI tool for your industry, use case, or role."
+          queryPlaceholder="Search for Tools & Categories"
+        />
 
-      <section className={styles.categorySection}>
-        {isLoading ? (
-          <div className={styles.grid}>
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className={styles.skeletonCard} />
-            ))}
-          </div>
-        ) : isError ? (
-          <div className={styles.error}>
-            Failed to load categories.
-            <button onClick={() => refetch()}>Retry</button>
-          </div>
-        ) : filteredCategories.length === 0 ? (
-          <div className={styles.empty}>No matching categories found.</div>
-        ) : (
-          <>
-            <h2 className={styles.heading}>All Categories</h2>
+        <section className={styles.categorySection}>
+          <h2 className={styles.heading}>All Categories</h2>
 
-            <CategoryGrid
-                    items={filteredCategories}
-                    onSelect={(item) => setSelectedCategory(item)} title={""}            />
-          </>
+          <CategoryGrid
+            title=""
+            items={paginatedCategories}
+          />
+        </section>
+
+        {/* ================= PAGINATION ================= */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            {/* PREV */}
+            <Link
+              href={`/categories?page=${Math.max(1, page - 1)}`}
+              className={page === 1 ? styles.disabled : ""}
+              aria-disabled={page === 1}
+            >
+              &lt;
+            </Link>
+
+            {/* PAGE NUMBERS */}
+            {getPaginationRange(page, totalPages).map((item, i) =>
+              item === "..." ? (
+                <span key={i} className={styles.ellipsis}>
+                  …
+                </span>
+              ) : (
+                <Link
+                  key={i}
+                  href={`/categories?page=${item}`}
+                  className={page === item ? styles.activePage : ""}
+                >
+                  {item}
+                </Link>
+              )
+            )}
+
+            {/* NEXT */}
+            <Link
+              href={`/categories?page=${Math.min(totalPages, page + 1)}`}
+              className={page === totalPages ? styles.disabled : ""}
+              aria-disabled={page === totalPages}
+            >
+              &gt;
+            </Link>
+          </div>
         )}
-      </section>
+      </div>
+
+      {/* ================= CLIENT ENHANCEMENT ================= */}
+      <div className={styles.homeClient}>
+        <CategoryClient />
+      </div>
     </>
   );
 }

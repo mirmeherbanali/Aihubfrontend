@@ -1,3 +1,6 @@
+/* ===============================
+   SECTION (UNCHANGED)
+================================ */
 .newsSection {
   text-align: center;
   padding: 60px 20px;
@@ -11,7 +14,7 @@
     position: relative;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: -15px;
       left: 50%;
@@ -24,105 +27,93 @@
   }
 }
 
-/* GRID */
+/* ===============================
+   GRID
+================================ */
 .newsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 30px;
   max-width: 1200px;
   margin: auto;
-  justify-items: center;
 }
 
-/* CARD */
+/* ===============================
+   CARD (NEW FORMAT)
+================================ */
 .card {
-  width: 100%;
-  max-width: 330px;
-  height: 260px;
-  position: relative;
-  border-radius: 35px;
-  transition: all 0.8s;
-  perspective: 700px;
-  perspective-origin: center top;
+  background: #ffffff;
+  border-radius: 22px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 30px rgba(41, 121, 255, 0.12);
+  transition: all 0.35s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 22px 50px rgba(41, 121, 255, 0.28);
+  }
 }
 
-/* UPPER PART */
-.upperPart {
-  height: 65%;
+/* IMAGE */
+.imageWrapper {
   width: 100%;
-  position: relative;
-  border-radius: 35px 35px 0 0;
-  transform-style: preserve-3d;
-  transition: all 0.9s;
+  height: 180px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
 }
 
-.upperPartFace,
-.upperPartBack {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-  border-radius: 35px 35px 0 0;
+.card:hover img {
+  transform: scale(1.08);
+}
+
+/* CONTENT */
+.cardContent {
+  padding: 20px;
+  text-align: left;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 10px;
+    line-height: 1.35;
+  }
+
+  p {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+  }
+}
+
+/* META */
+.meta {
+  margin-top: 14px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  backface-visibility: hidden;
-  border: 3px solid #2979ff;
+  justify-content: space-between;
+  font-size: 13px;
 }
 
-.upperPartFace {
-  background: #fff;
+.author {
+  font-weight: 700;
   color: #2979ff;
 }
 
-.upperPartBack {
-  transform: rotateX(180deg);
-  background: #2979ff;
-  color: #fff;
+.date {
+  color: #718096;
 }
 
-/* LOWER PART */
-.lowerPart {
-  height: 35%;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: all 0.9s;
-}
-
-.lowerPartFace,
-.lowerPartBack {
-  width: 100%;
-  height: 100%;
-  border-radius: 0 0 35px 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  backface-visibility: hidden;
-}
-
-.lowerPartFace {
-  background: #2979ff;
-  color: #fff;
-  font-weight: bold;
-}
-
-.lowerPartBack {
-  background: #fff;
-  color: #2979ff;
-  transform: rotateX(180deg);
-}
-
-/* HOVER */
-.card:hover .upperPart {
-  transform: rotateX(-180deg);
-}
-
-.card:hover .lowerPart {
-  transform: translateY(90px) rotateX(180deg);
-}
-
-/* VIEW BUTTON */
+/* ===============================
+   VIEW ALL BUTTON (UNCHANGED)
+================================ */
 .viewBtn {
   margin-top: 40px;
   background: white;
@@ -138,9 +129,10 @@
   transition: 0.4s ease;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg, #667eea, #2979ff);
@@ -170,7 +162,9 @@
   }
 }
 
-/* ✨ TABLET RESPONSIVE */
+/* ===============================
+   RESPONSIVE
+================================ */
 @media (max-width: 1024px) {
   .newsGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -181,11 +175,9 @@
   }
 }
 
-/* 📱 FULL MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   .newsGrid {
     grid-template-columns: 1fr;
-    gap: 25px;
   }
 
   .newsSection {
@@ -197,40 +189,7 @@
     margin-bottom: 40px;
   }
 
-  .card {
-    width: 100%;
-    max-width: 300px;
-    height: 210px;   // 🔥 perfect mobile height
+  .imageWrapper {
+    height: 160px;
   }
-
-  .upperPartFace,
-  .upperPartBack {
-    font-size: 15px;
-  }
-
-  .lowerPartFace,
-  .lowerPartBack {
-    font-size: 14px;
-  }
-}
-
-/* SMALL MOBILE (iPhone SE, 360px width) */
-@media (max-width: 420px) {
-  .card {
-    max-width: 270px;
-    height: 200px;
-  }
-}
-
-.newsSection a {
-  text-decoration: none !important;
-  color: inherit !important;
-  display: inline-block;
-}
-
-.newsSection a:hover,
-.newsSection a:active,
-.newsSection a:visited {
-  text-decoration: none !important;
-  color: inherit !important;
 }
