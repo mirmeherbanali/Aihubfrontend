@@ -23,13 +23,12 @@ export default function BlogDetailsPage({ params }: Props) {
 
   if (isLoading) return <Loader />;
   if (!blog) return <p className={styles.center}>Blog not found.</p>;
-  console.log("chk",blog)
+  console.log("chk", blog);
 
   return (
     <>
       {/* ================= HEADER ================= */}
       <header className={styles.header}>
-        {/* ✅ CATEGORY MAP + LINK */}
         <div className={styles.categoryRow}>
           {blog.categories?.length ? (
             blog.categories.map((cat: any) => (
@@ -50,17 +49,14 @@ export default function BlogDetailsPage({ params }: Props) {
 
         <div className={styles.metaRow}>
           <div className={styles.author}>
-            <div className={styles.avatar}>
-              {blog.author?.authorName}
-            </div>
+            <div className={styles.avatar}>{blog.author?.authorName}</div>
             <span>
               Published by <b>{blog.author?.authorName}</b>
             </span>
           </div>
 
           <span>
-            Updated on{" "}
-            <b>{new Date(blog.updatedAt).toLocaleDateString()}</b>
+            Updated on <b>{new Date(blog.updatedAt).toLocaleDateString()}</b>
           </span>
         </div>
       </header>
@@ -95,22 +91,19 @@ export default function BlogDetailsPage({ params }: Props) {
                 </div>
               )}
 
-             {item.categories?.length ? (
-  item.categories.map((cat: any) => (
-    <span key={cat._id} className={styles.badge}>
-      {cat.categoryName}
-    </span>
-  ))
-) : (
-  <span className={styles.badge}>Uncategorized</span>
-)}
-
+              {item.categories?.length ? (
+                item.categories.map((cat: any) => (
+                  <span key={cat._id} className={styles.badge}>
+                    {cat.categoryName}
+                  </span>
+                ))
+              ) : (
+                <span className={styles.badge}>Uncategorized</span>
+              )}
 
               <h4>{item.title}</h4>
 
-              <small>
-                {new Date(item.updatedAt).toLocaleDateString()}
-              </small>
+              <small>{new Date(item.updatedAt).toLocaleDateString()}</small>
             </Link>
           ))}
 
@@ -153,17 +146,15 @@ export default function BlogDetailsPage({ params }: Props) {
               )}
 
               <div className={styles.relatedBody}>
-     {item.categories?.length ? (
-  item.categories.map((cat: any) => (
-    <span key={cat._id} className={styles.badge}>
-      {cat.categoryName}
-    </span>
-  ))
-) : (
-  <span className={styles.badge}>Uncategorized</span>
-)}
-
-
+                {item.categories?.length ? (
+                  item.categories.map((cat: any) => (
+                    <span key={cat._id} className={styles.badge}>
+                      {cat.categoryName}
+                    </span>
+                  ))
+                ) : (
+                  <span className={styles.badge}>Uncategorized</span>
+                )}
 
                 <h3>{item.title}</h3>
 
