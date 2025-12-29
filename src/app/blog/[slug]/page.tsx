@@ -23,7 +23,7 @@ export default function BlogDetailsPage({ params }: Props) {
 
   if (isLoading) return <Loader />;
   if (!blog) return <p className={styles.center}>Blog not found.</p>;
-  console.log("chk", blog);
+
 
   return (
     <>
