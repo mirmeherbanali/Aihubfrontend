@@ -3,19 +3,17 @@
 import React from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/latestNews.module.scss";
-import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 
-const LatestNews = () => {
-  const { data, isLoading } = useGetAllBlogsQuery();
+
+
+export default  function LatestNewsServer({ blog }: { blog: any[] }) {
 
   // only published blogs
-  const blogs =
-    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+  const blogs =blog?.filter((b: any) => b.status === "Published");
 
   // latest 4
   const latestBlogs = blogs.slice(0, 4);
 
-  if (isLoading) return null;
 
   return (
     <section className={styles.newsSection}>
@@ -65,4 +63,3 @@ const LatestNews = () => {
   );
 };
 
-export default LatestNews;

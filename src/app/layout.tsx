@@ -18,6 +18,7 @@ import {
   getLoginTime,
   updateLoginTime,
 } from "@/utils/authStorage";
+import JsDetector from "./JsDetector";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -142,7 +143,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
               </div>
             )} */}
-
+           <JsDetector />
             {children}
           </main>
 

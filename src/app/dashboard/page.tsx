@@ -14,6 +14,7 @@ import AdminTools from "@/components/Dashboard/tools/adminTools";
 import CategoryPage from "@/components/Dashboard/categories/page";
 import Reviews from "@/components/Dashboard/reviews/page";
 import AdminHome from "@/components/Dashboard/AdminDashboard/page";
+import CreateBlogPage from "@/components/Dashboard/blog/page";
 const Dashboard = () => {
   const searchParams = useSearchParams()!;
   const router = useRouter();
@@ -57,7 +58,7 @@ const Dashboard = () => {
       case "6":
         return <Reviews />;
       case "7":
-        return <div>📝 Blogs Management</div>;
+        return <CreateBlogPage/>;
       case "8":
         return <div>📢 Advertisements Management</div>;
       case "9":
