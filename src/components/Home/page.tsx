@@ -1,14 +1,19 @@
 import PageHero from "../Hero/PageHero";
 import Categories from "./categories";
 import FeaturedTools from "./FeaturedTools";
-import LatestNews from "./LatestNews";
-import { getCategories, getTools } from "@/features/serverApi/serverApi";
+import { getAllBlogs, getCategories, getTools } from "@/features/serverApi/serverApi";
 import HomeClient from "./HomeClient";
 import styles from "../ui/style/Home.module.scss";
+import LatestNewsServer from "./LatestNewsServer";
+import { Suspense } from "react";
+import LatestNewsSkeleton from "./LatestNewsSkeleton";
 
 export default async function HomePage() {
-  const categories = await getCategories();
-  const tools = await getTools();
+  const [categories, tools, blog] = await Promise.all([
+    getCategories(),
+    getTools(),
+    getAllBlogs(),
+  ]);
 
   return (
     <>
@@ -21,7 +26,7 @@ export default async function HomePage() {
           btnText="Add Your Tool"
         />
         <Categories categoryData={categories} />
-        <LatestNews />
+          <LatestNewsServer blog={blog} />
         <FeaturedTools toolData={tools} allCategories={categories} />
       </div>
 
