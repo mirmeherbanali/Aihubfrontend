@@ -1,29 +1,72 @@
 "use client";
 
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
-import styles from "../../../components/ui/style/BlogDetails.module.scss";
+import styles from "@/components/ui/style/BlogDetails.module.scss";
 import Link from "next/link";
 import Loader from "@/components/Loader/Loader";
+import { useMemo } from "react";
 
 type Props = {
   params: {
     slug: string;
+    categoryName: string; // for display only
+    authorName: string;   // for display only
   };
 };
+
+// normalize string for URLs
+const normalize = (str?: string) =>
+  str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
 export default function BlogDetailsPage({ params }: Props) {
   const { slug } = params;
   const { data, isLoading } = useGetAllBlogsQuery();
 
-  const blogs =
-    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+  const blogs = useMemo(() => {
+    return (
+      data?.result?.list
+        ?.filter((b: any) => b.status === "Published")
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        ) || []
+    );
+  }, [data]);
 
-  const blog = blogs.find((b: any) => b.slug === slug);
-  const latestArticles = blogs.filter((b: any) => b.slug !== slug).slice(0, 3);
+  const blog = blogs.find((b: any) => normalize(b.slug) === normalize(slug));
 
   if (isLoading) return <Loader />;
   if (!blog) return <p className={styles.center}>Blog not found.</p>;
 
+  // Get normalized categories of current blog
+  const blogCategoryNames = blog.categories?.map((cat: any) =>
+    normalize(cat.categoryName)
+  );
+
+  // Latest articles: any author, same categories, exclude current blog
+  const latestArticles = blogs
+    .filter((b: any) => {
+      if (normalize(b.slug) === normalize(slug)) return false;
+      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      return categories.some((cat: any) => blogCategoryNames.includes(cat));
+    })
+    .slice(0, 3);
+
+  // Related articles: same categories, prioritize same author
+  const relatedArticles = [
+    ...blogs.filter((b: any) => {
+      if (normalize(b.slug) === normalize(slug)) return false;
+      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      return categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
+        normalize(b.author?.authorName) === normalize(blog.author?.authorName);
+    }),
+    ...blogs.filter((b: any) => {
+      if (normalize(b.slug) === normalize(slug)) return false;
+      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      return categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
+        normalize(b.author?.authorName) !== normalize(blog.author?.authorName);
+    })
+  ].slice(0, 4);
 
   return (
     <>
@@ -34,7 +77,7 @@ export default function BlogDetailsPage({ params }: Props) {
             blog.categories.map((cat: any) => (
               <Link
                 key={cat._id}
-                href={`/blog?category=${cat.categorySlug}`}
+                href={`/blog/${normalize(cat.categoryName)}`}
                 className={styles.category}
               >
                 {cat.categoryName}
@@ -77,12 +120,14 @@ export default function BlogDetailsPage({ params }: Props) {
         </article>
 
         <aside className={styles.sidebar}>
-          <h3 className={styles.sidebarTitle}>Latest Articles</h3>
+          <h3 className={styles.sidebarTitle}>
+            Latest Articles in {blog.categories?.[0]?.categoryName || "Category"}
+          </h3>
 
           {latestArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${item.slug}`}
+              href={`/blog/${normalize(item.categories?.[0]?.categoryName)}/${normalize(item.author?.authorName)}/${normalize(item.slug)}`}
               className={styles.sideCard}
             >
               {item.featuredImage?.url && (
@@ -91,31 +136,22 @@ export default function BlogDetailsPage({ params }: Props) {
                 </div>
               )}
 
-              {item.categories?.length ? (
-                item.categories.map((cat: any) => (
-                  <span key={cat._id} className={styles.badge}>
-                    {cat.categoryName}
-                  </span>
-                ))
-              ) : (
-                <span className={styles.badge}>Uncategorized</span>
-              )}
-
-              <h4>{item.title}</h4>
-
-              <small>{new Date(item.updatedAt).toLocaleDateString()}</small>
+              <div className={styles.sideBody}>
+                <h4>{item.title}</h4>
+                <small>
+                  Published by <b>{item.author?.authorName}</b> | {new Date(item.updatedAt).toLocaleDateString()}
+                </small>
+              </div>
             </Link>
           ))}
 
-          {/* ================= TOP CATEGORIES ================= */}
           <h3 className={styles.sidebarTitle}>Top Categories</h3>
-
           <div className={styles.categoryWrap}>
             {blog.categories?.length ? (
               blog.categories.map((cat: any) => (
                 <Link
                   key={cat._id}
-                  href={`/blog?category=${cat.categorySlug}`}
+                  href={`/blog/${normalize(cat.categoryName)}`}
                   className={styles.categoryTag}
                 >
                   {cat.categoryName}
@@ -133,10 +169,10 @@ export default function BlogDetailsPage({ params }: Props) {
         <h2>Related Articles</h2>
 
         <div className={styles.relatedGrid}>
-          {latestArticles.map((item: any) => (
+          {relatedArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${item.slug}`}
+              href={`/blog/${normalize(item.categories?.[0]?.categoryName)}/${normalize(item.author?.authorName)}/${normalize(item.slug)}`}
               className={styles.relatedCard}
             >
               {item.featuredImage?.url && (
@@ -146,20 +182,9 @@ export default function BlogDetailsPage({ params }: Props) {
               )}
 
               <div className={styles.relatedBody}>
-                {item.categories?.length ? (
-                  item.categories.map((cat: any) => (
-                    <span key={cat._id} className={styles.badge}>
-                      {cat.categoryName}
-                    </span>
-                  ))
-                ) : (
-                  <span className={styles.badge}>Uncategorized</span>
-                )}
-
                 <h3>{item.title}</h3>
-
                 <p>
-                  By <b>{item.author?.authorName} </b>
+                  Published by <b>{item.author?.authorName}</b> | {new Date(item.updatedAt).toLocaleDateString()}
                 </p>
               </div>
             </Link>
