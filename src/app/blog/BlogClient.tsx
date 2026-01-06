@@ -70,14 +70,15 @@ export default function BlogClient() {
 
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
-        {paginatedBlogs.flatMap((blog: any) =>
+        {paginatedBlogs?.flatMap((blog: any) =>
           (blog.categories?.length
-            ? blog.categories
+            ? blog?.categories
             : [{ categoryName: "Uncategorized" }]
-          ).map((cat: any) => (
+          )?.map((cat: any) => (
             <Link
-              key={`${blog._id}-${cat.categoryName}`}
-              href={`/blog/${cat.categoryName}`}
+              key={`${blog?._id}-${cat?.categoryName}`}
+              href={`/blog/${encodeURIComponent(cat.categoryName)}/${encodeURIComponent(blog.author?.authorName || "")}/${blog.slug}`}
+
               className={styles.blogCard}
             >
               {/* IMAGE */}

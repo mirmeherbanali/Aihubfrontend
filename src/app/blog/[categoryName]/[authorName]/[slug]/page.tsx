@@ -19,7 +19,7 @@ const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
 export default function BlogDetailsPage({ params }: Props) {
-  const { slug } = params;
+  const { slug,categoryName,authorName } = params;
   const { data, isLoading } = useGetAllBlogsQuery();
 
   const blogs = useMemo(() => {
@@ -93,9 +93,13 @@ export default function BlogDetailsPage({ params }: Props) {
         <div className={styles.metaRow}>
           <div className={styles.author}>
             <div className={styles.avatar}>{blog.author?.authorName}</div>
-            <span>
-              Published by <b>{blog.author?.authorName}</b>
-            </span>
+            <Link
+  href={`/blog/${categoryName}/${authorName}`}
+  className={styles.authorLink}
+>
+  Published by <b>{blog.author?.authorName}</b>
+</Link>
+
           </div>
 
           <span>
@@ -138,9 +142,18 @@ export default function BlogDetailsPage({ params }: Props) {
 
               <div className={styles.sideBody}>
                 <h4>{item.title}</h4>
-                <small>
-                  Published by <b>{item.author?.authorName}</b> | {new Date(item.updatedAt).toLocaleDateString()}
-                </small>
+             <small>
+  <Link
+    href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(
+      item.author?.authorName
+    )}`}
+    className={styles.authorLink}
+  >
+    Published by <b>{item.author?.authorName}</b>
+  </Link>{" "}
+  | {new Date(item.updatedAt).toLocaleDateString()}
+</small>
+
               </div>
             </Link>
           ))}
@@ -183,9 +196,18 @@ export default function BlogDetailsPage({ params }: Props) {
 
               <div className={styles.relatedBody}>
                 <h3>{item.title}</h3>
-                <p>
-                  Published by <b>{item.author?.authorName}</b> | {new Date(item.updatedAt).toLocaleDateString()}
-                </p>
+             <p>
+  <Link
+    href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(
+      item.author?.authorName
+    )}`}
+    className={styles.authorLink}
+  >
+    Published by <b>{item.author?.authorName}</b>
+  </Link>{" "}
+  | {new Date(item.updatedAt).toLocaleDateString()}
+</p>
+
               </div>
             </Link>
           ))}
