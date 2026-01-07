@@ -32,9 +32,7 @@ export default function CategoryPageClient({
   /* CATEGORY FILTER */
   const categoryBlogs = useMemo(() => {
     return blogs.filter((blog: any) =>
-      blog.categories?.some(
-        (cat: any) => cat.categoryName === categoryName
-      )
+      blog.categories?.some((cat: any) => cat.categoryName === categoryName)
     );
   }, [blogs, categoryName]);
 
@@ -55,13 +53,13 @@ export default function CategoryPageClient({
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
         {paginatedBlogs.map((blog: any) => (
-            <Link
-    key={blog._id}
-    href={`/blog/${categoryName}/${encodeURIComponent(
-      blog.author?.authorName || "unknown-author"
-    )}`}
-    className={styles.blogCard}
-  >
+          <Link
+            key={blog._id}
+             href={`/blog/${encodeURIComponent(
+              categoryName
+            )}/${encodeURIComponent( blog.author?.authorName)}/${blog.slug}`}
+            className={styles.blogCard}
+          >
             <div className={styles.imageWrapper}>
               <img
                 src={blog.featuredImage?.url || "/blog-placeholder.png"}
@@ -69,9 +67,7 @@ export default function CategoryPageClient({
               />
             </div>
 
-            <span className={styles.category}>
-              {categoryName}
-            </span>
+            <span className={styles.category}>{categoryName}</span>
 
             <h3 className={styles.title}>{blog.blogTitle}</h3>
 
@@ -79,8 +75,8 @@ export default function CategoryPageClient({
               Published By <span>{blog.author?.authorName}</span>
             </p>
             <p className={styles.meta}>
-                                          Published On <span>{formatDate(blog.publishedDate)}</span>
-                                        </p>
+              Published On <span>{formatDate(blog.publishedDate)}</span>
+            </p>
           </Link>
         ))}
       </div>
