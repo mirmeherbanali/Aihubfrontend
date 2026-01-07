@@ -77,7 +77,7 @@ export default function BlogDetailsPage({ params }: Props) {
             blog.categories.map((cat: any) => (
               <Link
                 key={cat._id}
-                href={`/blog/${normalize(cat.categoryName)}`}
+                href={`/blog/${encodeURIComponent(cat.categoryName)}`}
                 className={styles.category}
               >
                 {cat.categoryName}
@@ -88,7 +88,7 @@ export default function BlogDetailsPage({ params }: Props) {
           )}
         </div>
 
-        <h1 className={styles.title}>{blog.title}</h1>
+        <h3 className={styles.title}>{blog?.blogTitle}</h3>
 
         <div className={styles.metaRow}>
           <div className={styles.author}>
@@ -131,7 +131,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {latestArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${normalize(item.categories?.[0]?.categoryName)}/${normalize(item.author?.authorName)}/${normalize(item.slug)}`}
+              href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(item.author?.authorName)}/${encodeURIComponent(item.slug)}`}
               className={styles.sideCard}
             >
               {item.featuredImage?.url && (
@@ -164,7 +164,7 @@ export default function BlogDetailsPage({ params }: Props) {
               blog.categories.map((cat: any) => (
                 <Link
                   key={cat._id}
-                  href={`/blog/${normalize(cat.categoryName)}`}
+                  href={`/blog/${encodeURIComponent(cat.categoryName)}`}
                   className={styles.categoryTag}
                 >
                   {cat.categoryName}
@@ -185,7 +185,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {relatedArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${normalize(item.categories?.[0]?.categoryName)}/${normalize(item.author?.authorName)}/${normalize(item.slug)}`}
+              href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(item.author?.authorName)}/${encodeURIComponent(item.slug)}`}
               className={styles.relatedCard}
             >
               {item.featuredImage?.url && (
