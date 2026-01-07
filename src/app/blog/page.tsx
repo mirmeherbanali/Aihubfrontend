@@ -5,7 +5,14 @@ import Link from "next/link";
 import { getAllBlogs } from "@/features/serverApi/serverApi";
 import { getPaginationRange } from "@/components/shared/utilPagination";
 const BLOGS_PER_PAGE = 6;
-
+const formatDate = (date?: string) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+};
 export default async function BlogPage({
   searchParams,
 }: {
@@ -38,12 +45,18 @@ export default async function BlogPage({
 
         {/* SERVER BLOG GRID */}
         <div className={styles.gridWrapper}>
-          {paginatedBlogs.map((blog: any) => (
+          {paginatedBlogs?.flatMap((blog: any) =>
+          (blog.categories?.length
+            ? blog?.categories
+            : [{ categoryName: "Uncategorized" }]
+          )?.map((cat: any) => (
             <Link
-              key={blog._id}
-              href={`/blog/${blog.slug}`}
+              key={`${blog._id}-${cat.categoryName}`}
+              href={`/blog/${blog.slug}/${encodeURIComponent(cat.categoryName)}/${encodeURIComponent(blog.author?.authorName || "")}`}
+
               className={styles.blogCard}
             >
+             
               <div className={styles.imageWrapper}>
                 <img
                   src={blog.featuredImage?.url || "/blog-placeholder.png"}
@@ -51,17 +64,23 @@ export default async function BlogPage({
                 />
               </div>
 
-              <span className={styles.category}>
-                {blog.categories?.[0]?.categoryName || "-"}
+             <span className={styles.category}>
+                {cat.categoryName}
               </span>
 
-              <h3 className={styles.title}>{blog.blogTitle}</h3>
+              {/* TITLE */}
+            <h3 className={styles.title}>{blog.blogTitle}</h3>
 
+              {/* META */}
               <p className={styles.meta}>
                 Published By <span>{blog.author?.authorName}</span>
               </p>
+
+              <p className={styles.meta}>
+                Published On <span>{formatDate(blog.publishedDate)}</span>
+              </p>
             </Link>
-          ))}
+          )))}
         </div>
 
         {/* SERVER PAGINATION */}

@@ -16,7 +16,7 @@ const formatDate = (date?: string) => {
   });
 };
 
-export default function BlogClient(){
+export default function BlogClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -70,49 +70,52 @@ export default function BlogClient(){
 
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
-        {paginatedBlogs.map((blog: any) => (
-          <Link
-            key={blog._id}
-            href={`/blog/${blog.slug}`}
-            className={styles.blogCard}
-          >
-            {/* IMAGE */}
-            <div className={styles.imageWrapper}>
-              <img
-                src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                alt={blog.featuredImage?.altText || blog.blogTitle}
+        {paginatedBlogs?.flatMap((blog: any) =>
+          (blog.categories?.length
+            ? blog?.categories
+            : [{ categoryName: "Uncategorized" }]
+          )?.map((cat: any) => (
+            <Link
+              key={`${blog?._id}-${cat?.categoryName}`}
+              href={`/blog/${encodeURIComponent(cat.categoryName)}/${encodeURIComponent(blog.author?.authorName || "")}/${blog.slug}`}
+
+              className={styles.blogCard}
+            >
+              {/* IMAGE */}
+              <div className={styles.imageWrapper}>
+                <img
+                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                  alt={blog.featuredImage?.altText || blog.blogTitle}
+                />
+              </div>
+
+              {/* CATEGORY */}
+              <span className={styles.category}>
+                {cat.categoryName}
+              </span>
+
+              {/* TITLE */}
+              <h3
+                className={styles.title}
+                dangerouslySetInnerHTML={{
+                  __html: highlightMatch(blog.blogTitle),
+                }}
               />
-            </div>
 
-            {/* CATEGORY */}
-            <span className={styles.category}>
-              {blog.categories?.[0]?.categoryName || "-"}
-            </span>
+              {/* META */}
+              <p className={styles.meta}>
+                Published By <span>{blog.author?.authorName}</span>
+              </p>
 
-            {/* TITLE */}
-            <h3
-              className={styles.title}
-              dangerouslySetInnerHTML={{
-                __html: highlightMatch(blog.blogTitle),
-              }}
-            />
-
-            {/* META */}
-            <p className={styles.meta}>
-              Published By <span>{blog.author?.authorName}</span>
-            </p>
-
-            <p className={styles.meta}>
-              Published On <span>{formatDate(blog.publishedDate)}</span>
-            </p>
-          </Link>
-        ))}
+              <p className={styles.meta}>
+                Published On <span>{formatDate(blog.publishedDate)}</span>
+              </p>
+            </Link>
+          ))
+        )}
       </div>
 
       {/* PAGINATION */}
-       <div className={styles.homeServer}>
-    </div>
-       <div className={styles.homeServer}></div>
       {totalPages > 1 && (
         <div className={styles.paginationWrapper}>
           <RadioPagination
