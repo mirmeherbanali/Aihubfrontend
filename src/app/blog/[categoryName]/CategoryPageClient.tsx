@@ -72,9 +72,7 @@ export default function CategoryPageClient({
               />
             </div>
 
-            <span className={styles.category}>
-              {categoryName}
-            </span>
+            <span className={styles.category}>{categoryName}</span>
 
             <h3 className={styles.title}>{blog.blogTitle}</h3>
 
@@ -82,8 +80,8 @@ export default function CategoryPageClient({
               Published By <span>{blog.author?.authorName}</span>
             </p>
             <p className={styles.meta}>
-                                          Published On <span>{formatDate(blog.publishedDate)}</span>
-                                        </p>
+              Published On <span>{formatDate(blog.publishedDate)}</span>
+            </p>
           </Link>
         )))}
       </div>
