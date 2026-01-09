@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/CategoryGrid.module.scss";
+import { slugify } from "@/utils/useEncodeUrl";
 
 interface CategoryGridProps {
   title?: string;
@@ -41,7 +42,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
           return (
             <Link
               key={item._id}
-              href={`/categories/${item.categoryName.toLowerCase()}`}
+              href={`/categories/${slugify(item?.categoryName)}`}
               className={`${styles.card} ${isLoading ? styles.loading : ""}`}
               onClick={() => handleClick(item)}
             >

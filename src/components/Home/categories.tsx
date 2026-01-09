@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "../../components/ui/style/categoryCard.module.scss";
 
 import { FaImage, FaVideo, FaMusic, FaPenNib } from "react-icons/fa";
+import { slugify } from "@/utils/useEncodeUrl";
 
 interface Category {
   _id: string;
@@ -27,7 +28,7 @@ const Categories: React.FC<CategoriesProps> = ({ categoryData }) => {
         {categoryData.slice(0, 4).map((cat, index) => (
           <Link
             key={cat._id}
-            href={`/categories/${encodeURIComponent(cat.categoryName)}`}
+            href={`/categories/${slugify(cat.categoryName)}`}
             className={styles.cardContainer}
           >
             <div className={styles.cardBox}>

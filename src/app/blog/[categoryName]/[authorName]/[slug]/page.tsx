@@ -5,6 +5,7 @@ import styles from "@/components/ui/style/BlogDetails.module.scss";
 import Link from "next/link";
 import Loader from "@/components/Loader/Loader";
 import { useMemo } from "react";
+import { slugify } from "@/utils/useEncodeUrl";
 
 type Props = {
   params: {
@@ -77,7 +78,7 @@ export default function BlogDetailsPage({ params }: Props) {
             blog.categories.map((cat: any) => (
               <Link
                 key={cat._id}
-                href={`/blog/${encodeURIComponent(cat.categoryName)}`}
+                href={`/blog/${slugify(cat.categoryName)}`}
                 className={styles.category}
               >
                 {cat.categoryName}
@@ -131,7 +132,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {latestArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(item.author?.authorName)}/${encodeURIComponent(item.slug)}`}
+              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.author?.authorName)}/${slugify(item.slug)}`}
               className={styles.sideCard}
             >
               {item.featuredImage?.url && (
@@ -144,7 +145,7 @@ export default function BlogDetailsPage({ params }: Props) {
                 <h4>{item.title}</h4>
              <small>
   <Link
-    href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(
+    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(
       item.author?.authorName
     )}`}
     className={styles.authorLink}
@@ -164,7 +165,7 @@ export default function BlogDetailsPage({ params }: Props) {
               blog.categories.map((cat: any) => (
                 <Link
                   key={cat._id}
-                  href={`/blog/${encodeURIComponent(cat.categoryName)}`}
+                  href={`/blog/${slugify(cat.categoryName)}`}
                   className={styles.categoryTag}
                 >
                   {cat.categoryName}
@@ -185,7 +186,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {relatedArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(item.author?.authorName)}/${encodeURIComponent(item.slug)}`}
+              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.author?.authorName)}/${slugify(item.slug)}`}
               className={styles.relatedCard}
             >
               {item.featuredImage?.url && (
@@ -198,7 +199,7 @@ export default function BlogDetailsPage({ params }: Props) {
                 <h3>{item.title}</h3>
              <p>
   <Link
-    href={`/blog/${encodeURIComponent(item.categories?.[0]?.categoryName)}/${encodeURIComponent(
+    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(
       item.author?.authorName
     )}`}
     className={styles.authorLink}

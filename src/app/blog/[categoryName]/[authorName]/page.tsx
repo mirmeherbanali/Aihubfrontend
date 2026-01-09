@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getAllBlogs } from "@/features/serverApi/serverApi";
 import { getPaginationRange } from "@/components/shared/utilPagination";
 import AuthorPageClient from "./AuthorPageClient";
+import { slugify, unslugify } from "@/utils/useEncodeUrl";
 
 const BLOGS_PER_PAGE = 6;
 
@@ -23,8 +24,8 @@ export default async function AuthorPage({
   searchParams: { page?: string };
 }) {
   const page = Number(searchParams.page) || 1;
-  const categoryName = decodeURIComponent(params.categoryName);
-  const authorName = decodeURIComponent(params.authorName);
+  const categoryName = unslugify(params.categoryName);
+  const authorName = unslugify(params.authorName);
 
   const data = await getAllBlogs();
 
@@ -32,9 +33,9 @@ export default async function AuthorPage({
 
   const authorBlogs = blogs.filter(
     (blog: any) =>
-      blog.author?.authorName === authorName &&
+      blog.author?.authorName?.toLowerCase() === authorName &&
       blog.categories?.some(
-        (cat: any) => cat.categoryName === categoryName
+        (cat: any) => cat.categoryName?.toLowerCase() === categoryName
       )
   );
 
@@ -90,7 +91,7 @@ export default async function AuthorPage({
           {paginatedBlogs.map((blog: any) => (
             <Link
               key={blog._id}
-              href={`/blog/${categoryName}/${authorName}/${blog.slug}`}
+              href={`/blog/${slugify(categoryName)}/${slugify(authorName)}/${slugify(blog.slug)}`}
               className={styles.blogCard}
             >
               <div className={styles.imageWrapper}>
@@ -119,7 +120,7 @@ export default async function AuthorPage({
         {totalPages > 1 && (
           <div className={styles.pagination}>
             <Link
-              href={`/blog/${categoryName}/${authorName}?page=${Math.max(
+              href={`/blog/${slugify(categoryName)}/${slugify(authorName)}?page=${Math.max(
                 1,
                 page - 1
               )}`}
@@ -134,7 +135,7 @@ export default async function AuthorPage({
               ) : (
                 <Link
                   key={i}
-                  href={`/blog/${categoryName}/${authorName}?page=${item}`}
+                  href={`/blog/${slugify(categoryName)}/${slugify(authorName)}?page=${item}`}
                   className={page === item ? styles.activePage : ""}
                 >
                   {item}
@@ -143,7 +144,7 @@ export default async function AuthorPage({
             )}
 
             <Link
-              href={`/blog/${categoryName}/${authorName}?page=${Math.min(
+              href={`/blog/${slugify(categoryName)}/${slugify(authorName)}?page=${Math.min(
                 totalPages,
                 page + 1
               )}`}

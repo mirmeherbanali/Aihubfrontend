@@ -6,6 +6,7 @@ import RadioPagination from "@/components/ui/common/RadioPagination";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "../../components/ui/style/Blog.module.scss";
 import Link from "next/link";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -77,8 +78,7 @@ export default function BlogClient() {
           )?.map((cat: any) => (
             <Link
               key={`${blog?._id}-${cat?.categoryName}`}
-              href={`/blog/${encodeURIComponent(cat.categoryName)}/${encodeURIComponent(blog.author?.authorName || "")}/${blog.slug}`}
-
+              href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
               className={styles.blogCard}
             >
               {/* IMAGE */}

@@ -18,6 +18,7 @@ import { skipToken } from "@reduxjs/toolkit/query/react";
 import { getUserId, getUserType } from "@/utils/authStorage";
 import Loading from "@/app/loading";
 import Loader from "@/components/Loader/Loader";
+import { unslugify,slugify } from "@/utils/useEncodeUrl";
 
 const ToolDetailsPage = () => {
   const { slug, toolname } = useParams() as { slug: string; toolname: string };
@@ -28,8 +29,8 @@ const ToolDetailsPage = () => {
 
   const decoded = useMemo(
     () => ({
-      slug: decodeURIComponent(slug as string),
-      toolName: decodeURIComponent(toolname as string),
+      slug: unslugify(slug as string),
+      toolName: unslugify(toolname as string),
     }),
     [slug, toolname]
   );
@@ -44,7 +45,7 @@ const ToolDetailsPage = () => {
 
   const { category, categoryId } = useMemo(() => {
     const found = allCategories?.result?.list?.find(
-      (c: any) => c.categoryName?.toLowerCase() === decoded.slug.toLowerCase()
+      (c: any) => c.categoryName?.toLowerCase() === decoded.slug
     );
     return {
       category: found,
@@ -64,7 +65,7 @@ const ToolDetailsPage = () => {
     const tools = categoryDetail?.result?.list?.tools || [];
 
     const foundTool = tools.find(
-      (t: any) => t.toolName?.toLowerCase() === decoded.toolName.toLowerCase()
+      (t: any) => t.toolName?.toLowerCase() === decoded.toolName
     );
 
     const alt = foundTool
@@ -85,7 +86,7 @@ const ToolDetailsPage = () => {
 
   const handleViewAll = () => {
     window.open(
-      `/categories/${encodeURIComponent(category.categoryName)}`,
+      `/categories/${slugify(category.categoryName)}`,
       "_blank"
     );
   };
@@ -115,6 +116,7 @@ const ToolDetailsPage = () => {
             <ToolRightSidebar
               tool={tool}
               category={{ ...category, tools: alternativeTools }}
+              slug={slug}
               onViewAll={handleViewAll}
             />
           </aside>

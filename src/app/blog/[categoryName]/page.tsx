@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getAllBlogs } from "@/features/serverApi/serverApi";
 import { getPaginationRange } from "@/components/shared/utilPagination";
 import CategoryPageClient from "./CategoryPageClient";
+import { slugify,unslugify } from "@/utils/useEncodeUrl";
 
 const BLOGS_PER_PAGE = 6;
 const formatDate = (date?: string) => {
@@ -23,7 +24,7 @@ export default async function CategoryPage({
   searchParams: { page?: string };
 }) {
   const page = Number(searchParams.page) || 1;
-  const categoryName = decodeURIComponent(params.categoryName);
+  const categoryName = unslugify(params.categoryName);
 
   const data = await getAllBlogs();
 
@@ -33,7 +34,7 @@ export default async function CategoryPage({
   // ✅ category filter
   const categoryBlogs = blogs.filter((blog: any) =>
     blog.categories?.some(
-      (cat: any) => cat.categoryName === categoryName
+      (cat: any) => cat.categoryName?.toLowerCase() === categoryName
     )
   );
 
@@ -53,10 +54,14 @@ export default async function CategoryPage({
       <div className={styles.homeServer}>
         {/* SERVER BLOG GRID */}
         <div className={styles.gridWrapper}>
-          {paginatedBlogs.map((blog: any) => (
-              <Link
-    key={blog._id}
-    href={`/blog/${categoryName}/${encodeURIComponent(
+          {paginatedBlogs?.flatMap((blog: any) =>
+                    (blog.categories?.length
+                      ? blog?.categories
+                      : [{ categoryName: "Uncategorized" }]
+                    )?.map((cat: any) => (
+                      <Link
+                        key={`${blog?._id}-${cat?.categoryName}`}
+    href={`/blog/${slugify(categoryName)}/${slugify(
       blog.author?.authorName || "unknown-author"
     )}`}
     className={styles.blogCard}
@@ -81,7 +86,7 @@ export default async function CategoryPage({
                               Published On <span>{formatDate(blog.publishedDate)}</span>
                             </p>
             </Link>
-          ))}
+          )))}
         </div>
 
         {/* SERVER PAGINATION */}
@@ -89,7 +94,7 @@ export default async function CategoryPage({
           <div className={styles.pagination}>
             {/* PREVIOUS */}
             <Link
-              href={`/blog/${categoryName}?page=${Math.max(1, page - 1)}`}
+              href={`/blog/${slugify(categoryName)}?page=${Math.max(1, page - 1)}`}
               className={page === 1 ? styles.disabled : ""}
               aria-disabled={page === 1}
             >
@@ -103,7 +108,7 @@ export default async function CategoryPage({
               ) : (
                 <Link
                   key={i}
-                  href={`/blog/${categoryName}?page=${item}`}
+                  href={`/blog/${slugify(categoryName)}?page=${item}`}
                   className={page === item ? styles.activePage : ""}
                 >
                   {item}
@@ -113,7 +118,7 @@ export default async function CategoryPage({
 
             {/* NEXT */}
             <Link
-              href={`/blog/${categoryName}?page=${Math.min(totalPages, page + 1)}`}
+              href={`/blog/${slugify(categoryName)}?page=${Math.min(totalPages, page + 1)}`}
               className={page === totalPages ? styles.disabled : ""}
               aria-disabled={page === totalPages}
             >
