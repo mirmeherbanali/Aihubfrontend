@@ -6,6 +6,7 @@ import { useState } from "react";
 import styles from "../ui/style/CategoryToolCard.module.scss";
 import { FaArrowRight, FaBookmark, FaBolt, FaSpinner } from "react-icons/fa";
 import StarRating from "../ui/common/StarRating";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const CategoryToolCard = ({ tool }: { tool: any }) => {
   const { slug } = useParams() as { slug: string };
@@ -13,7 +14,7 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  const encodedToolName = encodeURIComponent(tool.toolName);
+  const encodedToolName = slugify(tool.toolName);
   const finalURL = `/categories/${slug}/tooldetails/${encodedToolName}`;
 
   const toggleBookmark = (e: React.MouseEvent) => {

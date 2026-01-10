@@ -4,6 +4,7 @@ import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { getAllBlogs } from "@/features/serverApi/serverApi";
 import { getPaginationRange } from "@/components/shared/utilPagination";
+import { slugify } from "@/utils/useEncodeUrl";
 const BLOGS_PER_PAGE = 6;
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -52,8 +53,7 @@ export default async function BlogPage({
           )?.map((cat: any) => (
             <Link
               key={`${blog._id}-${cat.categoryName}`}
-              href={`/blog/${blog.slug}/${encodeURIComponent(cat.categoryName)}/${encodeURIComponent(blog.author?.authorName || "")}`}
-
+              href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
               className={styles.blogCard}
             >
              

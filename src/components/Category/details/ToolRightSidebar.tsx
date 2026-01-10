@@ -2,14 +2,16 @@
 
 import React from "react";
 import styles from "@/components/ui/style/ToolRightSidebar.module.scss";
-
+import Link from "next/link";
+import { slugify } from "@/utils/useEncodeUrl";
 interface ToolRightSidebarProps {
   tool: any;
   category: any; 
+  slug:string;
   onViewAll: () => void;
 }
 
-const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category, onViewAll }) => {
+const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug, onViewAll }) => {
   if (!tool || !category?.tools) return null;
 
   return (
@@ -29,18 +31,31 @@ const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category, onV
 
       <div className={styles.cardList}>
         {category.tools.map((altTool: any) => (
-          <div key={altTool._id} className={styles.altCard}>
+          <Link
+            key={altTool._id}
+            href={`/categories/${slug}/tooldetails/${slugify(
+              altTool.toolName
+            )}`}
+            className={styles.altCard}
+          >
             <div className={styles.cardImage}>
               <img
                 src={altTool.logo || "https://via.placeholder.com/50"}
                 alt={altTool.toolName}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
               />
             </div>
+
             <div className={styles.cardText}>
-              <span className={styles.cardTitle}>{altTool.toolName}</span>
+              <span className={styles.cardTitle}>
+                {altTool.toolName}
+              </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

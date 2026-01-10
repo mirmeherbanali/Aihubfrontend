@@ -10,9 +10,10 @@ import RadioPagination from "@/components/ui/common/RadioPagination";
 import styles from "../.././../components/ui/style/CategorySlug.module.scss";
 import Loading from "@/app/loading";
 import Loader from "@/components/Loader/Loader";
+import { unslugify } from "@/utils/useEncodeUrl";
 
 export default function CategorySlugPage({ params }: { params: { slug: string } }) {
-  const decodedSlug = decodeURIComponent(params.slug);
+  const decodedSlug = unslugify(params.slug);
   const [currentPage, setCurrentPage] = useState(1);
 
   const toolsPerPage = 6;
@@ -23,7 +24,7 @@ export default function CategorySlugPage({ params }: { params: { slug: string } 
 
   // ✔ Ensure hooks run before any return
   const category = allCategories?.result?.list?.find(
-    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug.toLowerCase()
+    (cat: any) => cat.categoryName?.toLowerCase() === decodedSlug
   );
 
   const categoryId = category?._id;
