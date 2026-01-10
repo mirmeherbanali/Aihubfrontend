@@ -5,6 +5,7 @@ import RadioPagination from "@/components/ui/common/RadioPagination";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const BLOGS_PER_PAGE = 6;
 
@@ -35,7 +36,7 @@ export default function AuthorPageClient({
   const authorBlogs = useMemo(() => {
     return blogs.filter(
       (blog: any) =>
-        blog.author?.authorName === authorName &&
+        blog.author?.authorName?.toLowerCase() === authorName &&
         blog.categories?.some(
           (cat: any) => cat.categoryName === categoryName
         )
@@ -59,9 +60,9 @@ export default function AuthorPageClient({
         {paginatedBlogs.map((blog: any) => (
           <Link
             key={blog._id}
-            href={`/blog/${encodeURIComponent(
+            href={`/blog/${slugify(
               categoryName
-            )}/${encodeURIComponent(authorName)}/${blog.slug}`}
+            )}/${slugify(authorName)}/${slugify(blog.slug)}`}
             className={styles.blogCard}
           >
             <div className={styles.imageWrapper}>

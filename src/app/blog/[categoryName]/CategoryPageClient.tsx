@@ -6,6 +6,7 @@ import RadioPagination from "@/components/ui/common/RadioPagination";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const BLOGS_PER_PAGE = 6;
 const formatDate = (date?: string) => {
@@ -32,7 +33,9 @@ export default function CategoryPageClient({
   /* CATEGORY FILTER */
   const categoryBlogs = useMemo(() => {
     return blogs.filter((blog: any) =>
-      blog.categories?.some((cat: any) => cat.categoryName === categoryName)
+      blog.categories?.some(
+        (cat: any) => cat.categoryName?.toLowerCase() === categoryName
+      )
     );
   }, [blogs, categoryName]);
 
@@ -52,14 +55,16 @@ export default function CategoryPageClient({
     <>
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
-        {paginatedBlogs.map((blog: any) => (
-          <Link
-            key={blog._id}
-             href={`/blog/${encodeURIComponent(
-              categoryName
-            )}/${encodeURIComponent( blog.author?.authorName)}/${blog.slug}`}
-            className={styles.blogCard}
-          >
+        {paginatedBlogs?.flatMap((blog: any) =>
+                  (blog.categories?.length
+                    ? blog?.categories
+                    : [{ categoryName: "Uncategorized" }]
+                  )?.map((cat: any) => (
+                    <Link
+                      key={`${blog?._id}-${cat?.categoryName}`}
+    href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
+    className={styles.blogCard}
+  >
             <div className={styles.imageWrapper}>
               <img
                 src={blog.featuredImage?.url || "/blog-placeholder.png"}
@@ -78,7 +83,7 @@ export default function CategoryPageClient({
               Published On <span>{formatDate(blog.publishedDate)}</span>
             </p>
           </Link>
-        ))}
+        )))}
       </div>
 
       {/* CLIENT PAGINATION */}

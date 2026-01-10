@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/latestNews.module.scss";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const LatestNews = () => {
   const { data, isLoading } = useGetAllBlogsQuery();
@@ -71,9 +72,9 @@ if (categoryBlogPairs.length < 4) {
   {categoryBlogPairs.map(({ cat, item }: any) => (
     <Link
       key={`${item._id}-${cat.categoryName}`}
-      href={`/blog/${encodeURIComponent(
+      href={`/blog/${slugify(
         cat.categoryName
-      )}/${encodeURIComponent(
+      )}/${slugify(
         item.author?.authorName
       )}/${item.slug}`}
       className={styles.card}

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/featuredTools.module.scss";
+import { slugify } from "@/utils/useEncodeUrl";
 
 interface Category {
   _id: string;
@@ -38,9 +39,9 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
 
           if (!category) return null;
 
-          const link = `/categories/${encodeURIComponent(
+          const link = `/categories/${slugify(
             category.categoryName
-          )}/tooldetails/${encodeURIComponent(tool.toolName)}`;
+          )}/tooldetails/${slugify(tool.toolName)}`;
 
           return (
             <Link key={tool._id} href={link} className={styles.card}>
