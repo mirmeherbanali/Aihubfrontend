@@ -86,7 +86,7 @@ const ToolDetailsPage = () => {
 
   const handleViewAll = () => {
     window.open(
-      `/categories/${slugify(category.categoryName)}`,
+      `/category/${slugify(category.categoryName)}`,
       "_blank"
     );
   };
@@ -117,7 +117,7 @@ const ToolDetailsPage = () => {
               tool={tool}
               category={{ ...category, tools: alternativeTools }}
               slug={slug}
-              onViewAll={handleViewAll}
+              // onViewAll={handleViewAll}
             />
           </aside>
         )}

@@ -5,7 +5,8 @@ import RadioPagination from "@/components/ui/common/RadioPagination";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
-import { slugify } from "@/utils/useEncodeUrl";
+import { slugify, unslugify } from "@/utils/useEncodeUrl";
+import { useBlogStore } from "@/store/useCategoryStore";
 
 const BLOGS_PER_PAGE = 6;
 
@@ -19,29 +20,55 @@ const formatDate = (date?: string) =>
     : "-";
 
 export default function AuthorPageClient({
-  authorName,
   categoryName,
 }: {
-  authorName: string;
   categoryName: string;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading } = useGetAllBlogsQuery();
+   const rawAuthorName = useBlogStore((s: any) => s.authorName);
+
 
   const blogs =
     data?.result?.list?.filter((b: any) => b.status === "Published") || [];
 
-  /* ✅ AUTHOR + CATEGORY FILTER (MATCH SERVER LOGIC) */
-  const authorBlogs = useMemo(() => {
-    return blogs.filter(
-      (blog: any) =>
-        blog.author?.authorName?.toLowerCase() === authorName &&
-        blog.categories?.some(
-          (cat: any) => cat.categoryName === categoryName
-        )
+
+
+const normalizedAuthorSlug = useMemo(() => {
+  if (!rawAuthorName) return null;
+  return slugify(rawAuthorName);
+}, [rawAuthorName]);
+
+
+const authorBlogs = useMemo(() => {
+  if (!normalizedAuthorSlug) return [];
+
+  return blogs.filter((blog: any) => {
+    const blogAuthorSlug = slugify(
+      blog.author?.authorName || ""
     );
-  }, [blogs, authorName, categoryName]);
+
+    const match =
+      blogAuthorSlug === normalizedAuthorSlug;
+
+    console.log(
+      "author raw:", blog.author?.authorName,
+      "| blog slug:", blogAuthorSlug,
+      "| store slug:", normalizedAuthorSlug,
+      "| match:", match
+    );
+
+    return (
+      match &&
+      blog.categories?.some(
+        (cat: any) => cat.categoryName === categoryName
+      )
+    );
+  });
+}, [blogs, normalizedAuthorSlug, categoryName]);
+
+
 
   const totalPages = Math.ceil(authorBlogs.length / BLOGS_PER_PAGE);
 
@@ -62,7 +89,7 @@ export default function AuthorPageClient({
             key={blog._id}
             href={`/blog/${slugify(
               categoryName
-            )}/${slugify(authorName)}/${slugify(blog.slug)}`}
+            )}/${slugify(blog.slug)}`}
             className={styles.blogCard}
           >
             <div className={styles.imageWrapper}>
@@ -78,7 +105,7 @@ export default function AuthorPageClient({
             <h3 className={styles.title}>{blog.blogTitle}</h3>
 
             <p className={styles.meta}>
-              Published By <span>{authorName}</span>
+              Published By <span>{rawAuthorName}</span>
             </p>
 
             <p className={styles.meta}>

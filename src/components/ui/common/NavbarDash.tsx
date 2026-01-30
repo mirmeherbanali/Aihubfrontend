@@ -92,8 +92,8 @@ const [accordion, setAccordion] = useState<string | null>(null);
             </button>
 
             <button
-              onClick={() => handleNavigation("/categories", true)}
-              className={`${styles.navItem} ${pathname === "/categories" ? styles.active : ""}`}
+              onClick={() => handleNavigation("/category", true)}
+              className={`${styles.navItem} ${pathname === "/category" ? styles.active : ""}`}
             >
               Category
             </button>
@@ -156,7 +156,7 @@ const [accordion, setAccordion] = useState<string | null>(null);
         <div className={styles.accordionItem}>
 
               <button
-                onClick={() => handleNavigation("/categories")}
+                onClick={() => handleNavigation("/category")}
                 className={styles.button}
               >
                Categories

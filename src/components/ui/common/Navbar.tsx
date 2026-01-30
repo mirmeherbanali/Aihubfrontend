@@ -23,7 +23,7 @@ export default function Navbar() {
       <div className={styles.navContainer}>
       <nav className={styles.desktopMenu}>
         <Link href="/" className={`${styles.navItem} ${isActive("/")}`}>Home</Link>
-        <Link href="/categories" className={`${styles.navItem} ${isActive("/categories")}`}>Category</Link>
+        <Link href="/category" className={`${styles.navItem} ${isActive("/category")}`}>Category</Link>
         <Link href="/about" className={`${styles.navItem} ${isActive("/about")}`}>About</Link>
 
         {/* ✅ AUTH-CONTROLLED */}

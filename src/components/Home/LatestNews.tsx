@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "../../components/ui/style/latestNews.module.scss";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import { slugify } from "@/utils/useEncodeUrl";
+import { useBlogStore } from "@/store/useCategoryStore";
 
 const LatestNews = () => {
   const { data, isLoading } = useGetAllBlogsQuery();
@@ -61,9 +62,12 @@ if (categoryBlogPairs.length < 4) {
 }
 
 
+  const {setAuthorName} = useBlogStore((s: any) => s.setAuthorName)
+ const handlePointerDown = (authorName?: string) => {
+    if (!authorName) return;
 
-
-  if (isLoading) return null;
+    setAuthorName(slugify(authorName));
+  };
 
   return (
     <section className={styles.newsSection}>
@@ -74,10 +78,11 @@ if (categoryBlogPairs.length < 4) {
       key={`${item._id}-${cat.categoryName}`}
       href={`/blog/${slugify(
         cat.categoryName
-      )}/${slugify(
-        item.author?.authorName
       )}/${item.slug}`}
       className={styles.card}
+      onPointerDown={() =>
+              handlePointerDown(item.author?.authorName)
+            }
     >
       {/* IMAGE */}
       <div className={styles.imageWrapper}>

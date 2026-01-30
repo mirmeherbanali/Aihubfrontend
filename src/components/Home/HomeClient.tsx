@@ -26,17 +26,17 @@ export default function HomeClient() {
   );
 
   const handleCategoryClick = (slug: string) => {
-    router.push(`/categories/${encodeURIComponent(slug)}`);
+    router.push(`/category/${encodeURIComponent(slug)}`);
   };
 
   const handleViewAllClick = () => {
-    window.open("/categories");
+    window.open("/category");
   };
 
   const handleToolClick = (tool: any, category: any) => {
     const categorySlug = category.categoryName;
     router.push(
-      `/categories/${encodeURIComponent(categorySlug)}/tooldetails/${encodeURIComponent(tool.toolName)}`
+      `/product/${encodeURIComponent(tool.toolName)}`
     );
   };
 
@@ -54,9 +54,7 @@ export default function HomeClient() {
     // 🔥 show loading immediately
     setLoadingToolId(tool._id);
     router.push(
-      `/categories/${encodeURIComponent(
-        category.categoryName
-      )}/tooldetails/${encodeURIComponent(tool.toolName)}`
+      `/category/${encodeURIComponent(tool.toolName)}`
     );
     setQuery("");
   };

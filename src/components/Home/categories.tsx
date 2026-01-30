@@ -28,7 +28,7 @@ const Categories: React.FC<CategoriesProps> = ({ categoryData }) => {
         {categoryData.slice(0, 4).map((cat, index) => (
           <Link
             key={cat._id}
-            href={`/categories/${slugify(cat.categoryName)}`}
+            href={`/category/${slugify(cat.categoryName)}`}
             className={styles.cardContainer}
           >
             <div className={styles.cardBox}>
@@ -40,7 +40,7 @@ const Categories: React.FC<CategoriesProps> = ({ categoryData }) => {
       </div>
 
       <div className={styles.viewAllWrapper}>
-        <Link href="/categories" className={styles.viewBtn}>
+        <Link href="/category" className={styles.viewBtn}>
           View All <span>›</span>
         </Link>
       </div>

@@ -78,7 +78,7 @@ export default function NavbarClient() {
         </div>
 
         <div className={styles.accordionItem}>
-          <Link href="/categories" className={styles.button} onClick={closeMenu}>
+          <Link href="/category" className={styles.button} onClick={closeMenu}>
             Categories
           </Link>
         </div>

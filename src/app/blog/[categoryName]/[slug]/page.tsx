@@ -6,12 +6,12 @@ import Link from "next/link";
 import Loader from "@/components/Loader/Loader";
 import { useMemo } from "react";
 import { slugify } from "@/utils/useEncodeUrl";
+import { useBlogStore } from "@/store/useCategoryStore";
 
 type Props = {
   params: {
     slug: string;
     categoryName: string; // for display only
-    authorName: string;   // for display only
   };
 };
 
@@ -20,9 +20,9 @@ const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
 export default function BlogDetailsPage({ params }: Props) {
-  const { slug,categoryName,authorName } = params;
+  const { slug,categoryName } = params;
   const { data, isLoading } = useGetAllBlogsQuery();
-
+  // const authorName =  useBlogStore((s: any) => s.authorName)
   const blogs = useMemo(() => {
     return (
       data?.result?.list
@@ -33,6 +33,12 @@ export default function BlogDetailsPage({ params }: Props) {
         ) || []
     );
   }, [data]);
+   const setAuthorName = useBlogStore((s: any) => s.setAuthorName)
+   const handlePointerDown = (authorName?: string) => {
+      if (!authorName) return;
+     
+      setAuthorName(slugify(authorName));
+    };
 
   const blog = blogs.find((b: any) => normalize(b.slug) === normalize(slug));
 
@@ -95,8 +101,11 @@ export default function BlogDetailsPage({ params }: Props) {
           <div className={styles.author}>
             <div className={styles.avatar}>{blog.author?.authorName}</div>
             <Link
-  href={`/blog/${categoryName}/${authorName}`}
+  href={`/blog/${categoryName}/${slug}/${slugify(blog.author?.authorName)}`}
   className={styles.authorLink}
+   onPointerDown={() =>
+              handlePointerDown(blog.author?.authorName)
+            }
 >
   Published by <b>{blog.author?.authorName}</b>
 </Link>
@@ -132,7 +141,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {latestArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.author?.authorName)}/${slugify(item.slug)}`}
+              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.slug)}`}
               className={styles.sideCard}
             >
               {item.featuredImage?.url && (
@@ -145,10 +154,13 @@ export default function BlogDetailsPage({ params }: Props) {
                 <h4>{item.title}</h4>
              <small>
   <Link
-    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(
+    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
       item.author?.authorName
     )}`}
     className={styles.authorLink}
+    onPointerDown={() =>
+              handlePointerDown(item.author?.authorName)
+            }
   >
     Published by <b>{item.author?.authorName}</b>
   </Link>{" "}
@@ -186,7 +198,7 @@ export default function BlogDetailsPage({ params }: Props) {
           {relatedArticles.map((item: any) => (
             <Link
               key={item._id}
-              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.author?.authorName)}/${slugify(item.slug)}`}
+              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.slug)}`}
               className={styles.relatedCard}
             >
               {item.featuredImage?.url && (
@@ -199,10 +211,13 @@ export default function BlogDetailsPage({ params }: Props) {
                 <h3>{item.title}</h3>
              <p>
   <Link
-    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(
+    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
       item.author?.authorName
     )}`}
     className={styles.authorLink}
+     onPointerDown={() =>
+              handlePointerDown(item.author?.authorName)
+            }
   >
     Published by <b>{item.author?.authorName}</b>
   </Link>{" "}
