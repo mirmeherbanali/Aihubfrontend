@@ -8,10 +8,9 @@ interface ToolRightSidebarProps {
   tool: any;
   category: any; 
   slug:string;
-  onViewAll: () => void;
 }
 
-const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug, onViewAll }) => {
+const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug }) => {
   if (!tool || !category?.tools) return null;
 
   return (
@@ -33,7 +32,7 @@ const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug
         {category.tools.map((altTool: any) => (
           <Link
             key={altTool._id}
-            href={`/categories/${slug}/tooldetails/${slugify(
+            href={`/product/${slugify(
               altTool.toolName
             )}`}
             className={styles.altCard}
@@ -60,9 +59,16 @@ const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug
       </div>
 
       {category.tools.length > 0 && (
-        <button className={styles.viewAllBtn} onClick={onViewAll}>
-          View All &gt;
-        </button>
+      <Link
+  href={`/alternatives/${slugify(tool.toolName)}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className={styles.viewAllBtn}
+  
+>
+  View All &gt;
+</Link>
+
       )}
     </aside>
   );

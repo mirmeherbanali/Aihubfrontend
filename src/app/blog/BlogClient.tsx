@@ -7,6 +7,7 @@ import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "../../components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
+import { useBlogStore } from "@/store/useCategoryStore";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
@@ -51,9 +52,26 @@ export default function BlogClient() {
     return text.replace(regex, "<mark>$1</mark>");
   };
 
+  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
+
+  const handlePointerDown = (authorNameParam?: string) => {
+
+    if (!authorNameParam) {
+      return;
+    }
+
+    setAuthorName(slugify(authorNameParam));
+
+  };
+
+
+
   if (isLoading) {
     return <p style={{ textAlign: "center", padding: 40 }}>Loading blogs…</p>;
   }
+
+  
+    
 
   return (
     <>
@@ -78,8 +96,11 @@ export default function BlogClient() {
           )?.map((cat: any) => (
             <Link
               key={`${blog?._id}-${cat?.categoryName}`}
-              href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
+              href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
               className={styles.blogCard}
+              onPointerDown={() =>
+              handlePointerDown(blog.author?.authorName)
+            }
             >
               {/* IMAGE */}
               <div className={styles.imageWrapper}>
