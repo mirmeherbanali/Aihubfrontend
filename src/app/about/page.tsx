@@ -1,6 +1,6 @@
 // pages/about.js
 "use client";
-import Head from "next/head";
+
 import styles from "../../components/ui/style/About.module.scss";
 import Image from "next/image";
 import { useState, CSSProperties } from "react";
@@ -60,13 +60,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <Head>
-        <title>About Recuip - Revolutionizing Software Discovery</title>
-        <meta
-          name="description"
-          content="Discover how Recuip is transforming software discovery through innovative reviews, recommendations, and recruitment solutions."
-        />
-      </Head>
+     
 
       <div className={styles.container}>
         {/* Animated Hero Section */}
