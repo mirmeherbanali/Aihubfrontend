@@ -159,7 +159,7 @@ export default async function AuthorPage({
       {/* ===== CLIENT VERSION ===== */}
       <div className={styles.homeClient}>
         <AuthorPageClient
-          authorName={authorName}
+          // authorName={authorName}
           categoryName={categoryName}
         />
       </div>

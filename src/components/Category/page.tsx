@@ -52,7 +52,7 @@ export default async function CategoryPage({
           <div className={styles.pagination}>
             {/* PREV */}
             <Link
-              href={`/categories?page=${Math.max(1, page - 1)}`}
+              href={`/category?page=${Math.max(1, page - 1)}`}
               className={page === 1 ? styles.disabled : ""}
               aria-disabled={page === 1}
             >
@@ -68,7 +68,7 @@ export default async function CategoryPage({
               ) : (
                 <Link
                   key={i}
-                  href={`/categories?page=${item}`}
+                  href={`/category?page=${item}`}
                   className={page === item ? styles.activePage : ""}
                 >
                   {item}
@@ -78,7 +78,7 @@ export default async function CategoryPage({
 
             {/* NEXT */}
             <Link
-              href={`/categories?page=${Math.min(totalPages, page + 1)}`}
+              href={`/category?page=${Math.min(totalPages, page + 1)}`}
               className={page === totalPages ? styles.disabled : ""}
               aria-disabled={page === totalPages}
             >

@@ -223,7 +223,7 @@ const AdminTools = () => {
         const categoryName = category.categoryName;
         const toolName = row.toolName;
         window.open(
-          `/categories/${encodeURIComponent(categoryName)}/tooldetails/${encodeURIComponent(toolName)}`,
+          `/product/${encodeURIComponent(toolName)}`,
           "_blank"
         );
       },

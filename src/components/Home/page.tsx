@@ -26,6 +26,7 @@ export default async function HomePage() {
           btnText="Add Your Tool"
         />
         <Categories categoryData={categories} />
+        
           <LatestNewsServer blog={blog} />
         <FeaturedTools toolData={tools} allCategories={categories} />
       </div>

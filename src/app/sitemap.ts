@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${baseUrl}`, lastModified: new Date() },
     { url: `${baseUrl}/about`, lastModified: new Date() },
-    { url: `${baseUrl}/categories`, lastModified: new Date() },
+    { url: `${baseUrl}/category`, lastModified: new Date() },
     { url: `${baseUrl}/pricing`, lastModified: new Date() },
   ];
 
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categoryPages: MetadataRoute.Sitemap = categories
     ?.filter((cat: any) => cat?.slug)
     .map((cat: any) => ({
-      url: `${baseUrl}/categories/${cat.slug}`,
+      url: `${baseUrl}/category/${cat.slug}`,
       lastModified: new Date(cat.updatedAt || cat.createdAt || Date.now()),
     }));
 

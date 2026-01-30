@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { useParams, notFound } from "next/navigation";
+import React, { useMemo,useEffect,useState } from "react";
+import { useParams, notFound, useSearchParams } from "next/navigation";
 import styles from "@/components/ui/style/ToolPageDetails.module.scss";
 
 import ToolCardHeader from "@/components/Category/details/ToolCardHeader";
@@ -19,14 +19,17 @@ import { getUserId, getUserType } from "@/utils/authStorage";
 import Loading from "@/app/loading";
 import Loader from "@/components/Loader/Loader";
 import { unslugify,slugify } from "@/utils/useEncodeUrl";
+import { useCategoryStore } from "@/store/useCategoryStore";
 
 const ToolDetailsPage = () => {
-  const { slug, toolname } = useParams() as { slug: string; toolname: string };
-
+  
+    
+  const {  toolname } = useParams() as { toolname: string };
   const userId = getUserId();
   const userType = getUserType();
+  const slug = useCategoryStore((s: any) => s.slug);
 
-
+  console.log("slugslug",slug)
   const decoded = useMemo(
     () => ({
       slug: unslugify(slug as string),
@@ -84,12 +87,9 @@ const ToolDetailsPage = () => {
 
   if (catError || !category || detailError || !tool) return notFound();
 
-  const handleViewAll = () => {
-    window.open(
-      `/categories/${slugify(category.categoryName)}`,
-      "_blank"
-    );
-  };
+  // const handleViewAll = () => {
+  //   setSlug(slugify(category.categoryName))
+  // };
 
   return (
     <div className={styles.toolPage}>
@@ -116,8 +116,8 @@ const ToolDetailsPage = () => {
             <ToolRightSidebar
               tool={tool}
               category={{ ...category, tools: alternativeTools }}
-              slug={slug}
-              onViewAll={handleViewAll}
+              slug={slug??""}
+              // onViewAll={handleViewAll}
             />
           </aside>
         )}

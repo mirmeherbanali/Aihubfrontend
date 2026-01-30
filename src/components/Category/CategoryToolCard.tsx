@@ -7,15 +7,15 @@ import styles from "../ui/style/CategoryToolCard.module.scss";
 import { FaArrowRight, FaBookmark, FaBolt, FaSpinner } from "react-icons/fa";
 import StarRating from "../ui/common/StarRating";
 import { slugify } from "@/utils/useEncodeUrl";
-
+import { useCategoryStore } from "@/store/useCategoryStore";
 const CategoryToolCard = ({ tool }: { tool: any }) => {
   const { slug } = useParams() as { slug: string };
   const [isHovered, setIsHovered] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-
+  const { setSlug } = useCategoryStore() as { setSlug: (slug: string) => void };
   const encodedToolName = slugify(tool.toolName);
-  const finalURL = `/categories/${slug}/tooldetails/${encodedToolName}`;
+  const finalURL = `/product/${encodedToolName}`;
 
   const toggleBookmark = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,11 +30,21 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
       : words.slice(0, limit).join(" ") + " ...";
   };
 
+
+  const saveSlugBeforeNavigate = () => {
+    if (!slug) return;
+
+    setButtonLoading(true);
+
+    // ✅ Global store (instant, sync, reliable)
+    setSlug(slug);
+  };
+
   return (
-    <Link
+   <Link
       href={finalURL}
       className={styles.cardLinkWrapper}
-      onClick={() => setButtonLoading(true)}
+      onPointerDown={saveSlugBeforeNavigate} // ✅ BEST EVENT
     >
       <div
         className={`${styles.modernCard} ${styles.glassEffect}`}

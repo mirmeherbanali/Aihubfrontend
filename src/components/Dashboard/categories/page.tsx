@@ -42,7 +42,7 @@ export default function CategoryPage() {
       label: "View",
       onClick: (row) => {
         const slug = row.categoryName.toLowerCase();
-        window.open(`/categories/${slug}`, "_blank");
+        window.open(`/category/${slug}`, "_blank");
       },
     },
     {

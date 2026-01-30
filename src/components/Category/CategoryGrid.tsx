@@ -42,7 +42,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
           return (
             <Link
               key={item._id}
-              href={`/categories/${slugify(item?.categoryName)}`}
+              href={`/category/${slugify(item?.categoryName)}`}
               className={`${styles.card} ${isLoading ? styles.loading : ""}`}
               onClick={() => handleClick(item)}
             >
