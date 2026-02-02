@@ -27,54 +27,47 @@ export default function AuthorPageClient({
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading } = useGetAllBlogsQuery();
-   const rawAuthorName = useBlogStore((s: any) => s.authorName);
-
+  const rawAuthorName = useBlogStore((s: any) => s.authorName);
 
   const blogs =
     data?.result?.list?.filter((b: any) => b.status === "Published") || [];
 
+  const normalizedAuthorSlug = useMemo(() => {
+    if (!rawAuthorName) return null;
+    return slugify(rawAuthorName);
+  }, [rawAuthorName]);
 
+  const authorBlogs = useMemo(() => {
+    if (!normalizedAuthorSlug) return [];
 
-const normalizedAuthorSlug = useMemo(() => {
-  if (!rawAuthorName) return null;
-  return slugify(rawAuthorName);
-}, [rawAuthorName]);
+    return blogs.filter((blog: any) => {
+      const blogAuthorSlug = slugify(blog.author?.authorName || "");
 
+      const match = blogAuthorSlug === normalizedAuthorSlug;
 
-const authorBlogs = useMemo(() => {
-  if (!normalizedAuthorSlug) return [];
+      console.log(
+        "author raw:",
+        blog.author?.authorName,
+        "| blog slug:",
+        blogAuthorSlug,
+        "| store slug:",
+        normalizedAuthorSlug,
+        "| match:",
+        match,
+      );
 
-  return blogs.filter((blog: any) => {
-    const blogAuthorSlug = slugify(
-      blog.author?.authorName || ""
-    );
-
-    const match =
-      blogAuthorSlug === normalizedAuthorSlug;
-
-    console.log(
-      "author raw:", blog.author?.authorName,
-      "| blog slug:", blogAuthorSlug,
-      "| store slug:", normalizedAuthorSlug,
-      "| match:", match
-    );
-
-    return (
-      match &&
-      blog.categories?.some(
-        (cat: any) => cat.categoryName === categoryName
-      )
-    );
-  });
-}, [blogs, normalizedAuthorSlug, categoryName]);
-
-
+      return (
+        match &&
+        blog.categories?.some((cat: any) => cat.categoryName === categoryName)
+      );
+    });
+  }, [blogs, normalizedAuthorSlug, categoryName]);
 
   const totalPages = Math.ceil(authorBlogs.length / BLOGS_PER_PAGE);
 
   const paginatedBlogs = authorBlogs.slice(
     (currentPage - 1) * BLOGS_PER_PAGE,
-    currentPage * BLOGS_PER_PAGE
+    currentPage * BLOGS_PER_PAGE,
   );
 
   if (isLoading) {
@@ -87,9 +80,7 @@ const authorBlogs = useMemo(() => {
         {paginatedBlogs.map((blog: any) => (
           <Link
             key={blog._id}
-            href={`/blog/${slugify(
-              categoryName
-            )}/${slugify(blog.slug)}`}
+            href={`/blog/${slugify(categoryName)}/${slugify(blog.slug)}`}
             className={styles.blogCard}
           >
             <div className={styles.imageWrapper}>

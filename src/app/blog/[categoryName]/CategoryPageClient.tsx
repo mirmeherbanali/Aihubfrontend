@@ -11,7 +11,6 @@ import { useBlogStore } from "@/store/useCategoryStore";
 
 const BLOGS_PER_PAGE = 6;
 
-
 const formatDate = (date?: string) => {
   if (!date) return "-";
   return new Date(date).toLocaleDateString("en-IN", {
@@ -37,8 +36,8 @@ export default function CategoryPageClient({
   const categoryBlogs = useMemo(() => {
     return blogs.filter((blog: any) =>
       blog.categories?.some(
-        (cat: any) => cat.categoryName?.toLowerCase() === categoryName
-      )
+        (cat: any) => cat.categoryName?.toLowerCase() === categoryName,
+      ),
     );
   }, [blogs, categoryName]);
 
@@ -47,14 +46,14 @@ export default function CategoryPageClient({
 
   const paginatedBlogs = categoryBlogs.slice(
     (currentPage - 1) * BLOGS_PER_PAGE,
-    currentPage * BLOGS_PER_PAGE
+    currentPage * BLOGS_PER_PAGE,
   );
-    const setAuthorName = useBlogStore((s: any) => s.setAuthorName)
-     const handlePointerDown = (authorName?: string) => {
-        if (!authorName) return;
-    
-        setAuthorName(slugify(authorName));
-      };
+  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
+  const handlePointerDown = (authorName?: string) => {
+    if (!authorName) return;
+
+    setAuthorName(slugify(authorName));
+  };
 
   if (isLoading) {
     return <p style={{ textAlign: "center", padding: 40 }}>Loading blogs…</p>;
@@ -65,37 +64,36 @@ export default function CategoryPageClient({
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
         {paginatedBlogs?.flatMap((blog: any) =>
-                  (blog.categories?.length
-                    ? blog?.categories
-                    : [{ categoryName: "Uncategorized" }]
-                  )?.map((cat: any) => (
-                    <Link
-                      key={`${blog?._id}-${cat?.categoryName}`}
-    href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
-    className={styles.blogCard}
-     onPointerDown={() =>
-              handlePointerDown(blog.author?.authorName)
-            }
-  >
-            <div className={styles.imageWrapper}>
-              <img
-                src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                alt={blog.blogTitle}
-              />
-            </div>
+          (blog.categories?.length
+            ? blog?.categories
+            : [{ categoryName: "Uncategorized" }]
+          )?.map((cat: any) => (
+            <Link
+              key={`${blog?._id}-${cat?.categoryName}`}
+              href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
+              className={styles.blogCard}
+              onPointerDown={() => handlePointerDown(blog.author?.authorName)}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                  alt={blog.blogTitle}
+                />
+              </div>
 
-            <span className={styles.category}>{categoryName}</span>
+              <span className={styles.category}>{categoryName}</span>
 
-            <h3 className={styles.title}>{blog.blogTitle}</h3>
+              <h3 className={styles.title}>{blog.blogTitle}</h3>
 
-            <p className={styles.meta}>
-              Published By <span>{blog.author?.authorName}</span>
-            </p>
-            <p className={styles.meta}>
-              Published On <span>{formatDate(blog.publishedDate)}</span>
-            </p>
-          </Link>
-        )))}
+              <p className={styles.meta}>
+                Published By <span>{blog.author?.authorName}</span>
+              </p>
+              <p className={styles.meta}>
+                Published On <span>{formatDate(blog.publishedDate)}</span>
+              </p>
+            </Link>
+          )),
+        )}
       </div>
 
       {/* CLIENT PAGINATION */}
