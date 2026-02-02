@@ -19,7 +19,9 @@ const formatDate = (date?: string) => {
 };
 export async function generateMetadata({
   params,
-}: MetaProps): Promise<Metadata> {
+}: {
+  params: { categoryName: string };
+}): Promise<Metadata> {
   const categoryName = unslugify(params.categoryName);
   const url = `https://app.recuip.com/blog/${params.categoryName}`;
 
