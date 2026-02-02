@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import PageHero from "@/components/Hero/PageHero";
 import BlogClient from "./BlogClient";
 import styles from "@/components/ui/style/Blog.module.scss";
@@ -14,6 +15,35 @@ const formatDate = (date?: string) => {
     year: "numeric",
   });
 };
+export const metadata: Metadata = {
+  title: "Latest AI Blogs & Tutorials | Allisted",
+  description:
+    "Explore the latest AI tools, tutorials, and insights from industry experts.",
+  alternates: {
+    canonical: "https://yourdomain.com/blog",
+  },
+  openGraph: {
+    title: "Latest AI Blogs & Tutorials",
+    description: "Explore the latest AI tools, tutorials, and insights.",
+    url: "https://yourdomain.com/blog",
+    siteName: "Allisted",
+    images: [
+      {
+        url: "https://yourdomain.com/og-blog.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Latest AI Blogs & Tutorials",
+    description: "Explore the latest AI tools, tutorials, and insights.",
+    images: ["https://yourdomain.com/og-blog.png"],
+  },
+};
+
 export default async function BlogPage({
   searchParams,
 }: {
@@ -30,9 +60,8 @@ export default async function BlogPage({
 
   const paginatedBlogs = blogs.slice(
     (page - 1) * BLOGS_PER_PAGE,
-    page * BLOGS_PER_PAGE
+    page * BLOGS_PER_PAGE,
   );
-
 
   return (
     <>
@@ -47,81 +76,78 @@ export default async function BlogPage({
         {/* SERVER BLOG GRID */}
         <div className={styles.gridWrapper}>
           {paginatedBlogs?.flatMap((blog: any) =>
-          (blog.categories?.length
-            ? blog?.categories
-            : [{ categoryName: "Uncategorized" }]
-          )?.map((cat: any) => (
-            <Link
-              key={`${blog._id}-${cat.categoryName}`}
-              href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
-              className={styles.blogCard}
-            >
-             
-              <div className={styles.imageWrapper}>
-                <img
-                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                  alt={blog.blogTitle}
-                />
-              </div>
+            (blog.categories?.length
+              ? blog?.categories
+              : [{ categoryName: "Uncategorized" }]
+            )?.map((cat: any) => (
+              <Link
+                key={`${blog._id}-${cat.categoryName}`}
+                href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
+                className={styles.blogCard}
+              >
+                <div className={styles.imageWrapper}>
+                  <img
+                    src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                    alt={blog.blogTitle}
+                  />
+                </div>
 
-             <span className={styles.category}>
-                {cat.categoryName}
-              </span>
+                <span className={styles.category}>{cat.categoryName}</span>
 
-              {/* TITLE */}
-            <h3 className={styles.title}>{blog.blogTitle}</h3>
+                {/* TITLE */}
+                <h3 className={styles.title}>{blog.blogTitle}</h3>
 
-              {/* META */}
-              <p className={styles.meta}>
-                Published By <span>{blog.author?.authorName}</span>
-              </p>
+                {/* META */}
+                <p className={styles.meta}>
+                  Published By <span>{blog.author?.authorName}</span>
+                </p>
 
-              <p className={styles.meta}>
-                Published On <span>{formatDate(blog.publishedDate)}</span>
-              </p>
-            </Link>
-          )))}
+                <p className={styles.meta}>
+                  Published On <span>{formatDate(blog.publishedDate)}</span>
+                </p>
+              </Link>
+            )),
+          )}
         </div>
 
         {/* SERVER PAGINATION */}
         {totalPages > 1 && (
           <div className={styles.pagination}>
-  {/* PREVIOUS */}
-  <Link
-    href={`/blog?page=${Math.max(1, page - 1)}`}
-    className={page === 1 ? styles.disabled : ""}
-    aria-disabled={page === 1}
-  >
-    &lt;
-  </Link>
+            {/* PREVIOUS */}
+            <Link
+              href={`/blog?page=${Math.max(1, page - 1)}`}
+              className={page === 1 ? styles.disabled : ""}
+              aria-disabled={page === 1}
+            >
+              &lt;
+            </Link>
 
-  {/* PAGE NUMBERS */}
-  {getPaginationRange(page, totalPages).map((item, i) =>
-    item === "..." ? (
-      <span key={i} className={styles.ellipsis}>
-        …
-      </span>
-    ) : (
-      <Link
-        key={i}
-        href={`/blog?page=${item}`}
-        className={page === item ? styles.activePage : ""}
-      >
-        {item}
-      </Link>
-    )
-  )}
+            {/* PAGE NUMBERS */}
+            {getPaginationRange(page, totalPages).map((item, i) =>
+              item === "..." ? (
+                <span key={i} className={styles.ellipsis}>
+                  …
+                </span>
+              ) : (
+                <Link
+                  key={i}
+                  href={`/blog?page=${item}`}
+                  className={page === item ? styles.activePage : ""}
+                >
+                  {item}
+                </Link>
+              ),
+            )}
 
-  {/* NEXT */}
-  <Link
-    href={`/blog?page=${Math.min(totalPages, page + 1)}`}
-    className={page === totalPages ? styles.disabled : ""}
-    aria-disabled={page === totalPages}
-  >
-    &gt;
-  </Link>
-</div>
-
+            {/* NEXT */}
+            <Link
+              href={`/blog?page=${Math.min(totalPages, page + 1)}`}
+              className={page === totalPages ? styles.disabled : ""}
+              aria-disabled={page === totalPages}
+            >
+              &gt;
+            </Link>
+          </div>
         )}
       </div>
 
