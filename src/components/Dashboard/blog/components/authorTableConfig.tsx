@@ -1,3 +1,5 @@
+import { slugify } from "@/utils/useEncodeUrl";
+
 // authorTableConfig.ts
 export const AUTHOR_COLUMNS = [
   {
@@ -61,22 +63,23 @@ export const AUTHOR_COLUMNS = [
 ];
 
 export const BLOG_COLUMNS = [
-  {
-    key: "featuredImage",
-    label: "Image",
-    render: (row: any) =>
-      row?.featuredImage ? (
-        <img
-          src={row?.featuredImage?.url}
-          alt={row.featuredImage?.titleText}
-          width={50}
-          height={40}
-          style={{ borderRadius: 6, objectFit: "cover" }}
-        />
-      ) : (
-        "-"
-      ),
-  },
+ {
+  key: "featuredImage",
+  label: "Image",
+  render: (row: any) =>
+    row?.featuredImage ? (
+      <img
+        src={row.featuredImage.url}
+        alt={row.featuredImage.altText || row.blogTitle}
+        title={row.featuredImage.titleText || row.blogTitle}
+        width={50}
+        height={40}
+        style={{ borderRadius: 6, objectFit: "cover" }}
+      />
+    ) : (
+      "-"
+    ),
+},
   {
     key: "blogTitle",
     label: "Title",
@@ -143,6 +146,15 @@ export const COMMON_ACTIONS = (
   onEdit: (row: any) => void,
   onDelete: (row: any) => void
 ) => [
+  {
+    label: "View",
+    onClick: (row: any) => {
+      if (!row?.slug || row?.status !== "Published") return;
+      const frontendUrl = `/blog/${slugify(row.slug)}`;
+      window.open(frontendUrl, "_blank", "noopener,noreferrer");
+    },
+    disabled: (row: any) => row?.status !== "Published",
+  },
   {
     label: "Edit",
     onClick: (row: any) => onEdit(row),

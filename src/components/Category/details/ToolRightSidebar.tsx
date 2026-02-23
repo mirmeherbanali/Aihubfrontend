@@ -17,7 +17,7 @@ const ToolRightSidebar: React.FC<ToolRightSidebarProps> = ({ tool, category,slug
     
     <aside className={styles.sidebar}>
        <div className={styles.pricingCard}>
-        <h3 className={styles.pricingTitle}>Pricing</h3>
+        <h2 className={styles.pricingTitle}>Pricing</h2>
         <div className={styles.priceBox}>
           <span className={styles.priceLabel}>Starting Price</span>
           <span className={styles.priceValue}>

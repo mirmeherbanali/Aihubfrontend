@@ -94,8 +94,8 @@ export default function BlogDetailsPage({ params }: Props) {
             <span className={styles.category}>Uncategorized</span>
           )}
         </div>
-
-        <h3 className={styles.title}>{blog?.blogTitle}</h3>
+ 
+        <h1 className={styles.title}>{blog?.blogTitle}</h1>
 
         <div className={styles.metaRow}>
           <div className={styles.author}>
@@ -134,9 +134,12 @@ export default function BlogDetailsPage({ params }: Props) {
         </article>
 
         <aside className={styles.sidebar}>
-          <h3 className={styles.sidebarTitle}>
-            Latest Articles in {blog.categories?.[0]?.categoryName || "Category"}
-          </h3>
+          <span className={styles.sidebarTitle}>
+  Latest Articles in{" "}
+  {blog?.categories?.length > 0
+    ? blog.categories[0].categoryName
+    : "Category"}
+</span>
 
           {latestArticles.map((item: any) => (
             <Link
@@ -170,8 +173,7 @@ export default function BlogDetailsPage({ params }: Props) {
               </div>
             </Link>
           ))}
-
-          <h3 className={styles.sidebarTitle}>Top Categories</h3>
+          <span className={styles.sidebarTitle}>Top Categories</span>
           <div className={styles.categoryWrap}>
             {blog.categories?.length ? (
               blog.categories.map((cat: any) => (

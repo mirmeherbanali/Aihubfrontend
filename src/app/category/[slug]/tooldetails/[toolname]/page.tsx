@@ -117,7 +117,7 @@ const ToolDetailsPage = () => {
               tool={tool}
               category={{ ...category, tools: alternativeTools }}
               slug={slug}
-              onViewAll={handleViewAll}
+              // onViewAll={handleViewAll}
             />
           </aside>
         )}

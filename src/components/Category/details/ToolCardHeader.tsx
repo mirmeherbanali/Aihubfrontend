@@ -70,7 +70,7 @@ const ToolCardHeader: React.FC<ToolCardHeaderProps> = ({
             className={styles.toolLogo}
           />
           <div className={styles.toolInfo}>
-            <h3 className={styles.toolName}>{tool.toolName || "Tool Name"}</h3>
+            <h1 className={styles.toolName}>{tool.toolName || "Tool Name"}</h1>
             <p className={styles.categoryName}>{category.categoryName}</p>
           </div>
         </div>
