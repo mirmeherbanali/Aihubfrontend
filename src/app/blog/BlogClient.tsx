@@ -33,7 +33,7 @@ export default function BlogClient() {
   const filteredBlogs = useMemo(() => {
     if (!searchQuery) return blogs;
     return blogs.filter((b: any) =>
-      b.blogTitle?.toLowerCase().includes(searchQuery.toLowerCase())
+      b.blogTitle?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [blogs, searchQuery]);
 
@@ -42,7 +42,7 @@ export default function BlogClient() {
 
   const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * blogsPerPage,
-    currentPage * blogsPerPage
+    currentPage * blogsPerPage,
   );
 
   /* SEARCH HIGHLIGHT */
@@ -55,23 +55,16 @@ export default function BlogClient() {
   const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
 
   const handlePointerDown = (authorNameParam?: string) => {
-
     if (!authorNameParam) {
       return;
     }
 
     setAuthorName(slugify(authorNameParam));
-
   };
-
-
 
   if (isLoading) {
     return <p style={{ textAlign: "center", padding: 40 }}>Loading blogs…</p>;
   }
-
-  
-    
 
   return (
     <>
@@ -98,9 +91,7 @@ export default function BlogClient() {
               key={`${blog?._id}-${cat?.categoryName}`}
               href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
               className={styles.blogCard}
-              onPointerDown={() =>
-              handlePointerDown(blog.author?.authorName)
-            }
+              onPointerDown={() => handlePointerDown(blog.author?.authorName)}
             >
               {/* IMAGE */}
               <div className={styles.imageWrapper}>
@@ -111,9 +102,7 @@ export default function BlogClient() {
               </div>
 
               {/* CATEGORY */}
-              <span className={styles.category}>
-                {cat.categoryName}
-              </span>
+              <span className={styles.category}>{cat.categoryName}</span>
 
               {/* TITLE */}
               <h3
@@ -132,7 +121,7 @@ export default function BlogClient() {
                 Published On <span>{formatDate(blog.publishedDate)}</span>
               </p>
             </Link>
-          ))
+          )),
         )}
       </div>
 

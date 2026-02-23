@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { getAllBlogs } from "@/features/serverApi/serverApi";
@@ -15,6 +16,37 @@ const formatDate = (date?: string) =>
         year: "numeric",
       })
     : "-";
+type Props = {
+  params: { categoryName: string; slug: string; authorName: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const authorName = unslugify(params.authorName);
+
+  const url = `https://app.recuip.com/blog/${params.categoryName}/${params.slug}/${params.authorName}`;
+
+  return {
+    title: authorName,
+    description: `Browse the best blogs by ${authorName} in one place.`,
+    authors: [{ name: "Recuip" }],
+    alternates: { canonical: url },
+    openGraph: {
+      type: "profile",
+      url,
+      title: authorName,
+      description: `Browse the best blogs by ${authorName} in one place.`,
+      images: ["https://app.recuip.com/og-image.png"],
+      siteName: "Recuip",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: authorName,
+      description: `Browse the best blogs by ${authorName} in one place.`,
+      images: ["https://app.recuip.com/og-image.png"],
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function AuthorPage({
   params,
@@ -35,55 +67,60 @@ export default async function AuthorPage({
     (blog: any) =>
       blog.author?.authorName?.toLowerCase() === authorName &&
       blog.categories?.some(
-        (cat: any) => cat.categoryName?.toLowerCase() === categoryName
-      )
+        (cat: any) => cat.categoryName?.toLowerCase() === categoryName,
+      ),
   );
 
   const totalPages = Math.ceil(authorBlogs.length / BLOGS_PER_PAGE);
 
   const paginatedBlogs = authorBlogs.slice(
     (page - 1) * BLOGS_PER_PAGE,
-    page * BLOGS_PER_PAGE
+    page * BLOGS_PER_PAGE,
   );
 
   return (
     <div className={styles.pageWrapper}>
       {/* ===== AUTHOR HEADER (IMAGE YOU SHARED) ===== */}
-    <div className={styles.authorHeader}>
-  {/* Avatar */}
-  <div className={styles.authorAvatar}>
-    <img
-      src={authorBlogs[0]?.author?.authorImage || "/author-placeholder.png"}
-      alt={authorName}
-    />
+      <div className={styles.authorHeader}>
+        {/* Avatar */}
+        <div className={styles.authorAvatar}>
+          <img
+            src={
+              authorBlogs[0]?.author?.authorImage || "/author-placeholder.png"
+            }
+            alt={authorName}
+          />
 
-    {/* Social links under avatar */}
-    {authorBlogs[0]?.author?.socialLinks?.length > 0 && (
-      <div className={styles.socialLinksUnderAvatar}>
-        {authorBlogs[0].author?.socialLinks?.map((link: any, index: number) => (
-          <Link
-            key={index}
-            href={link.url || "#"}
-            className={styles.socialBtn}
-            target="_blank"
-          >
-            {link.title || "Link"}
-          </Link>
-        ))}
+          {/* Social links under avatar */}
+          {authorBlogs[0]?.author?.socialLinks?.length > 0 && (
+            <div className={styles.socialLinksUnderAvatar}>
+              {authorBlogs[0].author?.socialLinks?.map(
+                (link: any, index: number) => (
+                  <Link
+                    key={index}
+                    href={link.url || "#"}
+                    className={styles.socialBtn}
+                    target="_blank"
+                  >
+                    {link.title || "Link"}
+                  </Link>
+                ),
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Author info */}
+        <div className={styles.authorInfo}>
+          <h1 className={styles.authorName}>
+            {authorBlogs[0]?.author?.authorName}
+          </h1>
+
+          <p className={styles.authorBio}>
+            {authorBlogs[0]?.author?.authorBio || "No bio available."}
+          </p>
+        </div>
       </div>
-    )}
-  </div>
-
-  {/* Author info */}
-  <div className={styles.authorInfo}>
-    <h1 className={styles.authorName}>{authorBlogs[0]?.author?.authorName}</h1>
-
-    <p className={styles.authorBio}>
-      {authorBlogs[0]?.author?.authorBio || "No bio available."}
-    </p>
-  </div>
-</div>
-
 
       {/* ===== SERVER BLOG GRID ===== */}
       <div className={styles.homeServer}>
@@ -122,7 +159,7 @@ export default async function AuthorPage({
             <Link
               href={`/blog/${slugify(categoryName)}/${slugify(authorName)}?page=${Math.max(
                 1,
-                page - 1
+                page - 1,
               )}`}
               className={page === 1 ? styles.disabled : ""}
             >
@@ -131,7 +168,9 @@ export default async function AuthorPage({
 
             {getPaginationRange(page, totalPages).map((item, i) =>
               item === "..." ? (
-                <span key={i} className={styles.ellipsis}>…</span>
+                <span key={i} className={styles.ellipsis}>
+                  …
+                </span>
               ) : (
                 <Link
                   key={i}
@@ -140,13 +179,13 @@ export default async function AuthorPage({
                 >
                   {item}
                 </Link>
-              )
+              ),
             )}
 
             <Link
               href={`/blog/${slugify(categoryName)}/${slugify(authorName)}?page=${Math.min(
                 totalPages,
-                page + 1
+                page + 1,
               )}`}
               className={page === totalPages ? styles.disabled : ""}
             >

@@ -1,20 +1,44 @@
-import { Metadata } from "next";
-import { getAllBlogs } from "@/features/serverApi/serverApi";
-import BlogDetailsClient from "./BlogDetailsClient";
+"use client";
+
+import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
+import styles from "@/components/ui/style/BlogDetails.module.scss";
+import Link from "next/link";
+import Loader from "@/components/Loader/Loader";
+import { useMemo } from "react";
+import { slugify } from "@/utils/useEncodeUrl";
+import { useBlogStore } from "@/store/useCategoryStore";
 
 type Props = {
-  params: { categoryName: string; slug: string };
+  params: {
+    slug: string;
+    categoryName: string; // for display only
+  };
 };
 
-// Normalize helper
+// normalize string for URLs
 const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
-/* ================== 🔥 METADATA ================== */
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const data = await getAllBlogs();
+export default function BlogDetailsPage({ params }: Props) {
+  const { slug, categoryName } = params;
+  const { data, isLoading } = useGetAllBlogsQuery();
+  // const authorName =  useBlogStore((s: any) => s.authorName)
+  const blogs = useMemo(() => {
+    return (
+      data?.result?.list
+        ?.filter((b: any) => b.status === "Published")
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        ) || []
+    );
+  }, [data]);
+  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
+  const handlePointerDown = (authorName?: string) => {
+    if (!authorName) return;
 
-  const blogs = data?.filter((b: any) => b.status === "Published") || [];
+    setAuthorName(slugify(authorName));
+  };
 
   const blog = blogs.find((b: any) => normalize(b.slug) === normalize(slug));
 
@@ -23,14 +47,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Get normalized categories of current blog
   const blogCategoryNames = blog.categories?.map((cat: any) =>
-    normalize(cat.categoryName)
+    normalize(cat.categoryName),
   );
 
   // Latest articles: any author, same categories, exclude current blog
   const latestArticles = blogs
     .filter((b: any) => {
       if (normalize(b.slug) === normalize(slug)) return false;
-      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      const categories =
+        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
       return categories.some((cat: any) => blogCategoryNames.includes(cat));
     })
     .slice(0, 3);
@@ -39,16 +64,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const relatedArticles = [
     ...blogs.filter((b: any) => {
       if (normalize(b.slug) === normalize(slug)) return false;
-      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
-      return categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
-        normalize(b.author?.authorName) === normalize(blog.author?.authorName);
+      const categories =
+        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      return (
+        categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
+        normalize(b.author?.authorName) === normalize(blog.author?.authorName)
+      );
     }),
     ...blogs.filter((b: any) => {
       if (normalize(b.slug) === normalize(slug)) return false;
-      const categories = b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
-      return categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
-        normalize(b.author?.authorName) !== normalize(blog.author?.authorName);
-    })
+      const categories =
+        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
+      return (
+        categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
+        normalize(b.author?.authorName) !== normalize(blog.author?.authorName)
+      );
+    }),
   ].slice(0, 4);
 
   return (
@@ -70,22 +101,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             <span className={styles.category}>Uncategorized</span>
           )}
         </div>
- 
-        <h1 className={styles.title}>{blog?.blogTitle}</h1>
+
+        <h3 className={styles.title}>{blog?.blogTitle}</h3>
 
         <div className={styles.metaRow}>
           <div className={styles.author}>
             <div className={styles.avatar}>{blog.author?.authorName}</div>
             <Link
-  href={`/blog/${categoryName}/${slug}/${slugify(blog.author?.authorName)}`}
-  className={styles.authorLink}
-   onPointerDown={() =>
-              handlePointerDown(blog.author?.authorName)
-            }
->
-  Published by <b>{blog.author?.authorName}</b>
-</Link>
-
+              href={`/blog/${categoryName}/${slug}/${slugify(blog.author?.authorName)}`}
+              className={styles.authorLink}
+              onPointerDown={() => handlePointerDown(blog.author?.authorName)}
+            >
+              Published by <b>{blog.author?.authorName}</b>
+            </Link>
           </div>
 
           <span>
@@ -110,12 +138,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         </article>
 
         <aside className={styles.sidebar}>
-          <span className={styles.sidebarTitle}>
-  Latest Articles in{" "}
-  {blog?.categories?.length > 0
-    ? blog.categories[0].categoryName
-    : "Category"}
-</span>
+          <h3 className={styles.sidebarTitle}>
+            Latest Articles in{" "}
+            {blog.categories?.[0]?.categoryName || "Category"}
+          </h3>
 
           {latestArticles.map((item: any) => (
             <Link
@@ -131,25 +157,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
               <div className={styles.sideBody}>
                 <h4>{item.title}</h4>
-             <small>
-  <Link
-    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
-      item.author?.authorName
-    )}`}
-    className={styles.authorLink}
-    onPointerDown={() =>
-              handlePointerDown(item.author?.authorName)
-            }
-  >
-    Published by <b>{item.author?.authorName}</b>
-  </Link>{" "}
-  | {new Date(item.updatedAt).toLocaleDateString()}
-</small>
-
+                <small>
+                  <Link
+                    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
+                      item.author?.authorName,
+                    )}`}
+                    className={styles.authorLink}
+                    onPointerDown={() =>
+                      handlePointerDown(item.author?.authorName)
+                    }
+                  >
+                    Published by <b>{item.author?.authorName}</b>
+                  </Link>{" "}
+                  | {new Date(item.updatedAt).toLocaleDateString()}
+                </small>
               </div>
             </Link>
           ))}
-          <span className={styles.sidebarTitle}>Top Categories</span>
+
+          <h3 className={styles.sidebarTitle}>Top Categories</h3>
           <div className={styles.categoryWrap}>
             {blog.categories?.length ? (
               blog.categories.map((cat: any) => (
@@ -187,21 +213,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
               <div className={styles.relatedBody}>
                 <h3>{item.title}</h3>
-             <p>
-  <Link
-    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
-      item.author?.authorName
-    )}`}
-    className={styles.authorLink}
-     onPointerDown={() =>
-              handlePointerDown(item.author?.authorName)
-            }
-  >
-    Published by <b>{item.author?.authorName}</b>
-  </Link>{" "}
-  | {new Date(item.updatedAt).toLocaleDateString()}
-</p>
-
+                <p>
+                  <Link
+                    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
+                      item.author?.authorName,
+                    )}`}
+                    className={styles.authorLink}
+                    onPointerDown={() =>
+                      handlePointerDown(item.author?.authorName)
+                    }
+                  >
+                    Published by <b>{item.author?.authorName}</b>
+                  </Link>{" "}
+                  | {new Date(item.updatedAt).toLocaleDateString()}
+                </p>
               </div>
             </Link>
           ))}
