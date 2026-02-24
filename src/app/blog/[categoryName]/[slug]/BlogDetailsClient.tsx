@@ -41,7 +41,6 @@ export default function BlogDetailsPage({ params }: Props) {
   };
 
   const blog = blogs.find((b: any) => normalize(b.slug) === normalize(slug));
-
   if (isLoading) return <Loader />;
   if (!blog) return <p className={styles.center}>Blog not found.</p>;
 

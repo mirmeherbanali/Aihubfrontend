@@ -10,6 +10,7 @@ const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  
   const data = await getAllBlogs();
 
   const blogs = data?.filter((b: any) => b.status === "Published") || [];
