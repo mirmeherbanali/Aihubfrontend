@@ -80,7 +80,18 @@ export default function BlogDetailsPage({ params }: Props) {
       );
     }),
   ].slice(0, 4);
-
+  const processedContent = blog.content.replace(
+    /<img(.*?)>/g,
+    (match: string) => {
+      if (!match.includes("alt=")) {
+        match = match.replace(
+          "<img",
+          `<img alt="${blog.blogTitle}" title="${blog.blogTitle}"`
+        );
+      }
+      return match;
+    }
+  );
   return (
     <>
       {/* ================= HEADER ================= */}
@@ -125,7 +136,11 @@ export default function BlogDetailsPage({ params }: Props) {
       {blog.featuredImage?.url && (
         <section className={styles.featuredSection}>
           <div className={styles.featuredImage}>
-            <img src={blog.featuredImage.url} alt={blog.title} />
+            <img
+              src={blog.featuredImage.url}
+              alt={blog.featuredImage?.altText}
+              title={blog.featuredImage?.titleText}
+            />
           </div>
         </section>
       )}
@@ -150,7 +165,11 @@ export default function BlogDetailsPage({ params }: Props) {
             >
               {item.featuredImage?.url && (
                 <div className={styles.sideImage}>
-                  <img src={item.featuredImage.url} alt={item.title} />
+                  <img
+                    src={item.featuredImage.url}
+                    alt={item.featuredImage?.altText}
+                    title={item.featuredImage?.titleText}
+                  />
                 </div>
               )}
 
@@ -206,7 +225,11 @@ export default function BlogDetailsPage({ params }: Props) {
             >
               {item.featuredImage?.url && (
                 <div className={styles.relatedImage}>
-                  <img src={item.featuredImage.url} alt={item.title} />
+                  <img
+                    src={item.featuredImage.url}
+                    alt={item.featuredImage?.altText}
+                    title={item.featuredImage?.titleText}
+                  />
                 </div>
               )}
 
