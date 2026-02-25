@@ -23,7 +23,6 @@ export default function ToolDetailsClient({ toolname }: { toolname: string }) {
   const userId = getUserId();
   const userType = getUserType();
   const slug = useCategoryStore((s: any) => s.slug);
-
   const decoded = useMemo(
     () => ({
       slug: unslugify(slug as string),
@@ -50,11 +49,21 @@ export default function ToolDetailsClient({ toolname }: { toolname: string }) {
 
   const { tool, alternativeTools } = useMemo(() => {
     const tools = categoryDetail?.result?.list?.tools || [];
+    const normalizeText = (str = "") =>
+  str
+    .toLowerCase()
+    .replace(/['’]/g, "")        // remove apostrophes
+    .replace(/[^a-z0-9\s]/g, "") // remove special chars
+    .replace(/\s+/g, " ")        // normalize spaces
+    .trim();
 
-    const foundTool = tools.find(
-      (t: any) => t.toolName?.toLowerCase() === decoded.toolName
-    );
+const foundTool = tools.find((t: any) => {
+  const normalizedToolName = normalizeText(t.toolName);
+  const normalizedDecoded = normalizeText(decoded.toolName);
 
+  const match = normalizedToolName === normalizedDecoded;
+  return match;
+});
     const alt = foundTool
       ? tools.filter((t: any) => String(t._id) !== String(foundTool._id)).slice(0, 4)
       : [];

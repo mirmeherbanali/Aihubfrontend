@@ -42,11 +42,13 @@ export default function FormRenderer<T extends FieldValues>({
     return fieldErr?.message as string | undefined;
   };
 
-  const getButtonText =(field: { action: string; })=>{
-  if (!loading) return field.action;
+const getButtonText = (field: { action: string }) => {
+  if (!loading) {
+    return field.action === "Published" ? "Publish" : field.action;
+  }
 
-  if (field.action === "Draft")return "Submitting Draft...";
-  if (field.action ===" Published") return "Publishing...";
+  if (field.action === "Draft") return "Saving Draft...";
+  if (field.action === "Published") return "Publishing...";
 
   return "Submitting...";
 };

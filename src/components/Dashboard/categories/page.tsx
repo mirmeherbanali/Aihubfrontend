@@ -10,6 +10,7 @@ import { useGetAllCategoriesQuery,useDeleteCategoryMutation } from "@/features/d
 import { Category } from "@/types/category.types";
 import { FaTrash } from "react-icons/fa";
 import { getUserId } from "@/utils/authStorage";
+import { slugify } from "@/utils/useEncodeUrl";
 export default function CategoryPage() {
   const userId=getUserId()
   const [tab, setTab] = useState(1);
@@ -42,7 +43,7 @@ export default function CategoryPage() {
       label: "View",
       onClick: (row) => {
         const slug = row.categoryName.toLowerCase();
-        window.open(`/category/${slug}`, "_blank");
+        window.open(`/category/${slugify(slug)}`, "_blank");
       },
     },
     {
