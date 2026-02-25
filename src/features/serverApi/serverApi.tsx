@@ -26,7 +26,7 @@ export async function getTools() {
 export async function getAllBlogs() {
   const res = await fetch(`${API}/api/blog/getAllBlogs`, {
     method: "POST",
-    cache: "no-store", // 🔥 cache for 1 hour
+     next: { revalidate: 3600 },
   });
 
   const data = await res.json();
