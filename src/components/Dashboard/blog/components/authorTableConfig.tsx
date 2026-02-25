@@ -1,4 +1,5 @@
 // authorTableConfig.ts
+import { slugify } from "@/utils/useEncodeUrl";
 export const AUTHOR_COLUMNS = [
   {
     key: "authorImage",
@@ -139,10 +140,29 @@ export const CATEGORY_COLUMNS = [
   },
 ];
 
+
+
 export const COMMON_ACTIONS = (
   onEdit: (row: any) => void,
-  onDelete: (row: any) => void
+  onDelete: (row: any) => void,
+  onViewCategory?: (categoryName?: string) => void // 👈 ADD THIS
 ) => [
+  {
+    label: "View",
+    onClick: (row: any) => {
+      if (!row?.slug || row?.status !== "Published") return;
+
+      const firstCategory = row.categories?.[0];
+      if (!firstCategory?.categoryName) return;
+
+      // ✅ Safe optional call
+      onViewCategory?.(firstCategory.categoryName);
+
+      const frontendUrl = `/blog/${slugify(firstCategory.categoryName)}/${row.slug}`;
+      window.open(frontendUrl, "_blank", "noopener,noreferrer");
+    },
+    disabled: (row: any) => row?.status !== "Published",
+  },
   {
     label: "Edit",
     onClick: (row: any) => onEdit(row),
@@ -152,6 +172,4 @@ export const COMMON_ACTIONS = (
     onClick: (row: any) => onDelete(row),
   },
 ];
-
-
 

@@ -30,7 +30,7 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData,cat
         {/* Features */}
         {tool.features?.length > 0 && (
           <div className={styles.featuresBox}>
-            <h3>Key Features</h3>
+            <h2>Key Features</h2>
             <ul>
               {tool.features.map((feature: string, idx: number) => (
                 <li key={idx}>{feature}</li>
@@ -42,7 +42,7 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData,cat
         {/* Screenshots */}
         {tool.screenshots?.length > 0 && (
           <div className={styles.screenshotsBox}>
-            <h3>Screenshots</h3>
+            <h2>Screenshots</h2>
 
             <div className={styles.screenshotGrid}>
               {/* MAIN SCREENSHOT */}
@@ -78,7 +78,7 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData,cat
         {/* Video */}
         {tool.demoVideoUrl && (
           <div className={styles.videoBox}>
-            <h3>Video</h3>
+            <h2>Video</h2>
             <div className={styles.videoPlayer}>
               <a
                 href={tool.demoVideoUrl}
@@ -95,7 +95,7 @@ const ToolMainContent: React.FC<ToolMainContentProps> = ({ tool, reviewsData,cat
         {/* Tags */}
         {tool.tags?.length > 0 && (
           <div className={styles.tagsBox}>
-            <h3>Category</h3>
+            <h2>Category</h2>
             <div className={styles.tagsGrid}>
               
               <span className={styles.tag}>{category.categoryName}</span>

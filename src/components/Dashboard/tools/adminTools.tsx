@@ -21,6 +21,7 @@ import {
   useDeleteToolMutation,
 } from "@/features/tools/toolsApi";
 import { getUserId, getUserType } from "@/utils/authStorage";
+import { slugify } from "@/utils/useEncodeUrl";
 
 const AdminTools = () => {
   const userId = getUserId();
@@ -223,7 +224,7 @@ const AdminTools = () => {
         const categoryName = category.categoryName;
         const toolName = row.toolName;
         window.open(
-          `/product/${encodeURIComponent(toolName)}`,
+          `/product/${slugify(toolName)}`,
           "_blank"
         );
       },

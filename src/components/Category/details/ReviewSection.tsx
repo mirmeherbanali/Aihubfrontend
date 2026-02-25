@@ -37,7 +37,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
       {/* ⭐ Rating Summary Section */}
       <div className={styles.ratingSummary}>
         <div className={styles.leftSummary}>
-          <h1 className={styles.avgRating}>{tool?.reviewSummary?.avgRating}</h1>
+          <span className={styles.avgRating}>{tool?.reviewSummary?.avgRating}</span>
           <StarRating rating={tool?.reviewSummary?.avgRating} size="lg" />
           <p className={styles.totalReviews}>
             {tool?.reviewSummary?.totalReviews} total reviews
@@ -84,7 +84,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
                 <div className={styles.reviewInfo}>
                   <div className={styles.reviewHeaderRow}>
                     <div>
-                      <h4>{review?.userId?.email || "Anonymous User"}</h4>
+                      <span>{review?.userId?.email || "Anonymous User"}</span>
                       <p>
                         {relative} • <span>{formatted}</span>
                       </p>

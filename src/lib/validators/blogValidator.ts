@@ -51,11 +51,21 @@ export const blogSchema = z.object({
   lastModifiedDate: z.string().optional(),
 
   /* ================= SEO ================= */
-  jsonLdSchema: z
+jsonLdSchema: z
   .string()
   .optional()
+  .transform((val) => {
+    if (!val) return val;
+
+    return val
+      .replace(/“|”/g, '"')
+      .replace(/‘|’/g, "'")
+      .replace(/\t/g, "")
+      .trim();
+  })
   .refine((val) => {
     if (!val) return true;
+
     try {
       JSON.parse(val);
       return true;

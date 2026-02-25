@@ -76,33 +76,48 @@
   border: none;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s ease;
 
   &:hover {
     background: #007acc;
   }
 }
 
+.inlineBtn:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
 /* =========================
    RICH TEXT EDITOR
 ========================= */
 .editorWrapper {
   border: 1px solid #e5e7eb;
   border-radius: 14px;
-  overflow: hidden;
   background: #fff;
 
-  :global(.ql-toolbar) {
+  /* ❌ REMOVE overflow: hidden — sticky will NOT work with it */
+  overflow: visible;
+
+  /* Toolbar */
+  :global(.ql-toolbar.ql-snow) {
+    position: sticky;
+    top: 0; /* adjust if you have a fixed header */
+    z-index: 30;
+
+    background: #fff;
     border-radius: 14px 14px 0 0;
     border-color: #e5e7eb;
   }
 
-  :global(.ql-container) {
+  /* Editor container */
+  :global(.ql-container.ql-snow) {
     border-radius: 0 0 14px 14px;
     font-size: 15px;
   }
 
+  /* Editor content */
   :global(.ql-editor) {
-    min-height: 520px; /* 🔥 HEIGHT FIX */
+    min-height: 520px;
     padding: 18px;
     line-height: 1.7;
   }

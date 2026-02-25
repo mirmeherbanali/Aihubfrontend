@@ -25,6 +25,10 @@
   vertical-align: middle;
 }
 
+.actionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 /* ================================
    TABLE HEADER STYLE
 ================================ */

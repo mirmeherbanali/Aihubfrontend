@@ -103,6 +103,8 @@
   font-size: 17px;
   line-height: 1.9;
   color: #1f2937;
+  width: 100%;
+  overflow: hidden; /* prevents overflow */
 
   p {
     margin-bottom: 22px;
@@ -119,6 +121,19 @@
     font-size: 22px;
     font-weight: 700;
   }
+}
+
+/* Force all images inside content to stay within the green box */
+.content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Handle embedded iframes / videos */
+.content iframe,
+.content video {
+  max-width: 100%;
 }
 
 /* ================= SIDEBAR ================= */

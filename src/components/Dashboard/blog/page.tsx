@@ -32,6 +32,8 @@ import {
 import { TAB_CONFIG } from "./components/dashboardConfig";
 import { COMMON_ACTIONS } from "./components/authorTableConfig";
 import { getUserId } from "@/utils/authStorage";
+import { useBlogStore } from "@/store/useCategoryStore";
+import { slugify } from "@/utils/useEncodeUrl";
 
 type TabType = "blog" | "author" | "category";
 type ModeType = "list" | "form";
@@ -142,6 +144,7 @@ export default function CreateBlogPage() {
     mode: "onTouched",
   });
 
+  
   useEffect(() => {
     if (!editItem) {
       reset();
@@ -270,11 +273,20 @@ export default function CreateBlogPage() {
       console.error("Delete failed:", err);
     }
   };
+const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
 
-  const actions = COMMON_ACTIONS((row) => {
+const handlePointerDown = (categoryName?: string) => {
+  if (!categoryName) return;
+  setAuthorName(slugify(categoryName));
+};
+ const actions = COMMON_ACTIONS(
+  (row) => {
     setEditItem(row);
     setMode("form");
-  }, handleDelete);
+  },
+  handleDelete,
+  handlePointerDown
+);
 
   const authorOptions =
     authorQuery.data?.result?.list?.map((a: any) => ({
