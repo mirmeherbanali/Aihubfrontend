@@ -12,20 +12,21 @@ type Props = {
 const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
-/* ===========================
-   METADATA (HEAD META TAGS)
-=========================== */
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "http://localhost:3000";
+
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
   const data = await getAllBlogs();
 
-  const blogs =
-    data?.filter((b: any) => b.status === "Published") || [];
-
-  const blog = blogs.find(
-    (b: any) => normalize(b.slug) === normalize(params.slug)
-  );
+  const blog = data
+    ?.filter((b: any) => b.status === "Published")
+    ?.find(
+      (b: any) =>
+        normalize(b.slug) === normalize(params.slug)
+    );
 
   if (!blog) {
     return {
@@ -34,35 +35,32 @@ export async function generateMetadata(
     };
   }
 
-  const url = `https://app.recuip.com/blog/${params.categoryName}/${params.slug}`;
+  const canonicalUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
+  const image =
+    blog.featuredImage?.url ||
+    `${SITE_URL}/og-image.png`;
 
   return {
+    metadataBase: new URL(SITE_URL), // ✅ IMPORTANT
     title: blog.blogTitle,
-    description: blog.metaDescription || blog.blogTitle,
-    authors: [{ name: blog.author?.authorName || "Recuip" }],
-    alternates: { canonical: url },
+    description:
+      blog.metaDescription || blog.blogTitle,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       type: "article",
-      url,
+      url: canonicalUrl,
       title: blog.blogTitle,
-      description: blog.metaDescription || blog.blogTitle,
-      images: [
-        {
-          url:
-            blog.featuredImage?.url ||
-            "https://app.recuip.com/og-image.png",
-        },
-      ],
+      description:
+        blog.metaDescription || blog.blogTitle,
+      images: [{ url: image }],
       siteName: "Recuip",
     },
     twitter: {
       card: "summary_large_image",
       title: blog.blogTitle,
-      description: blog.metaDescription || blog.blogTitle,
-      images: [
-        blog.featuredImage?.url ||
-          "https://app.recuip.com/og-image.png",
-      ],
+      description:
+        blog.metaDescription || blog.blogTitle,
+      images: [image],
     },
     robots: { index: true, follow: true },
   };

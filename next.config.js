@@ -58,7 +58,16 @@ module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   swcMinify: true,
   experimental: { appDir: true },
-
+    // ✅ FIX: ADD images INSIDE config
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "s3-bucket-images-store.s3.ap-south-1.amazonaws.com",
+        pathname: "/blog-images/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {
