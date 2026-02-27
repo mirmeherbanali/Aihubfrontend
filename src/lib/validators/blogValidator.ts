@@ -63,18 +63,18 @@ jsonLdSchema: z
       .replace(/\t/g, "")
       .trim();
   })
-  .refine((val) => {
-    if (!val) return true;
+  // .refine((val) => {
+  //   if (!val) return true;
 
-    try {
-      JSON.parse(val);
-      return true;
-    } catch {
-      return false;
-    }
-  }, {
-    message: "Invalid JSON format",
-  }),
+  //   try {
+  //     JSON.parse(val);
+  //     return true;
+  //   } catch {
+  //     return false;
+  //   }
+  // }, {
+  //   message: "Invalid JSON format",
+  // }),
 
 
 //   robots: z

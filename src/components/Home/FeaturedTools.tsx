@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "../../components/ui/style/featuredTools.module.scss";
 import { slugify } from "@/utils/useEncodeUrl";
 import { useCategoryStore } from "@/store/useCategoryStore";
+import Image from "next/image";
 
 interface Category {
   _id: string;
@@ -29,7 +30,7 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
   toolData,
   allCategories,
 }) => {
-    const setSlug = useCategoryStore((s: any) => s.setSlug);
+  const setSlug = useCategoryStore((s: any) => s.setSlug);
 
   const handlePointerDown = (categoryName: string) => {
     setSlug(slugify(categoryName)); // ✅ store category slug before navigation
@@ -47,19 +48,20 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
           if (!category) return null;
 
           const link = `/product/${slugify(tool.toolName)}`;
-          setSlug(slugify(
-            category.categoryName
-          ));
+          setSlug(slugify(category.categoryName));
           return (
-            <Link key={tool._id} href={link} className={styles.card}  
-            onPointerDown={() =>
-                handlePointerDown(category.categoryName)
-              } >
+            <Link
+              key={tool._id}
+              href={link}
+              className={styles.card}
+              onPointerDown={() => handlePointerDown(category.categoryName)}
+            >
               <div className={styles.row}>
-                <img
+                <Image
                   src={tool.logo || "/placeholder.png"}
                   alt={tool.toolName}
-                  className={styles.logo}
+                  width={40}
+                  height={40}
                 />
 
                 <div className={styles.textBox}>
