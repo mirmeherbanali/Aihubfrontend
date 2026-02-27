@@ -5,8 +5,6 @@ import { getAllBlogs, getCategories, getTools } from "@/features/serverApi/serve
 import HomeClient from "./HomeClient";
 import styles from "../ui/style/Home.module.scss";
 import LatestNewsServer from "./LatestNewsServer";
-import { Suspense } from "react";
-import LatestNewsSkeleton from "./LatestNewsSkeleton";
 
 export default async function HomePage() {
   const [categories, tools, blog] = await Promise.all([
@@ -17,23 +15,27 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ✅ SERVER FALLBACK (JS OFF) */}
+      {/* ✅ SERVER RENDERED CONTENT */}
       <div className={styles.homeServer}>
         <PageHero
           content="Discover the Best AI Tools <br /> for Every Need"
-          subcontent="Explore 1000+ AI tools categorized by use case, industry, pricing, and popularity."
+          subcontent="Explore 1000+ AI tools categorized by use case."
           queryPlaceholder="Search for Tools & Categories"
           btnText="Add Your Tool"
         />
+
         <Categories categoryData={categories} />
-        
-          <LatestNewsServer blog={blog} />
+        <LatestNewsServer blog={blog} />
         <FeaturedTools toolData={tools} allCategories={categories} />
       </div>
 
-      {/* ✅ CLIENT UI (JS ON) */}
+      {/* ✅ CLIENT SIDE INTERACTION */}
       <div className={styles.homeClient}>
-        <HomeClient />
+        <HomeClient
+          categories={categories}
+          tools={tools}
+          blog={blog}
+        />
       </div>
     </>
   );

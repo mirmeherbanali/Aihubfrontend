@@ -25,7 +25,9 @@ const securityHeaders = () => {
           img-src 'self' blob: data: https:;
           script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
           style-src 'self' 'unsafe-inline';
-        `.replace(/\s{2,}/g, " ").trim()
+        `
+            .replace(/\s{2,}/g, " ")
+            .trim()
         : `
           default-src 'self';
 
@@ -46,7 +48,9 @@ const securityHeaders = () => {
           connect-src 'self' https://recuip.com;
           object-src 'none';
           base-uri 'self';
-        `.replace(/\s{2,}/g, " ").trim(),
+        `
+            .replace(/\s{2,}/g, " ")
+            .trim(),
     },
     { key: "X-Frame-Options", value: "DENY" },
     { key: "X-Content-Type-Options", value: "nosniff" },
@@ -58,7 +62,13 @@ module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   swcMinify: true,
   experimental: { appDir: true },
-
+  // ✅ FIX: ADD images INSIDE config
+  images: {
+    domains: [
+      "s3-bucket-images-store.s3.amazonaws.com",
+      "s3-bucket-images-store.s3.ap-south-1.amazonaws.com",
+    ],
+  },
   async headers() {
     return [
       {

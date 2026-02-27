@@ -1,237 +1,86 @@
-"use client";
+import { Metadata } from "next";
+import Script from "next/script";
+import { getAllBlogs } from "@/features/serverApi/serverApi";
+import BlogDetails from "./BlogDetails";
 
-import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
-import styles from "@/components/ui/style/BlogDetails.module.scss";
-import Link from "next/link";
-import Loader from "@/components/Loader/Loader";
-import { useMemo } from "react";
-import { slugify } from "@/utils/useEncodeUrl";
-import { useBlogStore } from "@/store/useCategoryStore";
+export const revalidate = 3600;
 
 type Props = {
   params: {
+    categoryName: string;
     slug: string;
-    categoryName: string; // for display only
   };
 };
 
-// normalize string for URLs
 const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
-export default function BlogDetailsPage({ params }: Props) {
-  const { slug, categoryName } = params;
-  const { data, isLoading } = useGetAllBlogsQuery();
-  // const authorName =  useBlogStore((s: any) => s.authorName)
-  const blogs = useMemo(() => {
-    return (
-      data?.result?.list
-        ?.filter((b: any) => b.status === "Published")
-        .sort(
-          (a: any, b: any) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        ) || []
-    );
-  }, [data]);
-  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
-  const handlePointerDown = (authorName?: string) => {
-    if (!authorName) return;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-    setAuthorName(slugify(authorName));
-  };
+/* ===========================
+   METADATA (NORMAL)
+=========================== */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const blogs = await getAllBlogs();
 
-  const blog = blogs.find((b: any) => normalize(b.slug) === normalize(slug));
-
-  if (isLoading) return <Loader />;
-  if (!blog) return <p className={styles.center}>Blog not found.</p>;
-
-  // Get normalized categories of current blog
-  const blogCategoryNames = blog.categories?.map((cat: any) =>
-    normalize(cat.categoryName),
+  const blog = blogs.find(
+    (b: any) =>
+      b.status === "Published" && normalize(b.slug) === normalize(params.slug),
   );
 
-  // Latest articles: any author, same categories, exclude current blog
-  const latestArticles = blogs
-    .filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
-      const categories =
-        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
-      return categories.some((cat: any) => blogCategoryNames.includes(cat));
-    })
-    .slice(0, 3);
+  if (!blog) {
+    return {
+      title: "Blog Not Found",
+      robots: { index: false, follow: false },
+    };
+  }
 
-  // Related articles: same categories, prioritize same author
-  const relatedArticles = [
-    ...blogs.filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
-      const categories =
-        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
-      return (
-        categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
-        normalize(b.author?.authorName) === normalize(blog.author?.authorName)
-      );
-    }),
-    ...blogs.filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
-      const categories =
-        b.categories?.map((cat: any) => normalize(cat.categoryName)) || [];
-      return (
-        categories.some((cat: any) => blogCategoryNames.includes(cat)) &&
-        normalize(b.author?.authorName) !== normalize(blog.author?.authorName)
-      );
-    }),
-  ].slice(0, 4);
+  const canonicalUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
+
+  return {
+    title: blog.blogTitle,
+    description: blog.metaDescription || blog.blogTitle,
+    alternates: { canonical: canonicalUrl },
+  };
+}
+
+/* ===========================
+   PAGE BODY
+=========================== */
+export default async function Page({ params }: Props) {
+  const blogs = await getAllBlogs();
+
+  const blog = blogs.find(
+    (b: any) =>
+      b.status === "Published" && normalize(b.slug) === normalize(params.slug),
+  );
+
+  if (!blog) {
+    return <p style={{ padding: "40px" }}>Blog not found</p>;
+  }
+
+  // Remove wrapper if DB stores full script
+  const cleanJson = blog.jsonLdSchema
+    ?.replace('<script type="application/ld+json">', "")
+    ?.replace("</script>", "")
+    ?.trim();
 
   return (
     <>
-      {/* ================= HEADER ================= */}
-      <header className={styles.header}>
-        <div className={styles.categoryRow}>
-          {blog.categories?.length ? (
-            blog.categories.map((cat: any) => (
-              <Link
-                key={cat._id}
-                href={`/blog/${slugify(cat.categoryName)}`}
-                className={styles.category}
-              >
-                {cat.categoryName}
-              </Link>
-            ))
-          ) : (
-            <span className={styles.category}>Uncategorized</span>
-          )}
-        </div>
-
-        <h3 className={styles.title}>{blog?.blogTitle}</h3>
-
-        <div className={styles.metaRow}>
-          <div className={styles.author}>
-            <div className={styles.avatar}>{blog.author?.authorName}</div>
-            <Link
-              href={`/blog/${categoryName}/${slug}/${slugify(blog.author?.authorName)}`}
-              className={styles.authorLink}
-              onPointerDown={() => handlePointerDown(blog.author?.authorName)}
-            >
-              Published by <b>{blog.author?.authorName}</b>
-            </Link>
-          </div>
-
-          <span>
-            Updated on <b>{new Date(blog.updatedAt).toLocaleDateString()}</b>
-          </span>
-        </div>
-      </header>
-
-      {/* ================= FEATURED IMAGE ================= */}
-      {blog.featuredImage?.url && (
-        <section className={styles.featuredSection}>
-          <div className={styles.featuredImage}>
-            <img src={blog.featuredImage.url} alt={blog.title} />
-          </div>
-        </section>
+      {cleanJson && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: cleanJson,
+          }}
+        />
       )}
 
-      {/* ================= CONTENT + SIDEBAR ================= */}
-      <section className={styles.layout}>
-        <article className={styles.content}>
-          <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-        </article>
-
-        <aside className={styles.sidebar}>
-          <h3 className={styles.sidebarTitle}>
-            Latest Articles in{" "}
-            {blog.categories?.[0]?.categoryName || "Category"}
-          </h3>
-
-          {latestArticles.map((item: any) => (
-            <Link
-              key={item._id}
-              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.slug)}`}
-              className={styles.sideCard}
-            >
-              {item.featuredImage?.url && (
-                <div className={styles.sideImage}>
-                  <img src={item.featuredImage.url} alt={item.title} />
-                </div>
-              )}
-
-              <div className={styles.sideBody}>
-                <h4>{item.title}</h4>
-                <small>
-                  <Link
-                    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
-                      item.author?.authorName,
-                    )}`}
-                    className={styles.authorLink}
-                    onPointerDown={() =>
-                      handlePointerDown(item.author?.authorName)
-                    }
-                  >
-                    Published by <b>{item.author?.authorName}</b>
-                  </Link>{" "}
-                  | {new Date(item.updatedAt).toLocaleDateString()}
-                </small>
-              </div>
-            </Link>
-          ))}
-
-          <h3 className={styles.sidebarTitle}>Top Categories</h3>
-          <div className={styles.categoryWrap}>
-            {blog.categories?.length ? (
-              blog.categories.map((cat: any) => (
-                <Link
-                  key={cat._id}
-                  href={`/blog/${slugify(cat.categoryName)}`}
-                  className={styles.categoryTag}
-                >
-                  {cat.categoryName}
-                </Link>
-              ))
-            ) : (
-              <span className={styles.emptyText}>No categories</span>
-            )}
-          </div>
-        </aside>
-      </section>
-
-      {/* ================= RELATED ARTICLES ================= */}
-      <section className={styles.related}>
-        <h2>Related Articles</h2>
-
-        <div className={styles.relatedGrid}>
-          {relatedArticles.map((item: any) => (
-            <Link
-              key={item._id}
-              href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slugify(item.slug)}`}
-              className={styles.relatedCard}
-            >
-              {item.featuredImage?.url && (
-                <div className={styles.relatedImage}>
-                  <img src={item.featuredImage.url} alt={item.title} />
-                </div>
-              )}
-
-              <div className={styles.relatedBody}>
-                <h3>{item.title}</h3>
-                <p>
-                  <Link
-                    href={`/blog/${slugify(item.categories?.[0]?.categoryName)}/${slug}/${slugify(
-                      item.author?.authorName,
-                    )}`}
-                    className={styles.authorLink}
-                    onPointerDown={() =>
-                      handlePointerDown(item.author?.authorName)
-                    }
-                  >
-                    Published by <b>{item.author?.authorName}</b>
-                  </Link>{" "}
-                  | {new Date(item.updatedAt).toLocaleDateString()}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <BlogDetails
+        blog={blog}
+        allBlogs={blogs}
+        categoryName={params.categoryName}
+      />
     </>
   );
 }

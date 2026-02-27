@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../../components/ui/style/latestNews.module.scss";
 import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import { slugify } from "@/utils/useEncodeUrl";
@@ -9,111 +10,140 @@ import { useBlogStore } from "@/store/useCategoryStore";
 
 const LatestNews = () => {
   const { data, isLoading } = useGetAllBlogsQuery();
+  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
 
-  // only published blogs
-  const blogs =
-    data?.result?.list?.filter((b: any) => b.status === "Published") || [];
+  /* ===========================
+     HEAVY LOGIC → useMemo
+  ============================ */
+  const categoryBlogPairs = useMemo(() => {
+    if (!data?.result?.list) return [];
 
-  // latest 4
-  const latestBlogs = blogs?.slice(0, 4);
-const sortedBlogs = [...latestBlogs].sort(
-  (a: any, b: any) =>
-    new Date(b.createdAt).getTime() -
-    new Date(a.createdAt).getTime()
-);
-const uniqueCategoryPairs: any[] = [];
-const usedCategories = new Set();
+    // only published blogs
+    const blogs = data.result.list.filter(
+      (b: any) => b.status === "Published"
+    );
 
-for (const item of sortedBlogs) {
-  const categories = item.categories?.length
-    ? item.categories
-    : [{ categoryName: "Uncategorized" }];
+    // latest 4 by date
+    const sortedBlogs = [...blogs]
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() -
+          new Date(a.createdAt).getTime()
+      )
+      .slice(0, 4);
 
-  for (const cat of categories) {
-    const key = cat.categoryName.toLowerCase();
+    const uniquePairs: any[] = [];
+    const usedCategories = new Set();
 
-    if (!usedCategories.has(key)) {
-      uniqueCategoryPairs.push({ cat, item });
-      usedCategories.add(key);
-      break; // one category per blog
+    for (const item of sortedBlogs) {
+      const categories = item.categories?.length
+        ? item.categories
+        : [{ categoryName: "Uncategorized" }];
+
+      for (const cat of categories) {
+        const key = cat.categoryName.toLowerCase();
+
+        if (!usedCategories.has(key)) {
+          uniquePairs.push({ cat, item });
+          usedCategories.add(key);
+          break;
+        }
+      }
+
+      if (uniquePairs.length === 4) break;
     }
 
-    if (uniqueCategoryPairs.length === 4) break;
-  }
+    // fallback if < 4
+    if (uniquePairs.length < 4) {
+      for (const item of sortedBlogs) {
+        if (uniquePairs.length === 4) break;
 
-  if (uniqueCategoryPairs.length === 4) break;
-}
-const categoryBlogPairs = [...uniqueCategoryPairs];
+        const exists = uniquePairs.some(
+          (p) => p.item._id === item._id
+        );
+        if (exists) continue;
 
-if (categoryBlogPairs.length < 4) {
-  for (const item of sortedBlogs) {
-    if (categoryBlogPairs.length === 4) break;
+        const cat =
+          item.categories?.[0] || {
+            categoryName: "Uncategorized",
+          };
 
-    const alreadyUsed = categoryBlogPairs.some(
-      (pair) => pair.item._id === item._id
-    );
-    if (alreadyUsed) continue;
+        uniquePairs.push({ cat, item });
+      }
+    }
 
-    const cat =
-      item.categories?.[0] || { categoryName: "Uncategorized" };
+    return uniquePairs;
+  }, [data]);
 
-    categoryBlogPairs.push({ cat, item });
-  }
-}
-
-
-  const {setAuthorName} = useBlogStore((s: any) => s.setAuthorName)
- const handlePointerDown = (authorName?: string) => {
+  const handlePointerDown = (authorName?: string) => {
     if (!authorName) return;
-
     setAuthorName(slugify(authorName));
   };
+
+  /* ===========================
+     SKELETON UI
+  ============================ */
+  if (isLoading) {
+    return (
+      <section className={styles.newsSection}>
+        <h2>Latest News on AI</h2>
+        <div className={styles.newsGrid}>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className={styles.skeletonCard} />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.newsSection}>
       <h2>Latest News on AI</h2>
-     <div className={styles.newsGrid}>
-  {categoryBlogPairs.map(({ cat, item }: any) => (
-    <Link
-      key={`${item._id}-${cat.categoryName}`}
-      href={`/blog/${slugify(
-        cat.categoryName
-      )}/${item.slug}`}
-      className={styles.card}
-      onPointerDown={() =>
+
+      <div className={styles.newsGrid}>
+        {categoryBlogPairs.map(({ cat, item }: any) => (
+          <Link
+            key={`${item._id}-${cat.categoryName}`}
+            href={`/blog/${slugify(cat.categoryName)}/${item.slug}`}
+            className={styles.card}
+            onPointerDown={() =>
               handlePointerDown(item.author?.authorName)
             }
-    >
-      {/* IMAGE */}
-      <div className={styles.imageWrapper}>
-        <img
-          src={item.featuredImage?.url || "/blog-placeholder.jpg"}
-          alt={item.blogTitle}
-        />
-      </div>
-
-      {/* CONTENT */}
-      <div className={styles.cardContent}>
-        <h3>{item.blogTitle}</h3>
-
-        <p>{item.metaDescription?.slice(0, 90)}...</p>
-
-        <div className={styles.meta}>
-          <span className={styles.author}>
-            {item.author?.authorName}
-          </span>
-
-          <span className={styles.date}>
-            {new Date(item.createdAt).toLocaleDateString()}
-          </span>
-        </div>
-      </div>
-    </Link>
-  ))}
+          >
+            {/* IMAGE */}
+           <div className={styles.imageWrapper}>
+  <Image
+    src={item.featuredImage?.url || "/blog-placeholder.jpg"}
+    alt={item.blogTitle}
+    fill
+    sizes="(max-width: 768px) 100vw, 25vw"
+    className={styles.image}
+    priority
+  />
 </div>
 
+            {/* CONTENT */}
+            <div className={styles.cardContent}>
+              <h3>{item.blogTitle}</h3>
+              <p>
+                {item.metaDescription?.slice(0, 90)}…
+              </p>
 
-      {/* SAME VIEW ALL BUTTON */}
+              <div className={styles.meta}>
+                <span className={styles.author}>
+                  {item.author?.authorName}
+                </span>
+                <span className={styles.date}>
+                  {new Date(
+                    item.createdAt
+                  ).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
       <Link href="/blog" className={styles.viewBtn}>
         View All <span>›</span>
       </Link>
