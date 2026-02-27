@@ -1,43 +1,28 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHero from "@/components/Hero/PageHero";
 import Categories from "./categories";
 import FeaturedTools from "./FeaturedTools";
-import { useGetAllCategoriesQuery } from "@/features/dashboard/category/categoryApi";
-import { useGetAllToolsQuery } from "@/features/tools/toolsApi";
 import styles from "../ui/style/Home.module.scss";
 import LatestNews from "./LatestNews";
 
-export default function HomeClient() {
+interface Props {
+  categories: any[];
+  tools: any[];
+  blog: any[];
+}
+
+export default function HomeClient({ categories, tools, blog }: Props) {
   const router = useRouter();
-
-  const { data: categoriesData } = useGetAllCategoriesQuery();
-  const { data: toolsData } = useGetAllToolsQuery();
   const [loadingToolId, setLoadingToolId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
-  const [query, setQuery] = useState("")
-
-  if (!categoriesData || !toolsData) return null;
-
-  const categories = categoriesData.result.list;
-  const tools = toolsData.result.list.filter(
-    (item: any) => item.status === "Approved"
-  );
-
-  const handleCategoryClick = (slug: string) => {
-    router.push(`/category/${encodeURIComponent(slug)}`);
-  };
-
-  const handleViewAllClick = () => {
-    window.open("/category");
-  };
-
-  const handleToolClick = (tool: any, category: any) => {
-    const categorySlug = category.categoryName;
-    router.push(
-      `/product/${encodeURIComponent(tool.toolName)}`
-    );
+  const handleSuggestionClick = (tool: any) => {
+    setLoadingToolId(tool._id);
+    router.push(`/product/${encodeURIComponent(tool.toolName)}`);
+    setQuery("");
   };
 
   const filteredTools = query
@@ -46,79 +31,41 @@ export default function HomeClient() {
       )
     : [];
 
-  const handleSuggestionClick = (tool: any) => {
-    const categoryId = tool.category?.[0]?._id;
-    const category = categories.find((c: any) => c._id === categoryId);
-
-    if (!category) return;
-    // 🔥 show loading immediately
-    setLoadingToolId(tool._id);
-    router.push(
-      `/category/${encodeURIComponent(tool.toolName)}`
-    );
-    setQuery("");
-  };
-
-
   return (
     <>
       <PageHero
         content="Discover the Best AI Tools <br /> for Every Need"
-        subcontent="Explore 1000+ AI tools categorized by use case, industry, pricing, and popularity."
+        subcontent="Explore 1000+ AI tools categorized by use case."
         queryPlaceholder="Search for Tools & Categories"
         liveSearch
         onSearch={(val) => setQuery(val)}
         btnText="Add Your Tool"
         onBtnClick={() => router.push("/tool")}
       />
-{/* 🔽 SEARCH SUGGESTIONS */}
+
       {query && filteredTools.length > 0 && (
         <div className={styles.suggestionBox}>
-          {filteredTools.slice(0, 6).map((tool: any) => {
-            const categoryId = tool.category?.[0]?._id;
-            const category = categories.find(
-              (c: any) => c._id === categoryId
-            );
-
-            return (
-              <div
-                key={tool._id}
-                className={`${styles.suggestionItem} ${
-  loadingToolId === tool._id ? styles.loading : ""
-}`}
-                onClick={() => handleSuggestionClick(tool)}
-              >
-                <div className={styles.left}>
-                     {loadingToolId === tool._id ? (
-      <div className={styles.spinner}></div>
-    ) :(
-                  <img
-                    src={tool.logo || "/placeholder.png"}
-                    alt={tool.toolName}
-                  />
-    )}
-                </div>
-
-                <div className={styles.right}>
-                  <h4>{tool.toolName}</h4>
-                  <span> {loadingToolId === tool._id ? "Opening tool..." : category?.categoryName}</span>
-                </div>
+          {filteredTools.slice(0, 6).map((tool: any) => (
+            <div
+              key={tool._id}
+              className={styles.suggestionItem}
+              onClick={() => handleSuggestionClick(tool)}
+            >
+              <img
+                src={tool.logo || "/placeholder.png"}
+                alt={tool.toolName}
+              />
+              <div>
+                <h4>{tool.toolName}</h4>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
-      <Categories
-        {...({ categoryData: categories, onCategoryClick: handleCategoryClick, onViewAllClick: handleViewAllClick } as any)}
-      />
-        <LatestNews/>
 
-
-      <FeaturedTools
-        toolData={tools}
-        allCategories={categories}
-        {...({ onToolClick: handleToolClick } as any)}
-      />
+      <Categories categoryData={categories} />
+      <LatestNews blog={blog} />
+      <FeaturedTools toolData={tools} allCategories={categories} />
     </>
   );
 }

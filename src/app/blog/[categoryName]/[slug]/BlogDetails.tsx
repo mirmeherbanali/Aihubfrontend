@@ -1,67 +1,31 @@
-"use client";
-
-import { useGetAllBlogsQuery } from "@/features/blog/blogApi";
 import styles from "@/components/ui/style/BlogDetails.module.scss";
 import Link from "next/link";
-import Loader from "@/components/Loader/Loader";
-import { useMemo } from "react";
+import Image from "next/image";
 import { slugify } from "@/utils/useEncodeUrl";
-import { useBlogStore } from "@/store/useCategoryStore";
 
 type Props = {
-  params: {
-    slug: string;
-    categoryName: string;
-  };
+  blog: any;
+  allBlogs: any[];
+  categoryName: string;
 };
 
 const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
-export default function BlogDetailsClient({ params }: Props) {
-  const { slug, categoryName } = params;
-
-  const { data, isLoading } = useGetAllBlogsQuery();
-
-  const blogs = useMemo(() => {
-    return (
-      data?.result?.list
-        ?.filter((b: any) => b.status === "Published")
-        .sort(
-          (a: any, b: any) =>
-            new Date(b.updatedAt).getTime() -
-            new Date(a.updatedAt).getTime()
-        ) || []
-    );
-  }, [data]);
-
-  const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
-
-  const handlePointerDown = (authorName?: string) => {
-    if (!authorName) return;
-    setAuthorName(slugify(authorName));
-  };
-
-  const blog = blogs.find(
-    (b: any) => normalize(b.slug) === normalize(slug)
-  );
-
-  if (isLoading || !data) {
-    return <Loader />;
-  }
-
-  if (!blog) {
-    return <p className={styles.center}>Blog not found.</p>;
-  }
+export default function BlogDetails({
+  blog,
+  allBlogs,
+  categoryName,
+}: Props) {
 
   const blogCategoryNames =
     blog.categories?.map((cat: any) =>
       normalize(cat.categoryName)
     ) || [];
 
-  const latestArticles = blogs
+  const latestArticles = allBlogs
     .filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
+      if (normalize(b.slug) === normalize(blog.slug)) return false;
 
       const categories =
         b.categories?.map((cat: any) =>
@@ -74,40 +38,20 @@ export default function BlogDetailsClient({ params }: Props) {
     })
     .slice(0, 3);
 
-  const relatedArticles = [
-    ...blogs.filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
+  const relatedArticles = allBlogs
+    .filter((b: any) => {
+      if (normalize(b.slug) === normalize(blog.slug)) return false;
 
       const categories =
         b.categories?.map((cat: any) =>
           normalize(cat.categoryName)
         ) || [];
 
-      return (
-        categories.some((cat: any) =>
-          blogCategoryNames.includes(cat)
-        ) &&
-        normalize(b.author?.authorName) ===
-          normalize(blog.author?.authorName)
+      return categories.some((cat: any) =>
+        blogCategoryNames.includes(cat)
       );
-    }),
-    ...blogs.filter((b: any) => {
-      if (normalize(b.slug) === normalize(slug)) return false;
-
-      const categories =
-        b.categories?.map((cat: any) =>
-          normalize(cat.categoryName)
-        ) || [];
-
-      return (
-        categories.some((cat: any) =>
-          blogCategoryNames.includes(cat)
-        ) &&
-        normalize(b.author?.authorName) !==
-          normalize(blog.author?.authorName)
-      );
-    }),
-  ].slice(0, 4);
+    })
+    .slice(0, 4);
 
   const processedContent = blog.content.replace(
     /<img(.*?)>/g,
@@ -154,20 +98,10 @@ export default function BlogDetailsClient({ params }: Props) {
               {blog.author?.authorName}
             </div>
 
-            <Link
-              href={`/blog/${categoryName}/${slug}/${slugify(
-                blog.author?.authorName
-              )}`}
-              className={styles.authorLink}
-              onPointerDown={() =>
-                handlePointerDown(
-                  blog.author?.authorName
-                )
-              }
-            >
+            <span className={styles.authorLink}>
               Published by{" "}
               <b>{blog.author?.authorName}</b>
-            </Link>
+            </span>
           </div>
 
           <span>
@@ -185,10 +119,19 @@ export default function BlogDetailsClient({ params }: Props) {
       {blog.featuredImage?.url && (
         <section className={styles.featuredSection}>
           <div className={styles.featuredImage}>
-            <img
+            <Image
               src={blog.featuredImage.url}
-              alt={blog.featuredImage?.altText}
-              title={blog.featuredImage?.titleText}
+              alt={
+                blog.featuredImage?.altText ||
+                blog.blogTitle
+              }
+              title={
+                blog.featuredImage?.titleText ||
+                blog.blogTitle
+              }
+              width={1200}
+              height={600}
+              priority
             />
           </div>
         </section>
@@ -222,10 +165,14 @@ export default function BlogDetailsClient({ params }: Props) {
             >
               {item.featuredImage?.url && (
                 <div className={styles.sideImage}>
-                  <img
+                  <Image
                     src={item.featuredImage.url}
-                    alt={item.featuredImage?.altText}
-                    title={item.featuredImage?.titleText}
+                    alt={
+                      item.featuredImage?.altText ||
+                      item.blogTitle
+                    }
+                    width={300}
+                    height={200}
                   />
                 </div>
               )}
@@ -245,30 +192,6 @@ export default function BlogDetailsClient({ params }: Props) {
               </div>
             </Link>
           ))}
-
-          <h3 className={styles.sidebarTitle}>
-            Top Categories
-          </h3>
-
-          <div className={styles.categoryWrap}>
-            {blog.categories?.length ? (
-              blog.categories.map((cat: any) => (
-                <Link
-                  key={cat._id}
-                  href={`/blog/${slugify(
-                    cat.categoryName
-                  )}`}
-                  className={styles.categoryTag}
-                >
-                  {cat.categoryName}
-                </Link>
-              ))
-            ) : (
-              <span className={styles.emptyText}>
-                No categories
-              </span>
-            )}
-          </div>
         </aside>
       </section>
 
@@ -288,10 +211,14 @@ export default function BlogDetailsClient({ params }: Props) {
             >
               {item.featuredImage?.url && (
                 <div className={styles.relatedImage}>
-                  <img
+                  <Image
                     src={item.featuredImage.url}
-                    alt={item.featuredImage?.altText}
-                    title={item.featuredImage?.titleText}
+                    alt={
+                      item.featuredImage?.altText ||
+                      item.blogTitle
+                    }
+                    width={400}
+                    height={250}
                   />
                 </div>
               )}
