@@ -18,17 +18,13 @@ const LatestNews = () => {
   const categoryBlogPairs = useMemo(() => {
     if (!data?.result?.list) return [];
 
-    // only published blogs
-    const blogs = data.result.list.filter(
-      (b: any) => b.status === "Published"
-    );
+    const blogs = data.result.list.filter((b: any) => b.status === "Published");
 
     // latest 4 by date
     const sortedBlogs = [...blogs]
       .sort(
         (a: any, b: any) =>
-          new Date(b.createdAt).getTime() -
-          new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       )
       .slice(0, 4);
 
@@ -58,15 +54,12 @@ const LatestNews = () => {
       for (const item of sortedBlogs) {
         if (uniquePairs.length === 4) break;
 
-        const exists = uniquePairs.some(
-          (p) => p.item._id === item._id
-        );
+        const exists = uniquePairs.some((p) => p.item._id === item._id);
         if (exists) continue;
 
-        const cat =
-          item.categories?.[0] || {
-            categoryName: "Uncategorized",
-          };
+        const cat = item.categories?.[0] || {
+          categoryName: "Uncategorized",
+        };
 
         uniquePairs.push({ cat, item });
       }
@@ -106,37 +99,29 @@ const LatestNews = () => {
             key={`${item._id}-${cat.categoryName}`}
             href={`/blog/${slugify(cat.categoryName)}/${item.slug}`}
             className={styles.card}
-            onPointerDown={() =>
-              handlePointerDown(item.author?.authorName)
-            }
+            onPointerDown={() => handlePointerDown(item.author?.authorName)}
           >
             {/* IMAGE */}
-           <div className={styles.imageWrapper}>
-  <Image
-    src={item.featuredImage?.url || "/blog-placeholder.jpg"}
-    alt={item.blogTitle}
-    fill
-    sizes="(max-width: 768px) 100vw, 25vw"
-    className={styles.image}
-    priority
-  />
-</div>
+            <div className={styles.imageWrapper}>
+              <Image
+                src={item.featuredImage?.url || "/blog-placeholder.jpg"}
+                alt={item.blogTitle}
+                fill
+                sizes="(max-width: 768px) 100vw, 25vw"
+                className={styles.image}
+                priority
+              />
+            </div>
 
             {/* CONTENT */}
             <div className={styles.cardContent}>
               <h3>{item.blogTitle}</h3>
-              <p>
-                {item.metaDescription?.slice(0, 90)}…
-              </p>
+              <p>{item.metaDescription?.slice(0, 90)}…</p>
 
               <div className={styles.meta}>
-                <span className={styles.author}>
-                  {item.author?.authorName}
-                </span>
+                <span className={styles.author}>{item.author?.authorName}</span>
                 <span className={styles.date}>
-                  {new Date(
-                    item.createdAt
-                  ).toLocaleDateString()}
+                  {new Date(item.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>

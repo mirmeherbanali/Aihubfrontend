@@ -64,7 +64,7 @@ export default function HomeClient({ categories, tools, blog }: Props) {
       )}
 
       <Categories categoryData={categories} />
-      <LatestNews blog={blog} />
+      <LatestNews  />
       <FeaturedTools toolData={tools} allCategories={categories} />
     </>
   );
