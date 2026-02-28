@@ -15,7 +15,7 @@ type Props = {
 const normalize = (str?: string) =>
   str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || "https://recuip.com";
 
 /* ===========================
    METADATA (NORMAL)
@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const blog = blogs.find(
     (b: any) =>
-      b.status === "Published" && normalize(b.slug) === normalize(params.slug),
+      b.status === "Published" &&
+      normalize(b.slug) === normalize(params.slug)
   );
 
   if (!blog) {
@@ -41,6 +42,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: blog.blogTitle,
     description: blog.metaDescription || blog.blogTitle,
     alternates: { canonical: canonicalUrl },
+
+    openGraph: {
+      title: blog.blogTitle,
+      description: blog.metaDescription || blog.blogTitle,
+      url: canonicalUrl,
+      siteName: "Recuip",
+      images: [
+        {
+          url: blog.featuredImage?.url,
+          width: 1200,
+          height: 630,
+          alt: blog.blogTitle,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: blog.blogTitle,
+      description: blog.metaDescription || blog.blogTitle,
+      images: [blog.featuredImage?.url],
+    },
+
+    robots: { index: true, follow: true },
   };
 }
 
@@ -52,21 +77,52 @@ export default async function Page({ params }: Props) {
 
   const blog = blogs.find(
     (b: any) =>
-      b.status === "Published" && normalize(b.slug) === normalize(params.slug),
+      b.status === "Published" &&
+      normalize(b.slug) === normalize(params.slug)
   );
 
   if (!blog) {
     return <p style={{ padding: "40px" }}>Blog not found</p>;
   }
 
-  // Remove wrapper if DB stores full script
+  /* ✅ DB SCHEMA (UNCHANGED) */
   const cleanJson = blog.jsonLdSchema
     ?.replace('<script type="application/ld+json">', "")
     ?.replace("</script>", "")
     ?.trim();
 
+  /* ✅ NEW DYNAMIC BLOG SCHEMA */
+  const blogUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
+
+  const dynamicSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": blogUrl,
+    },
+    headline: blog.blogTitle,
+    description: blog.metaDescription || blog.blogTitle,
+    image: blog.featuredImage?.url,
+    author: {
+      "@type": "Person",
+      name: blog.author?.authorName || "Recuip Team",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Recuip",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+    datePublished: new Date(blog.createdAt).toISOString(),
+    dateModified: new Date(blog.updatedAt).toISOString(),
+  };
+
   return (
     <>
+      {/* ✅ 1️⃣ DB SCHEMA (AS IT IS) */}
       {cleanJson && (
         <script
           type="application/ld+json"
@@ -75,6 +131,14 @@ export default async function Page({ params }: Props) {
           }}
         />
       )}
+
+      {/* ✅ 2️⃣ DYNAMIC SCHEMA (NEW) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(dynamicSchema),
+        }}
+      />
 
       <BlogDetails
         blog={blog}

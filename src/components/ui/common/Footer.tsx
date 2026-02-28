@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../style/footer.module.scss";
-
+import logoIMG from "../../../../public/assets/logo-allisted2.svg";
 const Footer = () => {
   return (
     <footer className={styles.footer}>
@@ -9,7 +10,14 @@ const Footer = () => {
         
         {/* Left Section */}
         <div className={styles.left}>
-          <h2 className={styles.logo}>Allisted</h2>
+           <Link href="/" className={styles.logo}>
+        <Image
+          src={logoIMG}
+          alt="Allisted Logo"
+          className={styles.logoImage}
+          priority
+        />
+      </Link>
           <p>
             Allisted is your go-to directory for the best AI tools. Explore,
             compare, and discover innovative solutions across categories —
