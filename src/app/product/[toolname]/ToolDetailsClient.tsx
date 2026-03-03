@@ -23,7 +23,6 @@ export default function ToolDetailsClient({ toolname }: { toolname: string }) {
   const userId = getUserId();
   const userType = getUserType();
   const slug = useCategoryStore((s: any) => s.slug);
-  console.log("chk3",slug,toolname)
   const decoded = useMemo(
     () => ({
       slug: unslugify(slug as string),

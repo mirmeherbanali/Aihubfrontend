@@ -40,7 +40,6 @@ export default function HomeClient({ categories, tools, blog }: Props) {
 // const slug = useCategoryStore((s: any) => s.slug);
 // console.log("chk dta a",slug)
   const handlePointerDown = (categoryName: string) => {
-    console.log("chk2",slugify(categoryName))
     setSlug(slugify(categoryName)); // ✅ store category slug before navigation
 
   };
