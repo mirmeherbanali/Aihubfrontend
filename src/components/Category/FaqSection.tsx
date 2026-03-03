@@ -20,7 +20,7 @@ const FaqItem = ({
       <header className={styles.faqHeader} onClick={onClick}>
         <div className={styles.questionMain}>
          
-          <h3 className={styles.question}>{item.question}</h3>
+           {item.question}
         </div>
         <div className={styles.iconWrapper}>
           {isOpen ? <FaArrowDown className={styles.icon} /> : <FaArrowRight className={styles.icon} />}

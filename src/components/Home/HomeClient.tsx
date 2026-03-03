@@ -86,9 +86,9 @@ export default function HomeClient({ categories, tools, blog }: Props) {
 
           <div>
             <h4>{tool.toolName}</h4>
-            <span style={{ fontSize: "12px", opacity: 0.6 }}>
+            {/* <span style={{ fontSize: "12px", opacity: 0.6 }}>
               {category.categoryName}
-            </span>
+            </span> */}
           </div>
 
           {isLoading && <div className={styles.spinner}></div>}
