@@ -30,18 +30,15 @@ const CategoryToolCard = ({ tool }: { tool: any }) => {
       : words.slice(0, limit).join(" ") + " ...";
   };
 
-
   const saveSlugBeforeNavigate = () => {
     if (!slug) return;
 
     setButtonLoading(true);
-
-    // ✅ Global store (instant, sync, reliable)
     setSlug(slug);
   };
 
   return (
-   <Link
+    <Link
       href={finalURL}
       className={styles.cardLinkWrapper}
       onPointerDown={saveSlugBeforeNavigate} // ✅ BEST EVENT
