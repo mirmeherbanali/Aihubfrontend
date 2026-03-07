@@ -20,10 +20,10 @@
 
 .suggestionBox {
   position: absolute;
-  top: 65%;
+  top: 60%;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
+  width: 680px;
   max-height: 420px;
   overflow-y: auto;
 
@@ -46,10 +46,11 @@
   &:hover {
     background: #131a2f;
   }
-  &.loading {
-    pointer-events: none;
-    opacity: 0.6;
-  }
+
+}
+.loading {
+  pointer-events: none;
+  opacity: 0.6;
 }
 .spinner {
   width: 28px;
@@ -67,24 +68,24 @@
 }
 
 /* ICON */
-.left img {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+.suggestionItem img {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-/* TEXT */
-.right h4 {
+/* ================= TEXT ================= */
+
+.suggestionItem h4 {
   margin: 0;
   font-size: 14px;
-  color: #fff;
+  font-weight: 500;
+  color: #f1f5f9;
+  line-height: 1.4;
 }
 
-.right span {
-  font-size: 12px;
-  color: #8fa3ff;
-}
 
 /* ---------------- MOBILE ---------------- */
 @media (max-width: 768px) {

@@ -33,7 +33,9 @@ const FeaturedTools: React.FC<FeaturedToolsProps> = ({
   const setSlug = useCategoryStore((s: any) => s.setSlug);
 
   const handlePointerDown = (categoryName: string) => {
+    console.log("chk2",slugify(categoryName))
     setSlug(slugify(categoryName)); // ✅ store category slug before navigation
+
   };
 
   return (
