@@ -20,16 +20,16 @@ export const metadata: Metadata = {
   description:
     "Explore the latest AI tools, tutorials, and insights from industry experts.",
   alternates: {
-    canonical: "https://yourdomain.com/blog",
+    canonical: "https://app.recuip.com/blog",
   },
   openGraph: {
     title: "Latest AI Blogs & Tutorials",
     description: "Explore the latest AI tools, tutorials, and insights.",
-    url: "https://yourdomain.com/blog",
+    url: "https://app.recuip.com/blog",
     siteName: "Allisted",
     images: [
       {
-        url: "https://yourdomain.com/og-blog.png",
+        url: "https://app.recuip.com/og-blog.png",
         width: 1200,
         height: 630,
       },
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Latest AI Blogs & Tutorials",
     description: "Explore the latest AI tools, tutorials, and insights.",
-    images: ["https://yourdomain.com/og-blog.png"],
+    images: ["https://app.recuip.com/og-blog.png"],
   },
 };
 
