@@ -85,13 +85,12 @@ export default async function Page({ params }: Props) {
     return <p style={{ padding: "40px" }}>Blog not found</p>;
   }
 
-  /* ✅ DB SCHEMA (UNCHANGED) */
   const cleanJson = blog.jsonLdSchema
     ?.replace('<script type="application/ld+json">', "")
     ?.replace("</script>", "")
     ?.trim();
 
-  /* ✅ NEW DYNAMIC BLOG SCHEMA */
+ 
   const blogUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
 
   const dynamicSchema = {
@@ -122,7 +121,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <>
-      {/* ✅ 1️⃣ DB SCHEMA (AS IT IS) */}
+
       {cleanJson && (
         <script
           type="application/ld+json"
@@ -132,7 +131,7 @@ export default async function Page({ params }: Props) {
         />
       )}
 
-      {/* ✅ 2️⃣ DYNAMIC SCHEMA (NEW) */}
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

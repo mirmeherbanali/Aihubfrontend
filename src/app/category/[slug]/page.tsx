@@ -16,16 +16,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: categoryName,
     description,
     alternates: {
-      canonical: `https://yourdomain.com/categories/${params.slug}`,
+      canonical: `https://app.recuip.com/categories/${params.slug}`,
     },
     openGraph: {
       title: categoryName,
       description,
-      url: `https://yourdomain.com/categories/${params.slug}`,
+      url: `https://app.recuip.com/categories/${params.slug}`,
       siteName: "Alllisted",
       images: [
         {
-          url: "https://yourdomain.com/og-image.png",
+          url: "https://app.recuip.com/og-image.png",
           width: 1200,
           height: 630,
           alt: categoryName,
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: categoryName,
       description,
-      images: ["https://yourdomain.com/og-image.png"],
+      images: ["https://app.recuip.com/og-image.png"],
     },
   };
 }
