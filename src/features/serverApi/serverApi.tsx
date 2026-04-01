@@ -1,36 +1,80 @@
-const API = process.env.NEXT_PUBLIC_API_URL;
+import { ENV } from "@/env";
+const API = ENV.API_URL;
 
 export async function getCategories() {
-  const res = await fetch(`${API}/api/category/getAllCategories`, {
-    method: "POST",
-    next: { revalidate: 3600 }, // 🔥 cache for 1 hour
-  });
-
-  const data = await res.json();
-  return data?.result?.list || [];
+  try {
+    const res = await fetch(`${API}/api/category/getAllCategories`, {
+      method: "POST",
+      next: { revalidate: 3600 }, // 🔥 cache for 1 hour
+    });
+    const data = await res.json();
+    return data?.result?.list || [];
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    return [];
+  }
 }
 
 export async function getTools() {
-  const res = await fetch(`${API}/api/tool/getAllTools`, {
-    method: "POST",
-    next: { revalidate: 3600 }, // 🔥 cache for 1 hour
-  });
-
-  const data = await res.json();
-  return (data?.result?.list || []).filter(
-    (item: { status: string }) => item.status === "Approved"
-  );
+  try {
+    const res = await fetch(`${API}/api/tool/getAllTools`, {
+      method: "POST",
+      next: { revalidate: 3600 }, // 🔥 cache for 1 hour
+    });
+    const data = await res.json();
+    return (data?.result?.list || []).filter(
+      (item: { status: string }) => item.status === "Approved"
+    );
+  } catch (err) {
+    console.error("Error fetching tools:", err);
+    return [];
+  }
 }
 
-
 export async function getAllBlogs() {
-  const res = await fetch(`${API}/api/blog/getAllBlogs`, {
-    method: "POST",
-    next: { revalidate: 3600 },
-  });
+  try {
+    const res = await fetch(`${API}/api/blog/getAllBlogs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 3600 },
+    });
 
-  const data = await res.json();
-  return data?.result?.list || [];
+    if (!res.ok) {
+      console.error(`Fetch failed for blogs: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    const data = await res.json();
+    return data?.result?.list || [];
+  } catch (err) {
+    console.error("Error fetching blogs:", err);
+    return [];
+  }
+}
+
+export async function getFourBlogsUnique() {
+  try {
+    const res = await fetch(`${API}/api/blog/getAllBlogsUnique`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      console.error(`Fetch failed for unique blogs: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    const data = await res.json();
+    return data?.result?.list || [];
+  } catch (error) {
+    console.error("Error in getFourBlogsUnique:", error);
+    return [];
+  }
 }
 
 export async function getBlogById({

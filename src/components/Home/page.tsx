@@ -1,6 +1,10 @@
 import Categories from "./categories";
 import FeaturedTools from "./FeaturedTools";
-import { getAllBlogs, getCategories, getTools } from "@/features/serverApi/serverApi";
+import {
+  getCategories,
+  getFourBlogsUnique,
+  getTools,
+} from "@/features/serverApi/serverApi";
 import styles from "../ui/style/Home.module.scss";
 import LatestNewsServer from "./LatestNewsServer";
 import HomeSearchWrapper from "./HomeSearchWrapper";
@@ -9,7 +13,7 @@ export default async function HomePage() {
   const [categories, tools, blog] = await Promise.all([
     getCategories(),
     getTools(),
-    getAllBlogs(),
+    getFourBlogsUnique(),
   ]);
 
   return (
