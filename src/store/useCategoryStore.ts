@@ -19,8 +19,11 @@ export const useBlogStore = create(
   persist(
     (set) => ({
       authorName: null,
+      blogId:null,
       setAuthorName: (authorName: string) => set({ authorName }),
-      clear: () => set({ authorName: null }),
+      setBlogId: (blogId: string) => set({ blogId }),
+
+      clear: () => set({ authorName: null,blogId:null }),
     }),
     {
       name: "blog-store",

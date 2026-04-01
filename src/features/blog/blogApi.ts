@@ -50,9 +50,17 @@ export const blogApi = baseApi.injectEndpoints({
       }),
       keepUnusedDataFor: 300,
     }),
+    // ✅ Get All Blogs
+    getFourBlogs: builder.query<AuthResponse, void>({
+      query: () => ({
+        url: "api/blog/getAllBlogsUnique",
+        method: "POST",
+      }),
+      keepUnusedDataFor: 300,
+    }),
 
     // ✅ Get Blog By ID
-    getBlogById: builder.query<AuthResponse, { blogId: string }>({
+    getBlogById: builder.query<AuthResponse, { id: string ,categoryName:string}>({
       query: (body) => ({
         url: "api/blog/getBlogById",
         method: "POST",
@@ -68,5 +76,6 @@ export const {
   useUpdateBlogMutation,
   useDeleteBlogMutation,
   useGetAllBlogsQuery,
+  useGetFourBlogsQuery,
   useGetBlogByIdQuery,
 } = blogApi;
