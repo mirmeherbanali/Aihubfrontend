@@ -17,7 +17,7 @@ export default function LatestNewsServer({ blog }: { blog: any[] }) {
               key={item._id}
               href={`/blog/${slugify(
                 category?.categoryName || "general"
-              )}/${slugify(item.author?.authorName)}/${item.slug}`}
+              )}/${item.slug}`}
               className={styles.card}
             >
               {/* IMAGE */}

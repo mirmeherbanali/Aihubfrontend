@@ -1,11 +1,7 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import BlogDetails from "./BlogDetails";
-// import { getBlogById } from "@/features/serverApi/serverApi";
-import { useGetBlogByIdQuery } from "@/features/blog/blogApi";
-
-import { useBlogStore } from "@/store/useCategoryStore";
+import { Metadata } from "next";
+import { getBlogBySlug } from "@/features/serverApi/serverApi";
+import BlogDetailsClient from "./BlogDetailsClient";
+import { ENV } from "@/env";
 
 type Props = {
   params: {
@@ -14,38 +10,69 @@ type Props = {
   };
 };
 
-export default function Page({ params }: Props) {
-  const blogId = useBlogStore((s: any) => s.blogId);
-    const setAuthorName = useBlogStore((s: any) => s.setAuthorName);
-    const setBlogId = useBlogStore((s: any) => s.setBlogId);
-    const finalId = blogId || params.slug;
-  // const{data,isLoading} = useGetBlogByIdQuery({id:blogId,categoryName:params?.categoryName})
-  const { data, isLoading } = useGetBlogByIdQuery(
-  {
-    id: finalId,
-    categoryName: params.categoryName,
-  },
-  {
-    skip: !finalId, // ✅ important
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const data = await getBlogBySlug(params.slug, params.categoryName);
+
+  const blog = data?.blog;
+
+  if (!blog) {
+    return {
+      title: "Blog Not Found | Allisted",
+    };
   }
-);
-if (isLoading) {
-  return <p style={{ padding: 40 }}>Loading blog...</p>;
+
+  const title = `${blog.blogTitle} | Allisted`;
+  const description = blog.excerpt || blog.blogTitle;
+  const ogImage = blog.featuredImage?.url || "/blog-placeholder.png";
+  const url = `${ENV.APP_URL}/blog/${params.categoryName}/${params.slug}`;
+
+  return {
+    title,
+    description,
+    authors: [{ name: blog.author?.authorName || "Recuip" }],
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
+    other: {
+      "twitter:url": url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Recuip",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: blog.blogTitle,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
 }
 
-  if (!data?.result?.list?.blog) {
+export default async function Page({ params }: Props) {
+  const data = await getBlogBySlug(params.slug, params.categoryName);
+
+  if (!data?.blog) {
     return <p style={{ padding: 40 }}>Blog not found</p>;
   }
-  const { blog, relatedArticles, latestArticle } = data?.result?.list;
+
+  const { blog, relatedArticles, latestArticle } = data;
 
   return (
-    <BlogDetails
-
+    <BlogDetailsClient
       blog={blog}
       relatedArticles={relatedArticles}
       latestArticles={latestArticle}
-      setAuthorName={setAuthorName}
-      setBlogId={setBlogId}
     />
   );
 }

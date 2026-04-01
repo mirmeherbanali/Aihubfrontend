@@ -81,7 +81,7 @@ export default async function BlogPage({
             return (
               <Link
                 key={blog._id}
-                href={`/blog/${slugify(firstCategory)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
+                href={`/blog/${slugify(firstCategory)}/${blog.slug}`}
                 className={styles.blogCard}
               >
                 <div className={styles.imageWrapper}>

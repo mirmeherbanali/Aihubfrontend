@@ -108,3 +108,20 @@ export async function getBlogById({
     return null;
   }
 }
+
+export async function getBlogBySlug(slug: string, categoryName: string) {
+  try {
+    const blogs = await getAllBlogs();
+    const blogSummary = blogs.find((b: any) => b.slug === slug);
+
+    if (!blogSummary) {
+      console.error(`Blog with slug "${slug}" not found in getAllBlogs`);
+      return null;
+    }
+
+    return await getBlogById({ id: blogSummary._id, categoryName });
+  } catch (error) {
+    console.error("Error in getBlogBySlug:", error);
+    return null;
+  }
+}

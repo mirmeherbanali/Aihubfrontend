@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "@/components/ui/style/BlogDetails.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
