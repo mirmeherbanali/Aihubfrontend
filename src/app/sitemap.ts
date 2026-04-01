@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { ENV } from "@/env";
 import {
   getAllBlogs,
   getCategories,
@@ -13,7 +14,7 @@ const generateSlug = (text: string) =>
     .replace(/(^-|-$)/g, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://app.recuip.com";
+  const baseUrl = ENV.APP_URL;
 
   const [blogs, categories, tools] = await Promise.all([
     getAllBlogs(),
