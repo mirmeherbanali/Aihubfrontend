@@ -8,14 +8,11 @@ import styles from "../../components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
 import { useBlogStore } from "@/store/useCategoryStore";
+import moment from "moment";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
-  return new Date(date).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  return moment(date).format("MMM DD, YYYY");
 };
 
 export default function BlogClient() {

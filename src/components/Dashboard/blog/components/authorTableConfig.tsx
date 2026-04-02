@@ -1,5 +1,7 @@
 // authorTableConfig.ts
 import { slugify } from "@/utils/useEncodeUrl";
+import moment from "moment";
+
 export const AUTHOR_COLUMNS = [
   {
     key: "authorImage",
@@ -54,10 +56,7 @@ export const AUTHOR_COLUMNS = [
   {
     key: "createdAt",
     label: "Created",
-    render: (row: any) =>
-      row.createdAt
-        ? new Date(row.createdAt).toLocaleDateString()
-        : "-",
+    render: (row: any) => (row.createdAt ? moment(row.createdAt).format("MMM DD, YYYY") : "-"),
   },
 ];
 
@@ -94,34 +93,26 @@ export const BLOG_COLUMNS = [
     render: (row: any) => row.author?.authorName || row.author || "-",
   },
   {
-  key: "categories",
-  label: "Category",
-  render: (row: any) =>
-    row.categories?.map((p: any) => p?.categoryName).join(", ") || "-",
-}
-,
-
- {
-  key: "status",
-  label: "Status",
-  render: (row: any) =>  row.status || "-",
-}
-,
+    key: "categories",
+    label: "Category",
+    render: (row: any) =>
+      row.categories?.map((p: any) => p?.categoryName).join(", ") || "-",
+  },
+  {
+    key: "status",
+    label: "Status",
+    render: (row: any) => row.status || "-",
+  },
   {
     key: "publishedDate",
     label: "Published",
     render: (row: any) =>
-      row.publishedDate
-        ? new Date(row.publishedDate).toLocaleDateString()
-        : "-",
+      row.publishedDate ? moment(row.publishedDate).format("MMM DD, YYYY") : "-",
   },
   {
     key: "createdAt",
     label: "Created",
-    render: (row: any) =>
-      row.createdAt
-        ? new Date(row.createdAt).toLocaleDateString()
-        : "-",
+    render: (row: any) => (row.createdAt ? moment(row.createdAt).format("MMM DD, YYYY") : "-"),
   },
 ];
 
@@ -133,14 +124,9 @@ export const CATEGORY_COLUMNS = [
   {
     key: "createdAt",
     label: "Created",
-    render: (row: any) =>
-      row.createdAt
-        ? new Date(row.createdAt).toLocaleDateString()
-        : "-",
+    render: (row: any) => (row.createdAt ? moment(row.createdAt).format("MMM DD, YYYY") : "-"),
   },
 ];
-
-
 
 export const COMMON_ACTIONS = (
   onEdit: (row: any) => void,
@@ -172,4 +158,3 @@ export const COMMON_ACTIONS = (
     onClick: (row: any) => onDelete(row),
   },
 ];
-

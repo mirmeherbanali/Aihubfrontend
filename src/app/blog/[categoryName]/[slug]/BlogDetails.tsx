@@ -3,6 +3,7 @@
 import styles from "@/components/ui/style/BlogDetails.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
+import moment from "moment";
 
 type Props = {
   blog: any;
@@ -74,7 +75,7 @@ export default function BlogDetails({
           <span>
             Updated on{" "}
             <b>
-              {new Date(blog.updatedAt).toLocaleDateString()}
+              {moment(blog.updatedAt).format("MMM DD, YYYY")}
             </b>
           </span>
         </div>
@@ -133,7 +134,7 @@ export default function BlogDetails({
                 <h3>{item.blogTitle}</h3>
                 <small>
                   Published by <b>{item.author?.authorName}</b> |{" "}
-                  {new Date(item.createdAt).toLocaleDateString()}
+                  {moment(item.createdAt).format("MMM DD, YYYY")}
                 </small>
               </div>
             </Link>
@@ -169,7 +170,7 @@ export default function BlogDetails({
                 <h3>{item.blogTitle}</h3>
                 <p>
                   Published by <b>{item.author?.authorName}</b> |{" "}
-                  {new Date(item.createdAt).toLocaleDateString()}
+                  {moment(item.createdAt).format("MMM DD, YYYY")}
                 </p>
               </div>
             </Link>

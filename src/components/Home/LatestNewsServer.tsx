@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "../../components/ui/style/latestNews.module.scss";
 import { slugify } from "@/utils/useEncodeUrl";
+import moment from "moment";
 
 export default function LatestNewsServer({ blog }: { blog: any[] }) {
   return (
@@ -40,7 +41,7 @@ export default function LatestNewsServer({ blog }: { blog: any[] }) {
                   </span>
 
                   <span className={styles.date}>
-                    {new Date(item.createdAt).toLocaleDateString()}
+                    {moment(item.createdAt).format("MMM DD, YYYY")}
                   </span>
                 </div>
               </div>

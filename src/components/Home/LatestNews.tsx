@@ -6,6 +6,7 @@ import Image from "next/image";
 import styles from "../../components/ui/style/latestNews.module.scss";
 import { useGetFourBlogsQuery } from "@/features/blog/blogApi";
 import { slugify } from "@/utils/useEncodeUrl";
+import moment from "moment";
 import { useBlogStore } from "@/store/useCategoryStore";
 
 const LatestNews = () => {
@@ -70,7 +71,7 @@ const LatestNews = () => {
                     {item.author?.authorName}
                   </span>
                   <span className={styles.date}>
-                    {new Date(item.createdAt).toLocaleDateString()}
+                    {moment(item.createdAt).format("MMM DD, YYYY")}
                   </span>
                 </div>
               </div>
