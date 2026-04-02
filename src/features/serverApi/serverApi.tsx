@@ -111,15 +111,19 @@ export async function getBlogById({
 
 export async function getBlogBySlug(slug: string, categoryName: string) {
   try {
-    const blogs = await getAllBlogs();
-    const blogSummary = blogs.find((b: any) => b.slug === slug);
+    const res = await fetch(`${API}/api/blog/getBlogBySlug`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slug, categoryName }),
+      next: { revalidate: 60 }, // cache for 1 minute
+    });
 
-    if (!blogSummary) {
-      console.error(`Blog with slug "${slug}" not found in getAllBlogs`);
-      return null;
-    }
+    if (!res.ok) throw new Error("Failed to fetch blog by slug");
 
-    return await getBlogById({ id: blogSummary._id, categoryName });
+    const data = await res.json();
+    return data?.result?.list || null;
   } catch (error) {
     console.error("Error in getBlogBySlug:", error);
     return null;

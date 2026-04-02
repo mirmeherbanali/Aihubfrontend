@@ -27,7 +27,7 @@ export default function BlogDetails({
       setAuthorName(slugify(authorName));
     };
   /* ================= CONTENT IMAGE FIX ================= */
-  const processedContent = blog.content.replace(
+  const processedContent = (blog?.content || "").replace(
     /<img[^>]*>/g,
     (match: string) => {
       const src = match.match(/src="([^"]*)"/)?.[1] || "";
