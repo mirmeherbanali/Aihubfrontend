@@ -47,6 +47,7 @@ export const blogApi = baseApi.injectEndpoints({
       query: () => ({
         url: "api/blog/getAllBlogs",
         method: "POST",
+        body: { limit: 100 }, // ✅ Get more blogs
       }),
       keepUnusedDataFor: 300,
     }),

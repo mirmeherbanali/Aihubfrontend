@@ -38,6 +38,7 @@ export async function getAllBlogs() {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ limit: 100 }), // ✅ Get more blogs for SSR
       next: { revalidate: 3600 },
     });
 
