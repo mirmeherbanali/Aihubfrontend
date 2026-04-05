@@ -1,5 +1,8 @@
 .homeServer {
   display: block;
+  :global(html.js-enabled) & {
+    display: none;
+  }
 }
 
 .homeServer a {
@@ -7,18 +10,9 @@
   color: inherit;
 }
 
-
 .homeClient {
   display: none;
-}
-
-/* When JavaScript is ENABLED */
-:global(html.js-enabled) {
-  .homeServer {
-    display: none;
-  }
-
-  .homeClient {
+  :global(html.js-enabled) & {
     display: block;
   }
 }

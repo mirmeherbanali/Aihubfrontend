@@ -8,14 +8,11 @@ import styles from "../../components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
 import { useBlogStore } from "@/store/useCategoryStore";
+import moment from "moment";
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
-  return new Date(date).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  return moment(date).format("MMM DD, YYYY");
 };
 
 export default function BlogClient() {
@@ -82,14 +79,13 @@ export default function BlogClient() {
 
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
-        {paginatedBlogs?.flatMap((blog: any) =>
-          (blog.categories?.length
-            ? blog?.categories
-            : [{ categoryName: "Uncategorized" }]
-          )?.map((cat: any) => (
+        {paginatedBlogs?.map((blog: any) => {
+          const firstCategory =
+            blog.categories?.[0]?.categoryName || "Uncategorized";
+          return (
             <Link
-              key={`${blog?._id}-${cat?.categoryName}`}
-              href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
+              key={blog?._id}
+              href={`/blog/${slugify(firstCategory)}/${blog.slug}`}
               className={styles.blogCard}
               onPointerDown={() => handlePointerDown(blog.author?.authorName)}
             >
@@ -102,7 +98,7 @@ export default function BlogClient() {
               </div>
 
               {/* CATEGORY */}
-              <span className={styles.category}>{cat.categoryName}</span>
+              <span className={styles.category}>{firstCategory}</span>
 
               {/* TITLE */}
               <h3
@@ -121,8 +117,8 @@ export default function BlogClient() {
                 Published On <span>{formatDate(blog.publishedDate)}</span>
               </p>
             </Link>
-          )),
-        )}
+          );
+        })}
       </div>
 
       {/* PAGINATION */}

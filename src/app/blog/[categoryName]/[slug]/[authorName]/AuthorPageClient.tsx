@@ -7,17 +7,12 @@ import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { slugify, unslugify } from "@/utils/useEncodeUrl";
 import { useBlogStore } from "@/store/useCategoryStore";
+import moment from "moment";
 
 const BLOGS_PER_PAGE = 6;
 
 const formatDate = (date?: string) =>
-  date
-    ? new Date(date).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      })
-    : "-";
+  date ? moment(date).format("MMM DD, YYYY") : "-";
 
 export default function AuthorPageClient({
   categoryName,

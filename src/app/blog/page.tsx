@@ -75,14 +75,13 @@ export default async function BlogPage({
 
         {/* SERVER BLOG GRID */}
         <div className={styles.gridWrapper}>
-          {paginatedBlogs?.flatMap((blog: any) =>
-            (blog.categories?.length
-              ? blog?.categories
-              : [{ categoryName: "Uncategorized" }]
-            )?.map((cat: any) => (
+          {paginatedBlogs?.map((blog: any) => {
+            const firstCategory =
+              blog.categories?.[0]?.categoryName || "Uncategorized";
+            return (
               <Link
-                key={`${blog._id}-${cat.categoryName}`}
-                href={`/blog/${slugify(cat.categoryName)}/${slugify(blog.author?.authorName || "")}/${blog.slug}`}
+                key={blog._id}
+                href={`/blog/${slugify(firstCategory)}/${blog.slug}`}
                 className={styles.blogCard}
               >
                 <div className={styles.imageWrapper}>
@@ -92,7 +91,7 @@ export default async function BlogPage({
                   />
                 </div>
 
-                <span className={styles.category}>{cat.categoryName}</span>
+                <span className={styles.category}>{firstCategory}</span>
 
                 {/* TITLE */}
                 <h3 className={styles.title}>{blog.blogTitle}</h3>
@@ -106,8 +105,8 @@ export default async function BlogPage({
                   Published On <span>{formatDate(blog.publishedDate)}</span>
                 </p>
               </Link>
-            )),
-          )}
+            );
+          })}
         </div>
 
         {/* SERVER PAGINATION */}
