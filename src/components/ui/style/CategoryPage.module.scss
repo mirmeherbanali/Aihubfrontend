@@ -1,18 +1,13 @@
 .homeServer {
   display: block;
+  :global(html.js-enabled) & {
+    display: none;
+  }
 }
 
 .homeClient {
   display: none;
-}
-
-/* JS ENABLED */
-:global(html.js-enabled) {
-  .homeServer {
-    display: none;
-  }
-
-  .homeClient {
+  :global(html.js-enabled) & {
     display: block;
   }
 }

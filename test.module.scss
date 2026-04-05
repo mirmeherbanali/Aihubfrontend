@@ -1,0 +1,6 @@
+.homeServer {
+  display: block;
+  :global(html.js-enabled) & {
+    display: none;
+  }
+}
