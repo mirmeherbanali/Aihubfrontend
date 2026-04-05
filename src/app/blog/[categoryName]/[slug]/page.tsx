@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!blog) {
     return {
-      title: "Blog Not Found | Allisted",
+      title: "Blog Not Found",
     };
   }
 
-  const title = `${blog.blogTitle} | Allisted`;
+  const title = blog.blogTitle;
   const description = blog.excerpt || blog.blogTitle;
   const ogImage = blog.featuredImage?.url || "/blog-placeholder.png";
   const url = `${ENV.APP_URL}/blog/${params.categoryName}/${params.slug}`;
@@ -68,11 +68,28 @@ export default async function Page({ params }: Props) {
 
   const { blog, relatedArticles, latestArticle } = data;
 
+  let schemaString = "";
+  const rawSchema = blog.jsonLdSchema || blog.schemaMarkup || blog.schema || blog.jsonLd;
+  if (rawSchema && typeof rawSchema === "string") {
+    const match = rawSchema.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+    schemaString = match ? match[1] : rawSchema;
+  } else if (rawSchema && typeof rawSchema === "object") {
+    schemaString = JSON.stringify(rawSchema);
+  }
+
   return (
-    <BlogDetailsClient
-      blog={blog}
-      relatedArticles={relatedArticles}
-      latestArticles={latestArticle}
-    />
+    <>
+      {schemaString && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemaString }}
+        />
+      )}
+      <BlogDetailsClient
+        blog={blog}
+        relatedArticles={relatedArticles}
+        latestArticles={latestArticle}
+      />
+    </>
   );
 }
