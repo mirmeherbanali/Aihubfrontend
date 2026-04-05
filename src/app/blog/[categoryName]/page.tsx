@@ -83,38 +83,31 @@ export default async function CategoryPage({
       <div className={styles.homeServer}>
         {/* SERVER BLOG GRID */}
         <div className={styles.gridWrapper}>
-          {paginatedBlogs?.flatMap((blog: any) =>
-            (blog.categories?.length
-              ? blog?.categories
-              : [{ categoryName: "Uncategorized" }]
-            )?.map((cat: any) => (
-              <Link
-                key={`${blog?._id}-${cat?.categoryName}`}
-                href={`/blog/${slugify(categoryName)}/${slugify(
-                  blog.author?.authorName || "unknown-author",
-                )}`}
-                className={styles.blogCard}
-              >
-                <div className={styles.imageWrapper}>
-                  <img
-                    src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                    alt={blog.blogTitle}
-                  />
-                </div>
+          {paginatedBlogs?.map((blog: any) => (
+            <Link
+              key={blog?._id}
+              href={`/blog/${slugify(categoryName)}/${blog.slug}`}
+              className={styles.blogCard}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                  alt={blog.blogTitle}
+                />
+              </div>
 
-                <span className={styles.category}>{categoryName}</span>
+              <span className={styles.category}>{categoryName}</span>
 
-                <h3 className={styles.title}>{blog.blogTitle}</h3>
+              <h3 className={styles.title}>{blog.blogTitle}</h3>
 
-                <p className={styles.meta}>
-                  Published By <span>{blog.author?.authorName}</span>
-                </p>
-                <p className={styles.meta}>
-                  Published On <span>{formatDate(blog.publishedDate)}</span>
-                </p>
-              </Link>
-            )),
-          )}
+              <p className={styles.meta}>
+                Published By <span>{blog.author?.authorName}</span>
+              </p>
+              <p className={styles.meta}>
+                Published On <span>{formatDate(blog.publishedDate)}</span>
+              </p>
+            </Link>
+          ))}
         </div>
 
         {/* SERVER PAGINATION */}

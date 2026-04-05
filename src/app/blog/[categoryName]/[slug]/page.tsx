@@ -1,9 +1,7 @@
 import { Metadata } from "next";
-import Script from "next/script";
-import { getAllBlogs } from "@/features/serverApi/serverApi";
-import BlogDetails from "./BlogDetails";
-
-export const revalidate = 3600;
+import { getBlogBySlug } from "@/features/serverApi/serverApi";
+import BlogDetailsClient from "./BlogDetailsClient";
+import { ENV } from "@/env";
 
 type Props = {
   params: {
@@ -12,137 +10,85 @@ type Props = {
   };
 };
 
-const normalize = (str?: string) =>
-  str?.trim().toLowerCase().replace(/\s+/g, "-") || "";
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || "https://recuip.com";
-
-/* ===========================
-   METADATA (NORMAL)
-=========================== */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const blogs = await getAllBlogs();
+  const data = await getBlogBySlug(params.slug, params.categoryName);
 
-  const blog = blogs.find(
-    (b: any) =>
-      b.status === "Published" &&
-      normalize(b.slug) === normalize(params.slug)
-  );
+  const blog = data?.blog;
 
   if (!blog) {
     return {
       title: "Blog Not Found",
-      robots: { index: false, follow: false },
     };
   }
 
-  const canonicalUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
+  const title = blog.blogTitle;
+  const description = blog.excerpt || blog.blogTitle;
+  const ogImage = blog.featuredImage?.url || "/blog-placeholder.png";
+  const url = `${ENV.APP_URL}/blog/${params.categoryName}/${params.slug}`;
 
   return {
-    title: blog.blogTitle,
-    description: blog.metaDescription || blog.blogTitle,
-    alternates: { canonical: canonicalUrl },
-
+    title,
+    description,
+    authors: [{ name: blog.author?.authorName || "Recuip" }],
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
+    other: {
+      "twitter:url": url,
+    },
     openGraph: {
-      title: blog.blogTitle,
-      description: blog.metaDescription || blog.blogTitle,
-      url: canonicalUrl,
+      title,
+      description,
+      url,
       siteName: "Recuip",
       images: [
         {
-          url: blog.featuredImage?.url,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: blog.blogTitle,
         },
       ],
+      type: "website",
     },
-
     twitter: {
       card: "summary_large_image",
-      title: blog.blogTitle,
-      description: blog.metaDescription || blog.blogTitle,
-      images: [blog.featuredImage?.url],
+      title,
+      description,
+      images: [ogImage],
     },
-
-    robots: { index: true, follow: true },
   };
 }
 
-/* ===========================
-   PAGE BODY
-=========================== */
 export default async function Page({ params }: Props) {
-  const blogs = await getAllBlogs();
+  const data = await getBlogBySlug(params.slug, params.categoryName);
 
-  const blog = blogs.find(
-    (b: any) =>
-      b.status === "Published" &&
-      normalize(b.slug) === normalize(params.slug)
-  );
-
-  if (!blog) {
-    return <p style={{ padding: "40px" }}>Blog not found</p>;
+  if (!data?.blog) {
+    return <p style={{ padding: 40 }}>Blog not found</p>;
   }
 
-  const cleanJson = blog.jsonLdSchema
-    ?.replace('<script type="application/ld+json">', "")
-    ?.replace("</script>", "")
-    ?.trim();
+  const { blog, relatedArticles, latestArticle } = data;
 
- 
-  const blogUrl = `${SITE_URL}/blog/${params.categoryName}/${params.slug}`;
-
-  const dynamicSchema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": blogUrl,
-    },
-    headline: blog.blogTitle,
-    description: blog.metaDescription || blog.blogTitle,
-    image: blog.featuredImage?.url,
-    author: {
-      "@type": "Person",
-      name: blog.author?.authorName || "Recuip Team",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Recuip",
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_URL}/logo.png`,
-      },
-    },
-    datePublished: new Date(blog.createdAt).toISOString(),
-    dateModified: new Date(blog.updatedAt).toISOString(),
-  };
+  let schemaString = "";
+  const rawSchema = blog.jsonLdSchema || blog.schemaMarkup || blog.schema || blog.jsonLd;
+  if (rawSchema && typeof rawSchema === "string") {
+    const match = rawSchema.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+    schemaString = match ? match[1] : rawSchema;
+  } else if (rawSchema && typeof rawSchema === "object") {
+    schemaString = JSON.stringify(rawSchema);
+  }
 
   return (
     <>
-
-      {cleanJson && (
+      {schemaString && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: cleanJson,
-          }}
+          dangerouslySetInnerHTML={{ __html: schemaString }}
         />
       )}
-
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(dynamicSchema),
-        }}
-      />
-
-      <BlogDetails
+      <BlogDetailsClient
         blog={blog}
-        allBlogs={blogs}
-        categoryName={params.categoryName}
+        relatedArticles={relatedArticles}
+        latestArticles={latestArticle}
       />
     </>
   );

@@ -6,16 +6,12 @@ import Link from "next/link";
 
 import { getCategories } from "@/features/serverApi/serverApi";
 import { getPaginationRange } from "@/components/shared/utilPagination";
+import { Suspense } from "react";
+import CategoryGridSkeleton from "./CategoryGridSkeleton";
 
 const PER_PAGE = 6;
 
-export default async function CategoryPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
-  const page = Number(searchParams.page) || 1;
-
+async function CategoryContent({ page }: { page: number }) {
   const data = await getCategories();
 
   // ✅ only published categories
@@ -30,6 +26,67 @@ export default async function CategoryPage({
 
   return (
     <>
+      <section className={styles.categorySection}>
+        <h2 className={styles.heading}>All Categories</h2>
+
+        <CategoryGrid
+          title=""
+          items={paginatedCategories}
+        />
+      </section>
+
+      {/* ================= PAGINATION ================= */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          {/* PREV */}
+          <Link
+            href={`/category?page=${Math.max(1, page - 1)}`}
+            className={page === 1 ? styles.disabled : ""}
+            aria-disabled={page === 1}
+          >
+            &lt;
+          </Link>
+
+          {/* PAGE NUMBERS */}
+          {getPaginationRange(page, totalPages).map((item, i) =>
+            item === "..." ? (
+              <span key={i} className={styles.ellipsis}>
+                …
+              </span>
+            ) : (
+              <Link
+                key={i}
+                href={`/category?page=${item}`}
+                className={page === item ? styles.activePage : ""}
+              >
+                {item}
+              </Link>
+            )
+          )}
+
+          {/* NEXT */}
+          <Link
+            href={`/category?page=${Math.min(totalPages, page + 1)}`}
+            className={page === totalPages ? styles.disabled : ""}
+            aria-disabled={page === totalPages}
+          >
+            &gt;
+          </Link>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default function CategoryPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
+
+  return (
+    <>
       {/* ================= SERVER FALLBACK ================= */}
       <div className={styles.homeServer}>
         <PageHero
@@ -38,54 +95,9 @@ export default async function CategoryPage({
           queryPlaceholder="Search for Tools & Categories"
         />
 
-        <section className={styles.categorySection}>
-          <h2 className={styles.heading}>All Categories</h2>
-
-          <CategoryGrid
-            title=""
-            items={paginatedCategories}
-          />
-        </section>
-
-        {/* ================= PAGINATION ================= */}
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            {/* PREV */}
-            <Link
-              href={`/category?page=${Math.max(1, page - 1)}`}
-              className={page === 1 ? styles.disabled : ""}
-              aria-disabled={page === 1}
-            >
-              &lt;
-            </Link>
-
-            {/* PAGE NUMBERS */}
-            {getPaginationRange(page, totalPages).map((item, i) =>
-              item === "..." ? (
-                <span key={i} className={styles.ellipsis}>
-                  …
-                </span>
-              ) : (
-                <Link
-                  key={i}
-                  href={`/category?page=${item}`}
-                  className={page === item ? styles.activePage : ""}
-                >
-                  {item}
-                </Link>
-              )
-            )}
-
-            {/* NEXT */}
-            <Link
-              href={`/category?page=${Math.min(totalPages, page + 1)}`}
-              className={page === totalPages ? styles.disabled : ""}
-              aria-disabled={page === totalPages}
-            >
-              &gt;
-            </Link>
-          </div>
-        )}
+        <Suspense fallback={<CategoryGridSkeleton />}>
+          <CategoryContent page={page} />
+        </Suspense>
       </div>
 
       {/* ================= CLIENT ENHANCEMENT ================= */}

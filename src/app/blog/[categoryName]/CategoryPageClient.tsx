@@ -8,16 +8,13 @@ import styles from "@/components/ui/style/Blog.module.scss";
 import Link from "next/link";
 import { slugify } from "@/utils/useEncodeUrl";
 import { useBlogStore } from "@/store/useCategoryStore";
+import moment from "moment";
 
 const BLOGS_PER_PAGE = 6;
 
 const formatDate = (date?: string) => {
   if (!date) return "-";
-  return new Date(date).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  return moment(date).format("MMM DD, YYYY");
 };
 
 export default function CategoryPageClient({
@@ -63,37 +60,32 @@ export default function CategoryPageClient({
     <>
       {/* BLOG GRID */}
       <div className={styles.gridWrapper}>
-        {paginatedBlogs?.flatMap((blog: any) =>
-          (blog.categories?.length
-            ? blog?.categories
-            : [{ categoryName: "Uncategorized" }]
-          )?.map((cat: any) => (
-            <Link
-              key={`${blog?._id}-${cat?.categoryName}`}
-              href={`/blog/${slugify(cat.categoryName)}/${blog.slug}`}
-              className={styles.blogCard}
-              onPointerDown={() => handlePointerDown(blog.author?.authorName)}
-            >
-              <div className={styles.imageWrapper}>
-                <img
-                  src={blog.featuredImage?.url || "/blog-placeholder.png"}
-                  alt={blog.blogTitle}
-                />
-              </div>
+        {paginatedBlogs?.map((blog: any) => (
+          <Link
+            key={blog?._id}
+            href={`/blog/${slugify(categoryName)}/${blog.slug}`}
+            className={styles.blogCard}
+            onPointerDown={() => handlePointerDown(blog.author?.authorName)}
+          >
+            <div className={styles.imageWrapper}>
+              <img
+                src={blog.featuredImage?.url || "/blog-placeholder.png"}
+                alt={blog.blogTitle}
+              />
+            </div>
 
-              <span className={styles.category}>{categoryName}</span>
+            <span className={styles.category}>{categoryName}</span>
 
-              <h3 className={styles.title}>{blog.blogTitle}</h3>
+            <h3 className={styles.title}>{blog.blogTitle}</h3>
 
-              <p className={styles.meta}>
-                Published By <span>{blog.author?.authorName}</span>
-              </p>
-              <p className={styles.meta}>
-                Published On <span>{formatDate(blog.publishedDate)}</span>
-              </p>
-            </Link>
-          )),
-        )}
+            <p className={styles.meta}>
+              Published By <span>{blog.author?.authorName}</span>
+            </p>
+            <p className={styles.meta}>
+              Published On <span>{formatDate(blog.publishedDate)}</span>
+            </p>
+          </Link>
+        ))}
       </div>
 
       {/* CLIENT PAGINATION */}
